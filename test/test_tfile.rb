@@ -73,6 +73,32 @@ class AlfaTFileTest < Test::Unit::TestCase
     assert_equal('/other/path/', f.dirname)
     assert_equal('/other/path/otherbla.bar', f.to_str)
     assert_equal('/other/path/otherbla.bar', f.to_s)
+
+    # projfile
+    Alfa::TFile.project_root = '/projects/project1'
+    f.projfile = 'config/passwords/db.yml'
+    assert_equal('/projects/project1/config/passwords/db.yml', f.absfile)
+    assert_equal('db.yml', f.basename)
+    assert_equal('.yml', f.extname)
+    assert_equal('db', f.filename)
+    assert_equal('/projects/project1/config/passwords/', f.dirname)
+    assert_equal('/projects/project1/config/passwords/db.yml', f.to_str)
+    assert_equal('/projects/project1/config/passwords/db.yml', f.to_s)
+    f.projfile = '/config/passwords/db.yml'
+    assert_equal('/projects/project1/config/passwords/db.yml', f.absfile)
+
+    # url
+    Alfa::TFile.document_root = '/projects/project1/public'
+    f.url = 'folder/document1.doc'
+    assert_equal('/projects/project1/public/folder/document1.doc', f.absfile)
+    assert_equal('document1.doc', f.basename)
+    assert_equal('.doc', f.extname)
+    assert_equal('document1', f.filename)
+    assert_equal('/projects/project1/public/folder/', f.dirname)
+    assert_equal('/projects/project1/public/folder/document1.doc', f.to_str)
+    assert_equal('/projects/project1/public/folder/document1.doc', f.to_s)
+    f.url = '/folder/document1.doc'
+    assert_equal('/projects/project1/public/folder/document1.doc', f.absfile)
   end
 
   def test_02 # set properties on create
