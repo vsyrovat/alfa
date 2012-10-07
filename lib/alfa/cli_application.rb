@@ -1,5 +1,5 @@
 module Alfa
-  class CliApplication
+  class CliApplication < Alfa::Application
 
   end
 end

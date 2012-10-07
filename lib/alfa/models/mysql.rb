@@ -1,5 +1,4 @@
 require 'alfa/support'
-require 'alfa/database/mysql'
 require 'alfa/models/base_sql'
 
 module Alfa
@@ -7,44 +6,55 @@ module Alfa
     class MySQL < Alfa::Models::BaseSQL
       include Alfa::ClassInheritance
       inheritable_attributes :connection, :table
+
       @connection = nil
       @table = nil
       @pk = :id
 
-      def self.register_database database
-        raise 'Expected database to be instance of Alfa::Database::MySQL' unless database.ancestors.include? Alfa::Database::MySQL
-        @connection = database
-      end
+      class << self
 
-      #@return Array || nil
-      def self.all
-        @connection.query("SELECT * FROM `#{self.table}`")
-      end
+        def register_database database
+          raise 'Expected database to be instance of Alfa::Database::MySQL' unless database.ancestors.include? Alfa::Database::MySQL
+          @connection = database
+        end
 
-      def self.find filter = {}
+        #@return Array || nil
+        def all
+          @connection.query("SELECT * FROM `#{self.table}`")
+        end
 
-      end
+        def find filter = {}
 
-      def self.find_first filter = {}
-      end
+        end
 
-      def self.count filter = {}
-      end
+        def find_first filter = {}
+        end
 
-      def self.exists? pk
-      end
+        def count filter = {}
+        end
 
-      def self.create data = {}
-      end
+        def exists? pk
+        end
 
-      def self.delete pk
-      end
+        def create data = {}
+          #data.symbolize_keys!
+          @connection.query("INSERT INTO `#{self.table}` SET #{self.prepare_set_string(data)}")
+        end
 
-      def self.update data = {}
-      end
+        def delete pk
+        end
 
-      def self.table
-        @table.to_s
+        def update data = {}
+        end
+
+        def table
+          @table.to_s
+        end
+
+        def prepare_set_string data = {}
+          data.map{|field, value| "`#{@connection.escape(field)}`='#{@connection.escape(value)}'"}.join(', ')
+        end
+
       end
 
     end

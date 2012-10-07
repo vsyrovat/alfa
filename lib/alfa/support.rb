@@ -35,3 +35,32 @@ module Alfa
   end
 
 end
+
+
+  class Module
+    def load_in_module_context file
+      module_eval file, file
+    end
+
+    def load_in_class_context file
+      class_eval file, file
+    end
+  end
+
+  class BasicObject
+    def load_in_instance_context file
+      instance_eval file, file
+    end
+  end
+
+  class Hash
+    # Destructively convert all keys to symbols, as long as they respond
+    # to +to_sym+. Same as +symbolize_keys+, but modifies +self+.
+    def symbolize_keys!
+      keys.each do |key|
+        self[(key.to_sym rescue key) || key] = delete(key)
+      end
+      self
+    end
+  end
+
