@@ -1,10 +1,8 @@
 require 'test/unit'
 require 'alfa/tfile'
 
-
-
 class AlfaTFileTest < Test::Unit::TestCase
-  def test_01_set
+  def test_01 # set properties after create
     f = Alfa::TFile.new
     #absfile
     f.absfile = '/some/path/to/file.txt'
@@ -77,7 +75,7 @@ class AlfaTFileTest < Test::Unit::TestCase
     assert_equal('/other/path/otherbla.bar', f.to_s)
   end
 
-  def test_02_create
+  def test_02 # set properties on create
     f = Alfa::TFile.new(:absfile => '/some/path/to/file.txt')
     assert_equal('/some/path/to/file.txt', f.absfile)
     assert_equal('file.txt', f.basename)
@@ -88,7 +86,8 @@ class AlfaTFileTest < Test::Unit::TestCase
     assert_equal('/some/path/to/file.txt', f.to_s)
   end
 
-  def test_03_class
+  # class_variables
+  def test_03
     Alfa::TFile.project_root = '/projects/project1'
     assert_equal('/projects/project1/', Alfa::TFile.project_root)
     assert_equal('/projects/project1/public/', Alfa::TFile.document_root)
@@ -97,7 +96,8 @@ class AlfaTFileTest < Test::Unit::TestCase
     assert_equal('/projects/project1/public/', Alfa::TFile.document_root)
   end
 
-  def test_04_url
+  # url
+  def test_04
     Alfa::TFile.project_root = '/projects/project'
     f = Alfa::TFile.new
     f.absfile = '/projects/project/public/robots.txt'
@@ -108,7 +108,8 @@ class AlfaTFileTest < Test::Unit::TestCase
     assert_equal(nil, f.url)
   end
 
-  def test_10_class_inheritance
+  # class inheritance
+  def test_10
     Alfa::TFile.project_root = '/projects/project0/'
     eval <<EOL
     class MyTFile1 < Alfa::TFile; end
