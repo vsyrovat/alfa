@@ -13,7 +13,7 @@ module Alfa
         @document_root = File.expand_path(arg) + '/'
       end
       def allowed_options
-        @allowed_options ||= %w(absfile projfile pubfile).map(&:to_sym)
+        @allowed_options ||= %w(absfile projfile url).map(&:to_sym)
       end
       def inherited(subclass)
         subclass.instance_variable_set(:@project_root, instance_variable_get(:@project_root))

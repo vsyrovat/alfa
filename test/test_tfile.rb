@@ -2,6 +2,17 @@ require 'test/unit'
 require 'alfa/tfile'
 
 class AlfaTFileTest < Test::Unit::TestCase
+  # errors if set projfile and pubfile before set project_root, document_root
+  def test_00
+    f = Alfa::TFile.new
+    assert_raise RuntimeError do
+      f.projfile = 'config/config.rb'
+    end
+    assert_raise RuntimeError do
+      f.url = '/folder/170.html'
+    end
+  end
+
   def test_01 # set properties after create
     f = Alfa::TFile.new
     #absfile
@@ -110,6 +121,16 @@ class AlfaTFileTest < Test::Unit::TestCase
     assert_equal('/some/path/to/', f.dirname)
     assert_equal('/some/path/to/file.txt', f.to_str)
     assert_equal('/some/path/to/file.txt', f.to_s)
+
+    Alfa::TFile.project_root = '/projects/project1'
+    f = Alfa::TFile.new(:projfile => 'config/config.rb')
+    assert_equal('/projects/project1/config/config.rb', f.absfile)
+    assert_equal('config.rb', f.basename)
+    assert_equal('.rb', f.extname)
+    assert_equal('config', f.filename)
+    assert_equal('/projects/project1/config/', f.dirname)
+    assert_equal('/projects/project1/config/config.rb', f.to_str)
+    assert_equal('/projects/project1/config/config.rb', f.to_s)
   end
 
   # class_variables
