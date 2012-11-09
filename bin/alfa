@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+if File.exists?(File.join(File.expand_path('../..', __FILE__), '.git'))
+  $:.unshift(File.expand_path('../../lib', __FILE__))
+end
+
+begin
+  if $*[0] == 'new' and $*[1]
+      require 'alfa/commands/new'
+  else
+      puts "format: alfa new APPLICATION_NAME"
+  end
+rescue StandardError => e
+  puts "Error: #{e}"
+end
+

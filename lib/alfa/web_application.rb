@@ -27,7 +27,7 @@ module Alfa
     def self.init!
       require File.join(PROJECT_ROOT, 'app/routes')
       require File.join(PROJECT_ROOT, 'app/controllers/application')
-      super
+      #super
       @inited = true
     end
 
