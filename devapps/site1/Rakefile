@@ -1,0 +1,5 @@
+require File.expand_path('../config/cli_application', __FILE__)
+
+task :hello do
+  alfa = Alfa
+end
