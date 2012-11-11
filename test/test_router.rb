@@ -72,18 +72,11 @@ class AlfaRouterTest < Test::Unit::TestCase
       end
     end
     #puts Alfa::Router.instance_variable_get(:@routes)
-    assert_equal(
-        [{rule: '/', options: {app: :backend, controller: :main, action: :index, layout: :index}}, {}],
-        Alfa::Router.find_route('/'))
-    assert_equal(
-        [{rule: '/:action', options: {app: :backend, controller: :main, layout: :internal}}, {action: 'foo'}],
-        Alfa::Router.find_route('/foo'))
-    assert_equal(
-        [{rule: '/:controller/:action', options: {app: :backend, layout: :internal}}, {controller: 'foo', action: 'bar'}],
-        Alfa::Router.find_route('/foo/bar'))
-    assert_equal(
-        [{rule: '/:controller/:action/:id', options: {app: :backend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}],
-        Alfa::Router.find_route('/foo/bar/8'))
+    assert_equal([{rule: '/', options: {app: :backend, controller: :main, action: :index, layout: :index}}, {}], Alfa::Router.find_route('/'))
+    assert_equal([{rule: '/:action', options: {app: :backend, controller: :main, layout: :internal}}, {action: 'foo'}], Alfa::Router.find_route('/foo'))
+    assert_equal([{rule: '/:controller/:action', options: {app: :backend, layout: :internal}}, {controller: 'foo', action: 'bar'}], Alfa::Router.find_route('/foo/bar'))
+    assert_equal([{rule: '/:controller/:action/:id', options: {app: :backend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
+
   end
 
 end
