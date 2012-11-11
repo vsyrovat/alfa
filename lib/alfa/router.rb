@@ -120,11 +120,13 @@ module Alfa
       @routes.each do |route|
         if route.is_a? Hash # container
           if self.app_match?(route[:context][:app][:path], url)
+            url = url[(route[:context][:app][:path].length-1)..-1]
             route[:routes].each do |r|
               is_success, params = self.route_match?(r[:rule], url)
               r[:options][:app] = route[:context][:app][:app]
               return r, params if is_success
             end
+            raise Alfa::RouteException404
           end
         else
           is_success, params = self.route_match?(route[:rule], url)
