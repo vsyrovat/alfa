@@ -4,10 +4,12 @@ module Alfa
     def self.call &block
     end
 
-    # Draws routes
-    #
+    def self.reset
+      @routes = []
+    end
+
+    # Set routes
     # Example:
-    #
     #   WebApplication.Router.draw do
     #     mount '/admin/', :admin
     #     route '/rss.xml', 'frontend/feeds#rss'
@@ -17,8 +19,8 @@ module Alfa
     #       mount '/', :forum
     #     end
     #   end
-    def self.draw &block
-      @routes = []
+    def self.draw app = nil, &block
+      reset
       @routes << {:rule => '/~assets/**', :options => {type: :asset}}
       class_eval &block
     end
@@ -85,6 +87,14 @@ module Alfa
       end
     end
 
+    def self.find_route url
+      #url = @env['PATH_INFO']
+      @routes.each do |route|
+        is_success, params = self.route_match?(route[:rule], url)
+        return route, params if is_success
+      end
+      raise Alfa::RouteException404
+    end
 
   end
 end

@@ -90,15 +90,6 @@ module Alfa
 
   # private section
 
-    def self.find_route
-      url = @env['PATH_INFO']
-      @routes.each do |route|
-        is_success, params = self.route_match? route[:rule], url
-        return route, params if is_success
-      end
-      raise Alfa::RouteException404
-    end
-
     def self.invoke_controller controller
       @controllers ||= {}
       controller = controller.to_s

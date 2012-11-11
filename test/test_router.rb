@@ -36,4 +36,24 @@ class AlfaRouterTest < Test::Unit::TestCase
     rule = Regexp.new('^/(?<controller>[^/]+)/(?<action>[^/]+)?$')
     assert_equal([false, {}], Alfa::Router.route_match?(rule, '/'))
   end
+
+
+  def test_mount
+    Alfa::Router.draw do
+      mount '/admin/', :admin
+      mount '/', :backend
+    end
+    Alfa::Router.context :app => :admin do
+      Alfa::Router.draw do
+        route '/' => 'main#index', :layout => :admin
+      end
+    end
+    Alfa::Router.context :app => :backend do
+      Alfa::Router.draw do
+        route '/' => 'main#index', :layout => :index
+      end
+    end
+    assert_equal(0, Alfa::Router.find_route('/'))
+  end
+
 end
