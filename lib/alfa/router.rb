@@ -1,7 +1,28 @@
 module Alfa
   class Router
 
+    # initialize class variables
+    @routes = []
+    @cursor = @routes
+    @cursors_stack = []
+    @mounts = []
+
     def self.call &block
+    end
+
+
+    def self.context options = {}, &block
+      new_routes_container = []
+      new_cursor = new_routes_container
+      if options.has_key?(:app)
+        app = @mounts.find {|item| item[:app] == options[:app]}
+        options[:app] = app
+      end
+      @cursor << {:context => options, :routes => new_routes_container}
+      @cursors_stack.push @cursor
+      @cursor = new_cursor
+      yield
+      @cursor = @cursors_stack.pop
     end
 
 
@@ -20,9 +41,8 @@ module Alfa
     #       mount '/', :forum
     #     end
     #   end
-    def self.draw app = nil, &block
-      reset
-      @routes << {:rule => '/~assets/**', :options => {type: :asset}}
+    def self.draw &block
+      #@routes << {:rule => '/~assets/**', :options => {type: :asset}}
       class_eval &block
     end
 
@@ -37,11 +57,19 @@ module Alfa
     # all requests to site.com/ and nested (site.com/*) will be sent to application 'frontend' (/apps/frontend)
     #   mount '/', :frontend
     def self.mount path, app, options = {}
+      @mounts << {:path => path, :app => app, :options => options}
     end
 
     # Sets route rule
     def self.route rule, options = {}
-      @routes << {:rule => rule, :options => options.merge({:namespace => @namespaces_stack.dup})}
+      @cursor << {:rule => rule, :options => options}
+    end
+
+
+    def self.app_match? path, url
+      path_segments = path.split('/').reject(&:empty?)
+      url_segments = url.split('/').reject(&:empty?)
+      path_segments.zip(url_segments).reduce(true) {|res, pare| res && pare[0] == pare[1]}
     end
 
 
@@ -90,8 +118,18 @@ module Alfa
     def self.find_route url
       #url = @env['PATH_INFO']
       @routes.each do |route|
-        is_success, params = self.route_match?(route[:rule], url)
-        return route, params if is_success
+        if route.is_a? Hash # container
+          if self.app_match?(route[:context][:app][:path], url)
+            route[:routes].each do |r|
+              is_success, params = self.route_match?(r[:rule], url)
+              r[:options][:app] = route[:context][:app][:app]
+              return r, params if is_success
+            end
+          end
+        else
+          is_success, params = self.route_match?(route[:rule], url)
+          return route, params if is_success
+        end
       end
       raise Alfa::RouteException404
     end
