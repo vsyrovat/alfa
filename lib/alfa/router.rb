@@ -4,6 +4,7 @@ module Alfa
     def self.call &block
     end
 
+
     def self.reset
       @routes = []
     end
@@ -43,8 +44,6 @@ module Alfa
       @routes << {:rule => rule, :options => options.merge({:namespace => @namespaces_stack.dup})}
     end
 
-
-  #private section
 
     def self.route_match? rule, url
       if rule.is_a? String
@@ -86,6 +85,7 @@ module Alfa
         end
       end
     end
+
 
     def self.find_route url
       #url = @env['PATH_INFO']
