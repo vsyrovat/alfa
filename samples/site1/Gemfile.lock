@@ -1,5 +1,5 @@
 PATH
-  remote: ../../gem/
+  remote: ../../
   specs:
     alfa (0.0.1.pre)
       mysql2 (~> 0.3.11)

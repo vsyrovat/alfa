@@ -25,8 +25,8 @@ module Alfa
     end
 
     def self.init!
-      require File.join(PROJECT_ROOT, 'app/routes')
-      require File.join(PROJECT_ROOT, 'app/controllers/application')
+      require File.join(PROJECT_ROOT, 'config/routes')
+      #require File.join(PROJECT_ROOT, 'apps/controllers/application')
       #super
       @inited = true
     end
@@ -82,23 +82,13 @@ module Alfa
       [response_code, headers, [body, debug_info]]
     end
 
-    # set routes
-    def self.routes &block
-      @routes = []
-      @routes << {:rule => '/~assets/**', :options => {type: :asset}}
-      class_eval &block
+    # router
+    def self.routes
+      @router
     end
 
 
-    def self.mount root, options = {}
-
-    end
-
-    def self.route rule, options = {}
-      @routes << {:rule => rule, :options => options.merge({:namespace => @namespaces_stack.dup})}
-    end
-
-  private
+  # private section
 
     def self.find_route
       url = @env['PATH_INFO']
@@ -107,47 +97,6 @@ module Alfa
         return route, params if is_success
       end
       raise Alfa::RouteException404
-    end
-
-    def self.route_match? rule, url
-      if rule.is_a? String
-        rule_trail_slash = rule[-1] == '/'
-        url_trail_slash = url[-1] == '/'
-        rule_segments = rule.split('/').reject(&:empty?)
-        url_segments = url.split('/').reject(&:empty?)
-        if url_segments.first == '~assets'
-          path = url_segments[1..-1].join('/')
-          if File.file?(File.expand_path('../../../assets/'+path, __FILE__))
-            return true, {path: path, type: :asset}
-          else
-            return false, {}
-          end
-        end
-        rule_segments += [nil]*(url_segments.size - rule_segments.size) if url_segments.size > rule_segments.size
-        pares = {}
-        skip_flag = false
-        fail_flag = false
-        rule_segments.zip(url_segments).each do |rule_segment, url_segment|
-          skip_flag = true if rule_segment == '**'
-          if rule_segment =~ /^:[a-z]+\w*$/i && url_segment =~ /^[a-z0-9_]+$/
-            pares[rule_segment[1..-1].to_sym] = url_segment
-          elsif (rule_segment == url_segment) || (rule_segment == '*' && url_segment =~ /^[a-z0-9_]+$/) || (rule_segment == nil && skip_flag) || rule_segment == '**'
-          else
-            fail_flag = true
-            break
-          end
-        end
-        fail_flag = true if rule_trail_slash != url_trail_slash
-        return !fail_flag, pares
-      elsif rule.is_a? Regexp
-        match = rule.match url
-        if match
-          pares = Hash[match.names.map(&:to_sym).zip(match.captures)]
-          return true, pares
-        else
-          return false, {}
-        end
-      end
     end
 
     def self.invoke_controller controller
