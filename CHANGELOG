@@ -1,6 +1,9 @@
+Alfa gem changelog
+"+" = new feature, "-" = removed feature, "b" = bugfix, "s" = security issue, "p" = perfomance issue, "*" = other, "!" = important, "." = minor
+
 === HEAD
 
-* Extends Router.draw syntax (vsyrovat)
++ Router.mount with tests (vsyrovat)
 
 === 0.0.1.pre
 
