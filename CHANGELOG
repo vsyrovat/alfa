@@ -1,5 +1,7 @@
 === HEAD
 
+* Extends Router.draw syntax (vsyrovat)
+
 === 0.0.1.pre
 
 * Basic functionality
