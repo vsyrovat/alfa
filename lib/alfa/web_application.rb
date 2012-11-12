@@ -41,6 +41,7 @@ module Alfa
         self.init! unless @inited
         response_code = 200
         route, params = self.routes.find_route @env['PATH_INFO']
+        app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
         c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
         a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
         l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
@@ -55,7 +56,7 @@ module Alfa
             else
           end
         else
-          controller = self.invoke_controller(c_sym)
+          controller = self.invoke_controller(app_sym, c_sym)
           raise Alfa::RouteException404 unless controller.public_methods.include?(a_sym)
           controller.__send__(a_sym)
           data = controller._instance_variables_hash
@@ -92,12 +93,11 @@ module Alfa
 
   # private section
 
-    def self.invoke_controller controller
+    def self.invoke_controller application, controller
       @controllers ||= {}
-      controller = controller.to_s
-      require File.join(PROJECT_ROOT, 'app/controllers', controller.to_s)
-      @controllers[controller] ||= Kernel.const_get(Alfa::Support.capitalize_name(controller)+'Controller').new
-      @controllers[controller]
+      require File.join(PROJECT_ROOT, 'apps', application.to_s, 'controllers', controller.to_s)
+      @controllers[[application, controller]] ||= Kernel.const_get(Alfa::Support.capitalize_name(controller)+'Controller').new
+      @controllers[[application, controller]]
     end
 
     def self.render_template template, data = {}

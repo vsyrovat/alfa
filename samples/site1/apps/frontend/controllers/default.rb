@@ -1,4 +1,4 @@
-class DefaultController < ApplicationController
+class DefaultController < Alfa::Controller
 
   def index
     @items = Foo.all
