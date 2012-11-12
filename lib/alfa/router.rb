@@ -6,8 +6,13 @@ module Alfa
     @cursor = @routes
     @cursors_stack = []
     @mounts = []
+    @apps_dir = nil
 
     def self.call &block
+    end
+
+    def self.set_apps_dir dir
+      @apps_dir = dir
     end
 
 
@@ -58,6 +63,11 @@ module Alfa
     #   mount '/', :frontend
     def self.mount path, app, options = {}
       @mounts << {:path => path, :app => app, :options => options}
+      if @apps_dir
+        self.context :app => app do
+          require File.join(@apps_dir, app.to_s, 'routes')
+        end
+      end
     end
 
     # Sets route rule

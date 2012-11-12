@@ -1,6 +1,4 @@
-WebApplication.routes do
-
-  mount :at => '/admin/', :app => 'admin', :as => :admin
+WebApplication.routes.draw do
 
   route '/', :controller => :main, :action => :index, :layout => :index
   route '/:action', :controller => :main, :layout => :internal

@@ -25,6 +25,7 @@ module Alfa
     end
 
     def self.init!
+      Alfa::Router.set_apps_dir File.join(PROJECT_ROOT, 'apps')
       require File.join(PROJECT_ROOT, 'config/routes')
       #require File.join(PROJECT_ROOT, 'apps/controllers/application')
       #super
@@ -39,7 +40,7 @@ module Alfa
       begin
         self.init! unless @inited
         response_code = 200
-        route, params = self.find_route
+        route, params = self.routes.find_route @env['PATH_INFO']
         c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
         a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
         l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
@@ -84,7 +85,7 @@ module Alfa
 
     # router
     def self.routes
-      @router
+      @router ||= Alfa::Router
     end
 
 
