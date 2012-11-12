@@ -75,12 +75,12 @@ class AlfaRouterTest < Test::Unit::TestCase
       end
     end
     #puts Alfa::Router.instance_variable_get(:@routes)
-    assert_equal([{rule: '/', paths: {app: :frontend, controller: :main, action: :index, layout: :index}}, {}], Alfa::Router.find_route('/'))
-    assert_equal([{rule: '/:action', paths: {app: :frontend, controller: :main, layout: :internal}}, {action: 'foo'}], Alfa::Router.find_route('/foo'))
-    assert_equal([{rule: '/:controller/:action', paths: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar'}], Alfa::Router.find_route('/foo/bar'))
-    assert_equal([{rule: '/:controller/:action/:id', paths: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
-    assert_equal([{rule: '/', paths: {app: :admin, controller: :main, action: :index, layout: :admin}}, {}], Alfa::Router.find_route('/admin/'))
-    assert_equal([{rule: '/:controller', paths: {app: :admin, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
+    assert_equal([{rule: '/', options: {app: :frontend, controller: :main, action: :index, layout: :index}}, {}], Alfa::Router.find_route('/'))
+    assert_equal([{rule: '/:action', options: {app: :frontend, controller: :main, layout: :internal}}, {action: 'foo'}], Alfa::Router.find_route('/foo'))
+    assert_equal([{rule: '/:controller/:action', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar'}], Alfa::Router.find_route('/foo/bar'))
+    assert_equal([{rule: '/:controller/:action/:id', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
+    assert_equal([{rule: '/', options: {app: :admin, controller: :main, action: :index, layout: :admin}}, {}], Alfa::Router.find_route('/admin/'))
+    assert_equal([{rule: '/:controller', options: {app: :admin, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
     assert_raise Alfa::RouteException404 do
       Alfa::Router.find_route('/admin/foo/bar')
     end
@@ -95,12 +95,12 @@ class AlfaRouterTest < Test::Unit::TestCase
     Alfa::Router.set_paths :config_path => File.expand_path('../data/test_router/config', __FILE__), :apps_path => File.expand_path('../data/test_router/apps', __FILE__)
     Alfa::Router.load
     #puts Alfa::Router.instance_variable_get(:@routes).inspect
-    assert_equal([{rule: '/', paths: {app: :frontend, controller: :main, action: :index, layout: :index}}, {}], Alfa::Router.find_route('/'))
-    assert_equal([{rule: '/:action', paths: {app: :frontend, controller: :main, layout: :internal}}, {action: 'foo'}], Alfa::Router.find_route('/foo'))
-    assert_equal([{rule: '/:controller/:action', paths: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar'}], Alfa::Router.find_route('/foo/bar'))
-    assert_equal([{rule: '/:controller/:action/:id', paths: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
-    assert_equal([{rule: '/', paths: {app: :backend, controller: :main, action: :index, layout: :admin}}, {}], Alfa::Router.find_route('/admin/'))
-    assert_equal([{rule: '/:controller', paths: {app: :backend, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
+    assert_equal([{rule: '/', options: {app: :frontend, controller: :main, action: :index, layout: :index}}, {}], Alfa::Router.find_route('/'))
+    assert_equal([{rule: '/:action', options: {app: :frontend, controller: :main, layout: :internal}}, {action: 'foo'}], Alfa::Router.find_route('/foo'))
+    assert_equal([{rule: '/:controller/:action', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar'}], Alfa::Router.find_route('/foo/bar'))
+    assert_equal([{rule: '/:controller/:action/:id', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
+    assert_equal([{rule: '/', options: {app: :backend, controller: :main, action: :index, layout: :admin}}, {}], Alfa::Router.find_route('/admin/'))
+    assert_equal([{rule: '/:controller', options: {app: :backend, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
     assert_raise Alfa::RouteException404 do
       Alfa::Router.find_route('/admin/foo/bar')
     end
