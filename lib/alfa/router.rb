@@ -6,14 +6,13 @@ module Alfa
     @cursor = @routes
     @cursors_stack = []
     @mounts = []
-    @default_paths = {:apps_path => nil, :config_path => nil}
+    @apps_dir = nil
 
     def self.call &block
     end
 
-
-    def self.set_paths options = {}
-      @paths = @default_paths.merge(options)
+    def self.set_apps_dir dir
+      @apps_dir = dir
     end
 
 
@@ -21,7 +20,8 @@ module Alfa
       new_routes_container = []
       new_cursor = new_routes_container
       if options.has_key?(:app)
-        options[:app] = @mounts.find {|item| item[:app] == options[:app]}
+        app = @mounts.find {|item| item[:app] == options[:app]}
+        options[:app] = app
       end
       @cursor << {:context => options, :routes => new_routes_container}
       @cursors_stack.push @cursor
@@ -33,20 +33,6 @@ module Alfa
 
     def self.reset
       @routes = []
-      @cursor = @routes
-      @cursors_stack = []
-      @mounts = []
-    end
-
-
-    def self.load
-      Kernel.load File.join(@paths[:config_path], 'routes.rb')
-    end
-
-
-    def self.reload
-      self.reset
-      self.load
     end
 
     # Set routes
@@ -76,17 +62,17 @@ module Alfa
     # all requests to site.com/ and nested (site.com/*) will be sent to application 'frontend' (/apps/frontend)
     #   mount '/', :frontend
     def self.mount path, app, options = {}
-      @mounts << {:path => path, :app => app, :paths => options}
-      if @paths[:apps_path]
+      @mounts << {:path => path, :app => app, :options => options}
+      if @apps_dir
         self.context :app => app do
-          Kernel.load File.join(@paths[:apps_path], app.to_s, 'routes.rb')
+          require File.join(@apps_dir, app.to_s, 'routes')
         end
       end
     end
 
     # Sets route rule
     def self.route rule, options = {}
-      @cursor << {:rule => rule, :paths => options}
+      @cursor << {:rule => rule, :options => options}
     end
 
 
@@ -147,7 +133,7 @@ module Alfa
             url = url[(route[:context][:app][:path].length-1)..-1]
             route[:routes].each do |r|
               is_success, params = self.route_match?(r[:rule], url)
-              r[:paths][:app] = route[:context][:app][:app]
+              r[:options][:app] = route[:context][:app][:app]
               return r, params if is_success
             end
             raise Alfa::RouteException404
