@@ -76,7 +76,7 @@ module Alfa
     # all requests to site.com/ and nested (site.com/*) will be sent to application 'frontend' (/apps/frontend)
     #   mount '/', :frontend
     def self.mount path, app, options = {}
-      @mounts << {:path => path, :app => app, :paths => options}
+      @mounts << {:path => path, :app => app, :options => options}
       if @paths[:apps_path]
         self.context :app => app do
           Kernel.load File.join(@paths[:apps_path], app.to_s, 'routes.rb')
@@ -86,7 +86,7 @@ module Alfa
 
     # Sets route rule
     def self.route rule, options = {}
-      @cursor << {:rule => rule, :paths => options}
+      @cursor << {:rule => rule, :options => options}
     end
 
 
@@ -147,7 +147,7 @@ module Alfa
             url = url[(route[:context][:app][:path].length-1)..-1]
             route[:routes].each do |r|
               is_success, params = self.route_match?(r[:rule], url)
-              r[:paths][:app] = route[:context][:app][:app]
+              r[:options][:app] = route[:context][:app][:app]
               return r, params if is_success
             end
             raise Alfa::RouteException404

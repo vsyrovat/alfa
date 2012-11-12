@@ -41,10 +41,10 @@ module Alfa
         self.init! unless @inited
         response_code = 200
         route, params = self.routes.find_route @env['PATH_INFO']
-        c_sym = route[:paths].has_key?(:controller) ? route[:paths][:controller] : params[:controller]
-        a_sym = route[:paths].has_key?(:action) ? route[:paths][:action] : params[:action]
-        l_sym = route[:paths].has_key?(:layout) ? route[:paths][:layout] : :default
-        t_sym = route[:paths].has_key?(:type) ? route[:paths][:type] : :default
+        c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
+        a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
+        l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
+        t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
         if t_sym == :asset
           body = File.read(File.expand_path('../../../assets/' + params[:path], __FILE__))
           case File.extname(params[:path]).downcase
