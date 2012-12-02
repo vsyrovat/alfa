@@ -89,7 +89,7 @@ class AlfaRouterTest < Test::Unit::TestCase
   end
 
 
-  # this test loads routes.rb files from data/test_router directory due to emulate real project skeletron
+  # this test loads routes.rb files from data/test_router directory to simulate real project skeletron
   def test_load_from_files
     Alfa::Router.reset
     Alfa::Router.set_paths :config_path => File.expand_path('../data/test_router/config', __FILE__), :apps_path => File.expand_path('../data/test_router/apps', __FILE__)
