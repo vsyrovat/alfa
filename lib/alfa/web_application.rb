@@ -2,10 +2,10 @@
 require 'alfa/support'
 require 'alfa/exceptions'
 require 'alfa/application'
+require 'alfa/tfile'
 require 'alfa/controller'
 require 'alfa/query_logger'
 require 'alfa/router'
-require 'alfa/tfile'
 require 'ruty'
 require 'ruty/tags/resources'
 
@@ -38,7 +38,7 @@ module Alfa
       headers = {"Content-Type" => 'text/html; charset=utf-8'}
       t_sym = :default
       begin
-        self.init! unless @inited
+        #self.init! unless @inited
         response_code = 200
         route, params = self.routes.find_route @env['PATH_INFO']
         t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
