@@ -159,8 +159,6 @@ module Alfa
           # else - ???
         else
           is_success, params = self.route_match?(route[:rule], url)
-          #puts route[:context]
-          #puts "route: #{route}, url: #{url}, is_success: #{is_success}"
           return route, params if is_success
         end
       end
