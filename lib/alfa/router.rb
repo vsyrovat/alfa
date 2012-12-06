@@ -61,8 +61,8 @@ module Alfa
     #     end
     #   end
     def self.draw &block
-      #@routes << {:rule => '/~assets/**', :options => {type: :asset}}
       class_eval &block
+      route '/~assets/:path**', type: :asset
     end
 
     # Set rules in subdomain context
@@ -87,6 +87,7 @@ module Alfa
     # Sets route rule
     def self.route rule, options = {}
       @cursor << {:rule => rule, :options => options}
+      #puts "set rule '#{rule}', routes = #{@routes}"
     end
 
 
@@ -101,9 +102,9 @@ module Alfa
       if rule.is_a? String
         rule_trail_slash = rule[-1] == '/'
         url_trail_slash = url[-1] == '/'
-        rule_segments = rule.split('/').reject(&:empty?)
-        url_segments = url.split('/').reject(&:empty?)
-        if url_segments.first == '~assets'
+        rule_segments = rule.split('/').reject(&:empty?) # @todo optimize (one split per server session instead of split per method call)
+        url_segments = url.split('/').reject(&:empty?)   # @todo optimize (one split per server session instead of split per method call)
+        if rule_segments.first == '~assets' && url_segments.first == '~assets'
           path = url_segments[1..-1].join('/')
           if File.file?(File.expand_path('../../../assets/'+path, __FILE__))
             return true, {path: path, type: :asset}
@@ -138,11 +139,14 @@ module Alfa
       end
     end
 
-
+    # @param string url
+    # @return route, params
+    # route is route that given in routes.rb
+    # params is detected params
     def self.find_route url
       #url = @env['PATH_INFO']
       @routes.each do |route|
-        if route.is_a? Hash # container
+        if route[:context].is_a? Hash # container
           if self.app_match?(route[:context][:app][:path], url)
             url = url[(route[:context][:app][:path].length-1)..-1]
             route[:routes].each do |r|
@@ -152,8 +156,11 @@ module Alfa
             end
             raise Alfa::RouteException404
           end
+          # else - ???
         else
           is_success, params = self.route_match?(route[:rule], url)
+          #puts route[:context]
+          #puts "route: #{route}, url: #{url}, is_success: #{is_success}"
           return route, params if is_success
         end
       end

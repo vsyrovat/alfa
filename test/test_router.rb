@@ -2,7 +2,7 @@ require 'test/unit'
 require 'alfa/router'
 
 class AlfaRouterTest < Test::Unit::TestCase
-  def test_route_match
+  def test_01 # route_match
     # string rules, positive cases
     assert_equal([true, {}], Alfa::Router.route_match?('/', '/'))
     assert_equal([true, {action: 'foo'}], Alfa::Router.route_match?('/:action', '/foo'))
@@ -14,6 +14,7 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal([true, {}], Alfa::Router.route_match?('/**', '/foo/bar'))
     assert_equal([true, {controller: 'foo'}], Alfa::Router.route_match?('/:controller/**', '/foo/bar/baz'))
     assert_equal([true, {path: 'js/jquery/jquery-latest.js', type: :asset}], Alfa::Router.route_match?('/~assets/:path**', '/~assets/js/jquery/jquery-latest.js'))
+    assert_equal([true, {}], Alfa::Router.route_match?('/hello.html', '/hello.html'))
 
     # string rules, negative cases
     assert_equal([false, {action: 'foo'}], Alfa::Router.route_match?('/:action', '/foo/'))
@@ -27,6 +28,7 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal([false, {}], Alfa::Router.route_match?('/~assets/:path**', '/~assets/js/jquery/non-exists-file.js'))
     assert_equal([false, {}], Alfa::Router.route_match?('/~assets/:path**', '/~assets/js/jquery/'))
     assert_equal([false, {}], Alfa::Router.route_match?('/~assets/:path**', '/~assets/js/jquery'))
+    assert_equal([false, {}], Alfa::Router.route_match?('/hello.html', '/~assets/js/jquery/jquery-latest.js'))
 
     # regexp rules, positive cases
     rule = Regexp.new('^/(?<controller>[^/]+)/(?<action>[^/]+)?$')
@@ -38,7 +40,7 @@ class AlfaRouterTest < Test::Unit::TestCase
   end
 
 
-  def test_app_match
+  def test_02 # app_match
     # positive cases
     assert_equal(true, Alfa::Router.app_match?('/foo/', '/foo/'))
     assert_equal(true, Alfa::Router.app_match?('/foo', '/foo/'))
@@ -53,10 +55,11 @@ class AlfaRouterTest < Test::Unit::TestCase
   end
 
 
-  def test_mount
+  def test_03 # mount
     Alfa::Router.reset
     Alfa::Router.set_paths
     Alfa::Router.draw do
+      route '/hello.html'
       mount '/admin/', :admin
       mount '/', :frontend
     end
@@ -75,6 +78,7 @@ class AlfaRouterTest < Test::Unit::TestCase
       end
     end
     #puts Alfa::Router.instance_variable_get(:@routes)
+    assert_equal([{rule: '/hello.html', options: {}}, {}], Alfa::Router.find_route('/hello.html'))
     assert_equal([{rule: '/', options: {app: :frontend, controller: :main, action: :index, layout: :index}}, {}], Alfa::Router.find_route('/'))
     assert_equal([{rule: '/:action', options: {app: :frontend, controller: :main, layout: :internal}}, {action: 'foo'}], Alfa::Router.find_route('/foo'))
     assert_equal([{rule: '/:controller/:action', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar'}], Alfa::Router.find_route('/foo/bar'))
@@ -84,13 +88,14 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_raise Alfa::RouteException404 do
       Alfa::Router.find_route('/admin/foo/bar')
     end
+    assert_equal([{rule: '/~assets/:path**', options: {type: :asset}}, {path: 'js/jquery/jquery-latest.js', type: :asset}], Alfa::Router.find_route('/~assets/js/jquery/jquery-latest.js'))
     #assert_equal([{rule: '/:controller/:action/:id', options: {app: :backend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
 
   end
 
 
   # this test loads routes.rb files from data/test_router directory to simulate real project skeletron
-  def test_load_from_files
+  def test_04 # load_from_files
     Alfa::Router.reset
     Alfa::Router.set_paths :config_path => File.expand_path('../data/test_router/config', __FILE__), :apps_path => File.expand_path('../data/test_router/apps', __FILE__)
     Alfa::Router.load

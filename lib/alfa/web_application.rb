@@ -41,10 +41,6 @@ module Alfa
         self.init! unless @inited
         response_code = 200
         route, params = self.routes.find_route @env['PATH_INFO']
-        app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
-        c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
-        a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
-        l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
         t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
         if t_sym == :asset
           body = File.read(File.expand_path('../../../assets/' + params[:path], __FILE__))
@@ -56,13 +52,17 @@ module Alfa
             else
           end
         else
+          app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
+          c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
+          a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
+          l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
           controller = self.invoke_controller(app_sym, c_sym)
           raise Alfa::RouteException404 unless controller.public_methods.include?(a_sym)
           controller.__send__(a_sym)
           data = controller._instance_variables_hash
           Ruty::Tags::RequireStyle.clean_cache
-          content = self.render_template(File.join(c_sym.to_s, a_sym.to_s + '.tpl'), data)
-          body = self.render_layout(l_sym.to_s + '.tpl', {body: content})
+          content = self.render_template(app_sym.to_s, File.join(c_sym.to_s, a_sym.to_s + '.tpl'), data)
+          body = self.render_layout(app_sym.to_s, l_sym.to_s + '.tpl', {body: content})
           headers = {"Content-Type" => 'text/html; charset=utf-8'}
         end
       rescue Alfa::RouteException404
@@ -100,18 +100,18 @@ module Alfa
       @controllers[[application, controller]]
     end
 
-    def self.render_template template, data = {}
-      t = self.loader.get_template File.join('views', template)
+    def self.render_template app, template, data = {}
+      t = self.loader.get_template File.join(app, 'templates', template)
       t.render data
     end
 
-    def self.render_layout layout, data = {}
-      t = self.loader.get_template File.join('layouts', layout)
+    def self.render_layout app, layout, data = {}
+      t = self.loader.get_template File.join(app, 'layouts', layout)
       t.render data
     end
 
     def self.loader
-      @loader ||= Ruty::Loaders::Filesystem.new(:dirname => File.join(PROJECT_ROOT, 'app'))
+      @loader ||= Ruty::Loaders::Filesystem.new(:dirname => File.join(PROJECT_ROOT, 'apps'))
     end
 
   end
