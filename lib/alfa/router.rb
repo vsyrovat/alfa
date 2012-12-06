@@ -62,7 +62,7 @@ module Alfa
     #   end
     def self.draw &block
       class_eval &block
-      route '/~assets/:path**', type: :asset
+      route '/~assets/:path**', type: :asset if @cursors_stack.empty?
     end
 
     # Set rules in subdomain context
