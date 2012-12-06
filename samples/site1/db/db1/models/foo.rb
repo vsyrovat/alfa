@@ -1,3 +1,3 @@
-  class Foo < Alfa::Models::MySQL
-    @table = :foo
-  end
+class Foo < Alfa::Models::MySQL
+  @table = :foo
+end

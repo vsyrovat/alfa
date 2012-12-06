@@ -1,7 +1,7 @@
 class DefaultController < Alfa::Controller
 
   def index
-    @items = Foo.all
+    #@items = DB1::Foo.all
     @name = 'Dico Tuco'
   end
 
