@@ -80,7 +80,7 @@ module Alfa
           r += ", logger hash: #{log[:logger_hash]}"
           r
         }.join('<br>')
-        debug_info += "<hr>rack input: #{env['rack.session']}"
+        debug_info += "<hr>rack session: #{env['rack.session']}"
       end
       [response_code, headers, [body, debug_info]]
     end
