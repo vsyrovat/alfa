@@ -5,9 +5,9 @@ PATH
       mysql2 (~> 0.3)
       rack (~> 1.4)
       rake (~> 10.0)
-      ruty (~> 0.0)
+      ruty (= 0.0.1)
       rvm (~> 1.11)
-      sequel (~> 3.41)
+      sequel (~> 3.42)
 
 GEM
   remote: https://rubygems.org/

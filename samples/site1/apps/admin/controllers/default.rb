@@ -1,5 +1,5 @@
 class DefaultController < Alfa::Controller
-  def action_index
+  def index
 
   end
 end

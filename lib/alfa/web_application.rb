@@ -7,6 +7,7 @@ require 'alfa/controller'
 require 'alfa/query_logger'
 require 'alfa/router'
 require 'ruty'
+require 'ruty/bugfix'
 require 'ruty/tags/resources'
 
 Encoding.default_external='utf-8'
@@ -71,7 +72,7 @@ module Alfa
         body += self.routes.instance_variable_get(:@routes).inspect
       rescue Exception => e
         response_code = 500
-        body = "Error occured: #{e.message} at #{e.backtrace.first}"
+        body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>#{e.backtrace.join("<br>")}"
       end
       if t_sym == :default
         debug_info = '<hr>Queries:<br>' + Alfa::QueryLogger.logs.map { |log|
