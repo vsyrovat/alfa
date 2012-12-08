@@ -1,4 +1,7 @@
 ---
 fields:
-  info:
-primary_key:
+  id: UNSIGNED INT AUTO_INCREMENT
+  c: varchar(255) not null default null
+  kvm: varchar(255)
+
+primary_key: id

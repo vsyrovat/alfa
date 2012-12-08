@@ -2,4 +2,4 @@
 
 {% block title %}site{% endblock %}
 
-{% block body %}{{ body }}{% endblock %}
+{% block body %}{{ body|raw }}{% endblock %}

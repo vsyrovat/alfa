@@ -8,6 +8,7 @@ require 'alfa/query_logger'
 require 'alfa/router'
 require 'ruty'
 require 'ruty/bugfix'
+require 'ruty/upgrade'
 require 'ruty/tags/resources'
 
 Encoding.default_external='utf-8'
@@ -18,6 +19,7 @@ module Alfa
     private_class_method :new
 
     @namespaces_stack = []
+    @bputs = []
 
     def self.inherited subclass
       instance_variables.each do |var|
@@ -36,6 +38,7 @@ module Alfa
     # main rack routine
     def self.call env
       @env = env
+      #@bputs = []
       headers = {"Content-Type" => 'text/html; charset=utf-8'}
       t_sym = :default
       begin
@@ -92,13 +95,18 @@ module Alfa
     end
 
 
+    def self.bputs arg
+      @bputs << "#{arg}\n"
+    end
+
+
   # private section
 
     def self.invoke_controller application, controller
       @controllers ||= {}
       require File.join(PROJECT_ROOT, 'apps', application.to_s, 'controllers', controller.to_s)
       @controllers[[application, controller]] ||= Kernel.const_get(Alfa::Support.capitalize_name(controller)+'Controller').new
-      @controllers[[application, controller]]
+      #@controllers[[application, controller]]
     end
 
     def self.render_template app, template, data = {}
@@ -116,4 +124,8 @@ module Alfa
     end
 
   end
+end
+
+def bputs arg
+  Alfa::WebApplication.bputs arg
 end

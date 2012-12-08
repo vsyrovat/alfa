@@ -1,3 +1,2 @@
-class Foo < Alfa::Models::MySQL
-  @table = :foo
+class Foo < Sequel::Model(Databases::MAIN[:foo])
 end

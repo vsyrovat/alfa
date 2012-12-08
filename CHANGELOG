@@ -3,6 +3,10 @@ Alfa gem changelog
 
 === HEAD
 
++ Escaping variables in templates by default (vsyrovat)
+
++ Using Sequel as main database engine (vsyrovat)
+
 + Router.mount with tests (vsyrovat)
 
 === 0.0.1.pre
