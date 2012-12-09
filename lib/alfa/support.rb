@@ -37,30 +37,57 @@ module Alfa
 end
 
 
-  class Module
-    def load_in_module_context file
-      module_eval file, file
-    end
-
-    def load_in_class_context file
-      class_eval file, file
-    end
+class Module
+  def load_in_module_context file
+    module_eval file, file
   end
 
-  class BasicObject
-    def load_in_instance_context file
-      instance_eval file, file
-    end
+  def load_in_class_context file
+    class_eval file, file
+  end
+end
+
+class BasicObject
+  def load_in_instance_context file
+    instance_eval file, file
+  end
+end
+
+# Borrowed from active_support/core_ext/hash/keys.rb
+class Hash
+  # Return a new hash with all keys converted to strings.
+  #
+  #   { :name => 'Rob', :years => '28' }.stringify_keys
+  #   #=> { "name" => "Rob", "years" => "28" }
+  def stringify_keys
+    dup.stringify_keys!
   end
 
-  class Hash
-    # Destructively convert all keys to symbols, as long as they respond
-    # to +to_sym+. Same as +symbolize_keys+, but modifies +self+.
-    def symbolize_keys!
-      keys.each do |key|
-        self[(key.to_sym rescue key) || key] = delete(key)
-      end
-      self
+  # Destructively convert all keys to strings. Same as
+  # +stringify_keys+, but modifies +self+.
+  def stringify_keys!
+    keys.each do |key|
+      self[key.to_s] = delete(key)
     end
+    self
   end
+
+  # Return a new hash with all keys converted to symbols, as long as
+  # they respond to +to_sym+.
+  #
+  #   { 'name' => 'Rob', 'years' => '28' }.symbolize_keys
+  #   #=> { :name => "Rob", :years => "28" }
+  def symbolize_keys
+    dup.symbolize_keys!
+  end
+
+  # Destructively convert all keys to symbols, as long as they respond
+  # to +to_sym+. Same as +symbolize_keys+, but modifies +self+.
+  def symbolize_keys!
+    keys.each do |key|
+      self[(key.to_sym rescue key) || key] = delete(key)
+    end
+    self
+  end
+end
 
