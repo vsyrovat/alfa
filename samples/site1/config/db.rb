@@ -6,4 +6,10 @@ require 'alfa/database'
 #  load_config File.join(PROJECT_ROOT, 'config/passwords/db1.yml')
 #end
 
-require File.expand_path('../../schemas/main/init', __FILE__)
+module DB
+  Main = Sequel.connect('mysql2://root:@localhost/site', :encoding=>'utf8')
+end
+
+Dir[File.join(PROJECT_ROOT, 'db/main/models/*.rb')].each do |f|
+  require f
+end
