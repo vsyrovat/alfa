@@ -1,6 +1,6 @@
 module Alfa
 
-  # thanks to John
+  # Thanks to John
   # http://railstips.org/blog/archives/2006/11/18/class-and-instance-variables-in-ruby/
   module ClassInheritance
     def self.included(base)
@@ -47,6 +47,7 @@ class Module
   end
 end
 
+
 class BasicObject
   def load_in_instance_context file
     instance_eval file, file
@@ -90,4 +91,3 @@ class Hash
     self
   end
 end
-
