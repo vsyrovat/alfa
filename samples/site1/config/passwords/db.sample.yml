@@ -1,5 +1,5 @@
 ---
-dsn: "mysql2://login:password@host[:port]/schema"
+dsn: "mysql2://root:123456@localhost[:3306]/site"
 host: "localhost"
 user: "root"
 password: "123456"
