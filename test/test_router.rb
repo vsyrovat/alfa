@@ -125,6 +125,8 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal([{rule: '/:action', options: {app: :frontend, controller: :main, layout: :internal}}, {action: 'foo'}], Alfa::Router.find_route('/foo'))
     assert_equal([{rule: '/:controller/:action', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar'}], Alfa::Router.find_route('/foo/bar'))
     assert_equal([{rule: '/:controller/:action/:id', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
-    assert_equal([{rule: '/', options: {app: :backend, controller: :main, action: :index, layout: :admin}}, {}], Alfa::Router.find_route('/admin/'))
-    assert_equal([{rule: '/:controller', options: {app: :backend, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
+    assert_equal([{rule: '/', options: {app: :admin, controller: :main, action: :index, layout: :admin}}, {}], Alfa::Router.find_route('/admin/'))
+    assert_equal([{rule: '/:controller', options: {app: :admin, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
+  end
+
 end
