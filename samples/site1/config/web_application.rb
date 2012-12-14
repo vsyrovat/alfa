@@ -6,6 +6,7 @@ class WebApplication < Alfa::WebApplication
   config[:run_mode] = :development # :development or :production or :test
   config[:project_root] = PROJECT_ROOT
   config[:document_root] = DOCUMENT_ROOT
+  config[:log][:file] = File.join(PROJECT_ROOT, 'log/web.log')
   config[:db][:main] = DB::Main
 end
 

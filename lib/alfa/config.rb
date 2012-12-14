@@ -4,6 +4,7 @@ module Alfa
 
     def initialize
       self[:db] = {}
+      self[:log] = {}
     end
 
   end

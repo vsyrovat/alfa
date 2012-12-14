@@ -33,62 +33,71 @@ module Alfa
 
     # main rack routine
     def self.call env
-      @env = env
-      @bputs = []
-      headers = {"Content-Type" => 'text/html; charset=utf-8'}
-      t_sym = :default
-      begin
-        @logger << "#{env['REQUEST_METHOD']} #{env['REQUEST_URI']} #{env['SERVER_PROTOCOL']} from #{env['REMOTE_ADDR']} at #{DateTime.now}, processing by pid #{$$}\n"
-        @logger << "  HTTP_HOST:            #{env['HTTP_HOST']}\n"
-        @logger << "  HTTP_ACCEPT:          #{env['HTTP_ACCEPT']}\n"
-        @logger << "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}\n"
-        @logger << "  PATH_INFO:            #{env['PATH_INFO']}\n"
-        response_code = 200
-        route, params = self.routes.find_route @env['PATH_INFO']
-        t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
-        if t_sym == :asset
-          body = File.read(File.expand_path('../../../assets/' + params[:path], __FILE__))
-          case File.extname(params[:path]).downcase
-            when '.js'
-              headers = {'Content-Type' => 'application/javascript; charset=utf-8'}
-            when '.css'
-              headers = {'Content-Type' => 'text/css; charset=utf-8'}
-            else
+      start_time = Time.now
+      response_code = nil # required for store context inside @logger.portion
+      headers = {} # required for store context inside @logger.portion
+      body = nil # required for store context inside @logger.portion
+      @logger.portion do |l|
+        @config[:db].each_value { |db| db.loggers = [l] }
+        @env = env
+        @bputs = []
+        headers = {"Content-Type" => 'text/html; charset=utf-8'}
+        t_sym = :default
+        begin
+          l.info "#{env['REQUEST_METHOD']} #{env['REQUEST_URI']} #{env['SERVER_PROTOCOL']} from #{env['REMOTE_ADDR']} at #{DateTime.now}"
+          #l.info "  HTTP_HOST: #{env['HTTP_HOST']}"
+          #@logger.info "  HTTP_ACCEPT: #{env['HTTP_ACCEPT']}"
+          #@logger.info "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}"
+          #@logger.info "  PATH_INFO: #{env['PATH_INFO']}"
+          response_code = 200
+          route, params = self.routes.find_route @env['PATH_INFO']
+          t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
+          if t_sym == :asset
+            body = File.read(File.expand_path('../../../assets/' + params[:path], __FILE__))
+            case File.extname(params[:path]).downcase
+              when '.js'
+                headers = {'Content-Type' => 'application/javascript; charset=utf-8'}
+              when '.css'
+                headers = {'Content-Type' => 'text/css; charset=utf-8'}
+              else
+            end
+          else
+            app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
+            c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
+            a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
+            l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
+            controller = self.invoke_controller(app_sym, c_sym)
+            raise Alfa::RouteException404 unless controller.public_methods.include?(a_sym)
+            controller.__send__(a_sym)
+            data = controller._instance_variables_hash
+            Ruty::Tags::RequireStyle.clean_cache
+            content = self.render_template(app_sym.to_s, File.join(c_sym.to_s, a_sym.to_s + '.tpl'), data)
+            body = self.render_layout(app_sym.to_s, l_sym.to_s + '.tpl', {body: content})
+            headers = {"Content-Type" => 'text/html; charset=utf-8'}
           end
-        else
-          app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
-          c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
-          a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
-          l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
-          controller = self.invoke_controller(app_sym, c_sym)
-          raise Alfa::RouteException404 unless controller.public_methods.include?(a_sym)
-          controller.__send__(a_sym)
-          data = controller._instance_variables_hash
-          Ruty::Tags::RequireStyle.clean_cache
-          content = self.render_template(app_sym.to_s, File.join(c_sym.to_s, a_sym.to_s + '.tpl'), data)
-          body = self.render_layout(app_sym.to_s, l_sym.to_s + '.tpl', {body: content})
-          headers = {"Content-Type" => 'text/html; charset=utf-8'}
+        rescue Alfa::RouteException404 => e
+          response_code = 404
+          body = 'Url not found<br>urls map:<br>'
+          body += self.routes.instance_variable_get(:@routes).inspect
+          l.info "404: Url not found (#{e.message})"
+        rescue Exception => e
+          response_code = 500
+          body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>#{e.backtrace.join("<br>")}"
         end
-      rescue Alfa::RouteException404 => e
-        response_code = 404
-        body = 'Url not found<br>urls map:<br>'
-        body += self.routes.instance_variable_get(:@routes).inspect
-        @logger << "404: Url not found (#{e.message})\n"
-      rescue Exception => e
-        response_code = 500
-        body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>#{e.backtrace.join("<br>")}"
+        if t_sym == :default
+          #debug_info = '<hr>Queries:<br>' + @logger.logs.map { |log|
+          #  r = "#{log[:num]}: #{log[:query]} | #{log[:status]}"
+          #  r += ", error: #{log[:error]}" if log[:status] == :fail
+          #  r += ", logger hash: #{log[:logger_hash]}"
+          #  r
+          #}.join('<br>')
+          debug_info = "<hr>rack env: #{env.inspect}"
+        end
+        l.info "RESPONSE: #{response_code} (#{sprintf('%.4f', Time.now - start_time)} sec)"
+        l << "\n"
       end
-      if t_sym == :default
-        #debug_info = '<hr>Queries:<br>' + @logger.logs.map { |log|
-        #  r = "#{log[:num]}: #{log[:query]} | #{log[:status]}"
-        #  r += ", error: #{log[:error]}" if log[:status] == :fail
-        #  r += ", logger hash: #{log[:logger_hash]}"
-        #  r
-        #}.join('<br>')
-        debug_info = "<hr>rack env: #{env.inspect}"
-      end
-      @logger << "\n"
       @log_file.flush
+      #@logger = nil
       return [response_code, headers, [body, @bputs.join('<br>')]]
     end
 
