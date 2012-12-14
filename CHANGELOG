@@ -3,6 +3,8 @@ Alfa gem changelog
 
 === HEAD
 
++ Logger for http requests (vsyrovat)
+
 + Escaping variables in templates by default (vsyrovat)
 
 + Using Sequel as main database engine (vsyrovat)
