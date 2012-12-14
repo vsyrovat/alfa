@@ -1,7 +1,20 @@
 GEM
+  remote: https://rubygems.org/
   specs:
+    mysql2 (0.3.11)
+    rack (1.4.1)
+    rake (10.0.2)
+    ruty (0.0.1)
+    rvm (1.11.3.5)
+    sequel (3.42.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  mysql2 (~> 0.3)
+  rack (~> 1.4)
+  rake (~> 10.0)
+  ruty (= 0.0.1)
+  rvm (~> 1.11)
+  sequel (~> 3.42)

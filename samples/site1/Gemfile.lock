@@ -2,22 +2,22 @@ PATH
   remote: ../../
   specs:
     alfa (0.0.1.pre)
-      mysql2 (~> 0.3.11)
-      rack (~> 1.4.1)
-      rake (~> 0.9.2)
-      ruty (~> 0.0.1)
-      rvm (~> 1.11.3)
-      sequel (~> 3.40.0)
+      mysql2 (~> 0.3)
+      rack (~> 1.4)
+      rake (~> 10.0)
+      ruty (= 0.0.1)
+      rvm (~> 1.11)
+      sequel (~> 3.42)
 
 GEM
   remote: https://rubygems.org/
   specs:
     mysql2 (0.3.11)
     rack (1.4.1)
-    rake (0.9.2.2)
+    rake (10.0.2)
     ruty (0.0.1)
     rvm (1.11.3.5)
-    sequel (3.40.0)
+    sequel (3.42.0)
 
 PLATFORMS
   ruby

@@ -47,7 +47,7 @@ module Alfa
     #     end
     #   end
     def self.draw &block
-      #@routes << {:rule => '/~assets/**', :options => {type: :asset}}
+      route '/~assets/:path**', :type => :asset if @cursors_stack.empty?
       class_eval &block
     end
 
@@ -73,9 +73,10 @@ module Alfa
     # Sets route rule
     def self.route rule, options = {}
       @cursor << {:rule => rule, :options => options}
+      #puts "set rule '#{rule}', routes = #{@routes}"
     end
 
-
+    # @todo write tests for this method
     def self.app_match? path, url
       path_segments = path.split('/').reject(&:empty?)
       url_segments = url.split('/').reject(&:empty?)
@@ -84,12 +85,13 @@ module Alfa
 
 
     def self.route_match? rule, url
+      #bputs rule
       if rule.is_a? String
         rule_trail_slash = rule[-1] == '/'
         url_trail_slash = url[-1] == '/'
-        rule_segments = rule.split('/').reject(&:empty?)
-        url_segments = url.split('/').reject(&:empty?)
-        if url_segments.first == '~assets'
+        rule_segments = rule.split('/').reject(&:empty?) # @todo optimize (one split per server session instead of split per method call)
+        url_segments = url.split('/').reject(&:empty?)   # @todo optimize (one split per server session instead of split per method call)
+        if rule_segments.first == '~assets' && url_segments.first == '~assets'
           path = url_segments[1..-1].join('/')
           if File.file?(File.expand_path('../../../assets/'+path, __FILE__))
             return true, {path: path, type: :asset}
@@ -124,11 +126,13 @@ module Alfa
       end
     end
 
-
+    # @param string url
+    # @return route, params
+    # route is route that given in routes.rb
+    # params is detected params
     def self.find_route url
-      #url = @env['PATH_INFO']
       @routes.each do |route|
-        if route.is_a? Hash # container
+        if route[:context].is_a? Hash # container
           if self.app_match?(route[:context][:app][:path], url)
             url = url[(route[:context][:app][:path].length-1)..-1]
             route[:routes].each do |r|
@@ -138,6 +142,7 @@ module Alfa
             end
             raise Alfa::RouteException404
           end
+          # else - ???
         else
           is_success, params = self.route_match?(route[:rule], url)
           return route, params if is_success

@@ -1,0 +1,7 @@
+---
+fields:
+  id: UNSIGNED INT NOT NULL AUTO_INCREMENT
+  c: VARCHAR(255) NOT NULL
+  kvm: VARCHAR(255) NOT NULL
+
+primary_key: id

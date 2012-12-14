@@ -1,1 +1,2 @@
-require 'alfa/database/mysql'
+#require 'alfa/database/mysql'
+require 'sequel'

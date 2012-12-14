@@ -1,6 +1,16 @@
+Alfa gem changelog
++ = new feature, - = removed feature, ~ = update feature, b = bugfix, s = security issue, p = perfomance issue, * = other
+! = important, . = minor
+
 === HEAD
 
-* Extends Router.draw syntax (vsyrovat)
++ Logger for http requests (vsyrovat)
+
++ Escaping variables in templates by default (vsyrovat)
+
++ Using Sequel as main database engine (vsyrovat)
+
++ Router.mount with tests (vsyrovat)
 
 === 0.0.1.pre
 
