@@ -61,8 +61,8 @@ module Alfa
     #     end
     #   end
     def self.draw &block
-      class_eval &block
       route '/~assets/:path**', :type => :asset if @cursors_stack.empty?
+      class_eval &block
     end
 
     # Set rules in subdomain context
@@ -154,7 +154,7 @@ module Alfa
               r[:options][:app] = route[:context][:app][:app]
               return r, params if is_success
             end
-            #raise Alfa::RouteException404
+            raise Alfa::RouteException404
           end
           # else - ???
         else
