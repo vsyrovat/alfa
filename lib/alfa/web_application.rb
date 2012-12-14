@@ -4,7 +4,6 @@ require 'alfa/exceptions'
 require 'alfa/application'
 require 'alfa/tfile'
 require 'alfa/controller'
-require 'alfa/query_logger'
 require 'alfa/router'
 require 'ruty'
 require 'ruty/bugfix'
@@ -16,7 +15,6 @@ Encoding.default_internal='utf-8'
 
 module Alfa
   class WebApplication < Alfa::Application
-    private_class_method :new
 
     @namespaces_stack = []
     @bputs = []
@@ -30,19 +28,21 @@ module Alfa
     def self.init!
       self.routes.set_paths :config_path => File.join(PROJECT_ROOT, 'config'), :apps_path => File.join(PROJECT_ROOT, 'apps')
       self.routes.load
-      #require File.join(PROJECT_ROOT, 'apps/controllers/application')
-      #super
-      @inited = true
+      super
     end
 
     # main rack routine
     def self.call env
       @env = env
-      #@bputs = []
+      @bputs = []
       headers = {"Content-Type" => 'text/html; charset=utf-8'}
       t_sym = :default
       begin
-        #self.init! unless @inited
+        @logger << "#{env['REQUEST_METHOD']} #{env['REQUEST_URI']} #{env['SERVER_PROTOCOL']} from #{env['REMOTE_ADDR']} at #{DateTime.now}, processing by pid #{$$}\n"
+        @logger << "  HTTP_HOST:            #{env['HTTP_HOST']}\n"
+        @logger << "  HTTP_ACCEPT:          #{env['HTTP_ACCEPT']}\n"
+        @logger << "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}\n"
+        @logger << "  PATH_INFO:            #{env['PATH_INFO']}\n"
         response_code = 200
         route, params = self.routes.find_route @env['PATH_INFO']
         t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
@@ -69,24 +69,27 @@ module Alfa
           body = self.render_layout(app_sym.to_s, l_sym.to_s + '.tpl', {body: content})
           headers = {"Content-Type" => 'text/html; charset=utf-8'}
         end
-      rescue Alfa::RouteException404
+      rescue Alfa::RouteException404 => e
         response_code = 404
         body = 'Url not found<br>urls map:<br>'
         body += self.routes.instance_variable_get(:@routes).inspect
+        @logger << "404: Url not found (#{e.message})\n"
       rescue Exception => e
         response_code = 500
         body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>#{e.backtrace.join("<br>")}"
       end
       if t_sym == :default
-        debug_info = '<hr>Queries:<br>' + Alfa::QueryLogger.logs.map { |log|
-          r = "#{log[:num]}: #{log[:query]} | #{log[:status]}"
-          r += ", error: #{log[:error]}" if log[:status] == :fail
-          r += ", logger hash: #{log[:logger_hash]}"
-          r
-        }.join('<br>')
-        debug_info += "<hr>rack session: #{env['rack.session']}"
+        #debug_info = '<hr>Queries:<br>' + @logger.logs.map { |log|
+        #  r = "#{log[:num]}: #{log[:query]} | #{log[:status]}"
+        #  r += ", error: #{log[:error]}" if log[:status] == :fail
+        #  r += ", logger hash: #{log[:logger_hash]}"
+        #  r
+        #}.join('<br>')
+        debug_info = "<hr>rack env: #{env.inspect}"
       end
-      [response_code, headers, [body, debug_info]]
+      @logger << "\n"
+      @log_file.flush
+      return [response_code, headers, [body, @bputs.join('<br>')]]
     end
 
     # router
@@ -106,7 +109,6 @@ module Alfa
       @controllers ||= {}
       require File.join(PROJECT_ROOT, 'apps', application.to_s, 'controllers', controller.to_s)
       @controllers[[application, controller]] ||= Kernel.const_get(Alfa::Support.capitalize_name(controller)+'Controller').new
-      #@controllers[[application, controller]]
     end
 
     def self.render_template app, template, data = {}

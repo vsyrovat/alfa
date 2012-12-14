@@ -62,7 +62,7 @@ module Alfa
     #   end
     def self.draw &block
       class_eval &block
-      route '/~assets/:path**', type: :asset if @cursors_stack.empty?
+      route '/~assets/:path**', :type => :asset if @cursors_stack.empty?
     end
 
     # Set rules in subdomain context
@@ -90,7 +90,7 @@ module Alfa
       #puts "set rule '#{rule}', routes = #{@routes}"
     end
 
-
+    # @todo write tests for this method
     def self.app_match? path, url
       path_segments = path.split('/').reject(&:empty?)
       url_segments = url.split('/').reject(&:empty?)
@@ -99,6 +99,7 @@ module Alfa
 
 
     def self.route_match? rule, url
+      #bputs rule
       if rule.is_a? String
         rule_trail_slash = rule[-1] == '/'
         url_trail_slash = url[-1] == '/'
@@ -144,7 +145,6 @@ module Alfa
     # route is route that given in routes.rb
     # params is detected params
     def self.find_route url
-      #url = @env['PATH_INFO']
       @routes.each do |route|
         if route[:context].is_a? Hash # container
           if self.app_match?(route[:context][:app][:path], url)
@@ -154,7 +154,7 @@ module Alfa
               r[:options][:app] = route[:context][:app][:app]
               return r, params if is_success
             end
-            raise Alfa::RouteException404
+            #raise Alfa::RouteException404
           end
           # else - ???
         else
