@@ -1,7 +1,8 @@
 require 'fileutils'
 
-desc ''
-task :assets do
+namespace :assets do
+
+  desc 'Copy assets from gem folder to PROJECT_ROOT/public/~assets'
   task :copy do
     src = File.expand_path('../../../../assets', __FILE__)
     dest = File.join(DOCUMENT_ROOT, '~assets')
@@ -11,4 +12,5 @@ task :assets do
     end
     puts "Assets copied from #{src} to #{dest}"
   end
+
 end
