@@ -1,4 +1,5 @@
 require 'fileutils'
+
 desc ''
 task :assets do
   task :copy do
