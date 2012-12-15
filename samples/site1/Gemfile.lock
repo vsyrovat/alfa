@@ -1,7 +1,7 @@
 PATH
   remote: ../../
   specs:
-    alfa (0.0.1.pre)
+    alfa (0.0.2.pre)
       mysql2 (~> 0.3)
       rack (~> 1.4)
       rake (~> 10.0)
@@ -14,7 +14,7 @@ GEM
   specs:
     mysql2 (0.3.11)
     rack (1.4.1)
-    rake (10.0.2)
+    rake (10.0.3)
     ruty (0.0.1)
     rvm (1.11.3.5)
     sequel (3.42.0)
