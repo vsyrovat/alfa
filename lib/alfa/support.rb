@@ -19,7 +19,7 @@ module Alfa
         @inheritable_attributes
       end
 
-      def inherited(subclass)
+      def inherited(subclass) # ruby hook
         @inheritable_attributes.each do |inheritable_attribute|
           instance_var = "@#{inheritable_attribute}"
           subclass.instance_variable_set(instance_var, instance_variable_get(instance_var))

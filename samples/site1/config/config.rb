@@ -1,9 +1,5 @@
-module Project
-  BASE_CONFIG = {
-    :project_root => PROJECT_ROOT,
-    :document_root => DOCUMENT_ROOT,
-    :db => {
-      :main => DB::Main,
-    },
-  }
-end
+# eval in actual application's context (CliApplication, WebApplication or other)
+
+config[:project_root] = PROJECT_ROOT
+config[:document_root] = DOCUMENT_ROOT
+config[:db][:main] = {:instance => DB::Main, :maintain => true}

@@ -10,9 +10,6 @@ require 'ruty/bugfix'
 require 'ruty/upgrade'
 require 'ruty/tags/resources'
 
-Encoding.default_external='utf-8'
-Encoding.default_internal='utf-8'
-
 module Alfa
   class WebApplication < Alfa::Application
 
@@ -38,7 +35,7 @@ module Alfa
       headers = {} # required for store context inside @logger.portion
       body = nil # required for store context inside @logger.portion
       @logger.portion do |l|
-        @config[:db].each_value { |db| db.loggers = [l] }
+        @config[:db].each_value { |db| db[:instance].loggers = [l] }
         @env = env
         @bputs = []
         headers = {"Content-Type" => 'text/html; charset=utf-8'}
