@@ -1,4 +1,5 @@
 require 'sequel/extensions/migration'
+require 'alfa/logger'
 
 # All maintainable databases
 def dbs
@@ -39,13 +40,22 @@ namespace :db do
     end
   end
 
+  # Auxiliary task
+  # Set logger($stdout) for all databases
+  task :stdout_logger do
+    @stdout_logger ||= Alfa::Logger.new($stdout)
+    dbs.each_value do |db|
+      db[:instance].loggers << @stdout_logger
+    end
+  end
+
   desc "Reset schema (drop all tables)"
-  task :reset => :require_db do
+  task :reset => [:require_db, :stdout_logger] do
     @db[:instance].drop_table(*@db[:instance].tables)
   end
 
   desc "Create dumb migration for certain database and puts them into PROJECT_ROOT/db/%database%/migration"
-  task :'add-migration' => :require_db do
+  task :'add-migration' => [:require_db, :stdout_logger] do
     unless @db[:path]
       puts "Error: not specified path for database #{@db_name}"
       exit
@@ -79,7 +89,7 @@ EOL
   end
 
   desc "Migrate database(s)"
-  task :migrate => :optional_db do
+  task :migrate => [:optional_db, :stdout_logger] do
     if @db
       Sequel::Migrator.run(@db[:instance], File.join(@db[:path], 'migrations'))
     else
@@ -88,4 +98,24 @@ EOL
       end
     end
   end
+
+  namespace :migrate do
+    desc "Migrate database 1 step down"
+    task :down => [:require_db, :stdout_logger] do
+      migrator = Sequel::TimestampMigrator.new(@db[:instance], File.join(@db[:path], 'migrations'))
+      to_rollback = migrator.applied_migrations.last
+      if to_rollback
+        target = migrator.applied_migrations[0..-2].last # last but one applied migration
+        if target
+          target = target.split('_').first.to_i
+        else
+          target = 0
+        end
+        Sequel::Migrator.run(@db[:instance], File.join(@db[:path], 'migrations'), :target=>target)
+      else
+        puts "Nothing to rollback"
+      end
+    end
+  end
+
 end
