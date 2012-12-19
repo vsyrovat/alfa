@@ -1,3 +1,5 @@
+require 'sequel/extensions/migration'
+
 # All maintainable databases
 def dbs
   Alfa::VARS[:rakeapp_instance].instance_eval do
@@ -76,4 +78,14 @@ EOL
     end
   end
 
+  desc "Migrate database(s)"
+  task :migrate => :optional_db do
+    if @db
+      Sequel::Migrator.run(@db[:instance], File.join(@db[:path], 'migrations'))
+    else
+      dbs.each do |name, db|
+        Sequel::Migrator.run(db[:instance], File.join(db[:path], 'migrations'))
+      end
+    end
+  end
 end
