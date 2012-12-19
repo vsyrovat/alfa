@@ -23,19 +23,9 @@ namespace :db do
   end
 
   desc "Create dumb migration for certain database and puts them into PROJECT_ROOT/db/%database%/migration"
-  task :'add-migration' do
+  task :'add-migration' => :require_db do
+    db = @env_db
     Alfa::VARS[:rakeapp_instance].instance_eval do
-      unless ENV['db']
-        puts "Please specify database such as: rake db:add-migration db=database"
-        puts "Known maintainable databases: " << config[:db].select{|name, db| db[:maintain]}.map{|name, db| name}.join(', ')
-        exit
-      end
-      db_name = ENV['db'].to_sym
-      unless config[:db][db_name]
-        puts "Unknown database. Known maintainable databases: " << config[:db].select{|name, db| db[:maintain]}.map{|name, db| name}.join(', ')
-        exit
-      end
-      db = config[:db][db_name]
       unless db[:path]
         puts "Error: not specified path for database #{db_name}"
         exit
