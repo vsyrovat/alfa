@@ -1,13 +1,4 @@
 namespace :db do
-  desc ""
-  task :init do
-    Alfa::VARS[:rakeapp_instance].instance_eval do
-      config[:db].select{|name, db| db[:maintain]}.each do |name, db|
-        # put code here
-      end
-    end
-  end
-
   desc "Create dumb migration for certain database and puts them into PROJECT_ROOT/db/%database%/migration"
   task :'add-migration' do
     Alfa::VARS[:rakeapp_instance].instance_eval do
