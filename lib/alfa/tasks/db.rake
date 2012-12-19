@@ -1,4 +1,27 @@
 namespace :db do
+  task :require_db do
+    env_db = nil
+    Alfa::VARS[:rakeapp_instance].instance_eval do
+      unless ENV['db']
+        puts "Please specify database such as: db=database"
+        puts "Known maintainable databases: " << config[:db].select{|name, db| db[:maintain]}.map{|name, db| name}.join(', ')
+        exit
+      end
+      db_name = ENV['db'].to_sym
+      unless config[:db][db_name]
+        puts "Unknown database. Known maintainable databases: " << config[:db].select{|name, db| db[:maintain]}.map{|name, db| name}.join(', ')
+        exit
+      end
+      env_db = config[:db][db_name]
+    end
+    @env_db = env_db
+  end
+
+  desc "Reset schema (drop all tables)"
+  task :reset => :require_db do
+    @env_db[:instance].drop_table(*@env_db[:instance].tables)
+  end
+
   desc "Create dumb migration for certain database and puts them into PROJECT_ROOT/db/%database%/migration"
   task :'add-migration' do
     Alfa::VARS[:rakeapp_instance].instance_eval do
