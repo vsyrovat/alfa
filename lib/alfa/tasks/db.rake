@@ -100,6 +100,18 @@ EOL
   end
 
   namespace :migrate do
+    desc "Migrate database 1 step up"
+    task :up => [:require_db, :stdout_logger] do
+      migrator = Sequel::TimestampMigrator.new(@db[:instance], File.join(@db[:path], 'migrations'))
+      if migrator.migration_tuples
+        m = migrator.migration_tuples.first
+        if m[2] == :up
+          target = m[1].split('_').first.to_i
+          Sequel::Migrator.run(@db[:instance], File.join(@db[:path], 'migrations'), :target=>target)
+        end
+      end
+    end
+
     desc "Migrate database 1 step down"
     task :down => [:require_db, :stdout_logger] do
       migrator = Sequel::TimestampMigrator.new(@db[:instance], File.join(@db[:path], 'migrations'))
