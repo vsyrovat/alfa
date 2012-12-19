@@ -2,6 +2,11 @@ Alfa gem changelog
 + = new feature, - = removed feature, ~ = update feature, b = bugfix, s = security issue, p = perfomance issue, * = other
 ! = important, . = minor
 
+=== HEAD
+
++ Rake base db: tasks (add-migration, migrate, migrate:up, migrate:down, reset) (vsyrovat)
+
+
 === 0.0.2.pre
 
 + Logger for http requests (vsyrovat)
@@ -11,6 +16,7 @@ Alfa gem changelog
 + Using Sequel as main database engine (vsyrovat)
 
 + Router.mount with tests (vsyrovat)
+
 
 === 0.0.1.pre
 
