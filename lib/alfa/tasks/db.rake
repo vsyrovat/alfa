@@ -1,3 +1,9 @@
+def all_dbs
+  Alfa::VARS[:rakeapp_instance].instance_eval do
+    config[:db]
+  end
+end
+
 namespace :db do
   task :require_db do
     env_db = nil
