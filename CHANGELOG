@@ -4,6 +4,8 @@ Alfa gem changelog
 
 === HEAD
 
++ Tests for Alfa::Config
+
 + Rake base db: tasks (add-migration, migrate, migrate:up, migrate:down, reset) (vsyrovat)
 
 
