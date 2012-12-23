@@ -4,6 +4,8 @@ Alfa gem changelog
 
 === HEAD
 
++ Tests for Alfa::Controller
+
 + Tests for Alfa::Application
 
 + Tests for Alfa::Config
