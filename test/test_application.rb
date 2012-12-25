@@ -10,6 +10,7 @@ class AlfaApplicationTest < Test::Unit::TestCase
     end
     assert Alfa::Application.respond_to?(:init!)
     assert Alfa::Application.respond_to?(:load_tasks)
+    assert Alfa::Application.respond_to?(:config)
   end
 
   def test_02 # Alfa::Application.config
