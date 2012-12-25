@@ -1,4 +1,12 @@
 module Alfa
-  class RouteException404 < StandardError
+  module Exceptions
+    # Route not found
+    class Route404 < StandardError; end
+
+    # Application's config.project_root required
+    class E001 < StandardError; end
+
+    # WebApplication's config.document_root required
+    class E002 < StandardError; end
   end
 end

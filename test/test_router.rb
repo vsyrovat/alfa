@@ -112,7 +112,7 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal([{rule: '/:controller/:action/:id', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
     assert_equal([{rule: '/', options: {app: :admin, controller: :main, action: :index, layout: :admin}}, {}], Alfa::Router.find_route('/admin/'))
     assert_equal([{rule: '/:controller', options: {app: :admin, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
-    assert_raise Alfa::RouteException404 do
+    assert_raise Alfa::Exceptions::Route404 do
       Alfa::Router.find_route('/admin/foo/bar')
     end
     assert_equal([{rule: '/~assets/:path**', options: {type: :asset}}, {path: 'js/jquery/jquery-latest.js', type: :asset}], Alfa::Router.find_route('/~assets/js/jquery/jquery-latest.js'))

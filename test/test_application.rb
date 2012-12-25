@@ -20,4 +20,14 @@ class AlfaApplicationTest < Test::Unit::TestCase
     Alfa::Application.config[:bar] = 2
     assert_equal(2, Alfa::Application.config[:bar])
   end
+
+  def test_03
+    assert_raise Alfa::Exceptions::E001, "Application requires config.project_root" do
+      Alfa::Application.init!
+    end
+    assert_raise Alfa::Exceptions::E001, "Application's project_root should not be nil" do
+      Alfa::Application.config[:project_root] = nil
+      Alfa::Application.init!
+    end
+  end
 end

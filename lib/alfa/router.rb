@@ -140,7 +140,7 @@ module Alfa
               r[:options][:app] = route[:context][:app][:app]
               return r, params if is_success
             end
-            raise Alfa::RouteException404
+            raise Alfa::Exceptions::Route404
           end
           # else - ???
         else

@@ -1,5 +1,6 @@
 require 'alfa/logger'
 require 'alfa/config'
+require 'alfa/exceptions'
 
 Encoding.default_external='utf-8'
 Encoding.default_internal='utf-8'
@@ -16,14 +17,15 @@ module Alfa
     include Alfa::ClassInheritance
     inheritable_attributes :config
 
+    @config = Alfa::Config.new
 
     def self.config(kwargs={})
-      @config ||= Alfa::Config.new
       @config.merge! kwargs
     end
 
 
     def self.init!
+      self.verify_config
       @log_file = File.open(File.join(@config[:log][:file]), File::WRONLY | File::APPEND | File::CREAT)
       @logger = Alfa::Logger.new(@log_file)
       str = "Application (pid=#{$$}) started at #{DateTime.now}"
@@ -40,6 +42,11 @@ module Alfa
     def self.load_tasks
       VARS[:rakeapp_instance] = self
       require 'alfa/tasks'
+    end
+
+
+    def self.verify_config
+      raise Exceptions::E001 unless @config[:project_root]
     end
 
   end

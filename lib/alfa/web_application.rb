@@ -23,9 +23,9 @@ module Alfa
     end
 
     def self.init!
-      Alfa::Router.set_apps_dir File.join(PROJECT_ROOT, 'apps')
-      require File.join(PROJECT_ROOT, 'config/routes')
       super
+      Alfa::Router.set_apps_dir File.join(@config[:project_root], 'apps')
+      require File.join(@config[:project_root], 'config/routes')
     end
 
     # main rack routine
@@ -111,9 +111,14 @@ module Alfa
 
   # private section
 
+    def self.verify_config
+      super
+      raise Exceptions::E002.new unless @config[:document_root]
+    end
+
     def self.invoke_controller application, controller
       @controllers ||= {}
-      require File.join(PROJECT_ROOT, 'apps', application.to_s, 'controllers', controller.to_s)
+      require File.join(@config[:project_root], 'apps', application.to_s, 'controllers', controller.to_s)
       @controllers[[application, controller]] ||= Kernel.const_get(Alfa::Support.capitalize_name(controller)+'Controller').new
     end
 
@@ -128,7 +133,7 @@ module Alfa
     end
 
     def self.loader
-      @loader ||= Ruty::Loaders::Filesystem.new(:dirname => File.join(PROJECT_ROOT, 'apps'))
+      @loader ||= Ruty::Loaders::Filesystem.new(:dirname => File.join(@config[:project_root], 'apps'))
     end
 
   end
