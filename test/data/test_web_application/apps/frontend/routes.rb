@@ -1,3 +1,3 @@
 Alfa::WebApplication.routes.draw do
-  mount '/' => :frontend
+  route '/' => 'kfk#index'
 end

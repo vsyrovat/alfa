@@ -32,7 +32,7 @@ module Alfa
 
 
     def self.reset
-      @routes = []
+      @routes.clear
     end
 
     # Set routes
@@ -65,7 +65,7 @@ module Alfa
       @mounts << {:path => path, :app => app, :options => options}
       if @apps_dir
         self.context :app => app do
-          require File.join(@apps_dir, app.to_s, 'routes')
+          Kernel.load File.join(@apps_dir, app.to_s, 'routes.rb')
         end
       end
     end
@@ -148,7 +148,7 @@ module Alfa
           return route, params if is_success
         end
       end
-      raise Alfa::RouteException404
+      raise Alfa::Exceptions::Route404
     end
 
   end

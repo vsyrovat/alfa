@@ -79,6 +79,7 @@ class AlfaRouterTest < Test::Unit::TestCase
 
   # Checks right order of draw and mounted rules
   def test_03 # Router's internal routes struct
+    Alfa::Router.reset
     prepare_router
     assert_equal(
         [
@@ -103,6 +104,7 @@ class AlfaRouterTest < Test::Unit::TestCase
 
 
   def test_04 # mount
+    Alfa::Router.reset
     prepare_router
     #puts Alfa::Router.instance_variable_get(:@routes)
     assert_equal([{rule: '/hello.html', options: {}}, {}], Alfa::Router.find_route('/hello.html'))
@@ -119,14 +121,43 @@ class AlfaRouterTest < Test::Unit::TestCase
     #assert_equal([{rule: '/:controller/:action/:id', options: {app: :backend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
   end
 
+  # Checks right order of draw and mounted rules
+  def test_05
+    Alfa::Router.reset
+    Alfa::Router.set_apps_dir File.expand_path('../data/test_router/apps', __FILE__)
+    load File.expand_path('../data/test_router/config/routes.rb', __FILE__)
+    assert_equal(
+        [
+            {:rule=>"/~assets/:path**", :options=>{:type=>:asset}},
+            {:context=>{:app=>{:path=>"/admin/", :app=>:backend, :options=>{}}},
+             :routes=>[
+                 {:rule=>"/", :options=>{:controller=>:main, :action=>:index, :layout=>:index}},
+                 {:rule=>"/:controller", :options=>{:action=>:index}}
+             ]},
+            {:context=>{:app=>{:path=>"/", :app=>:frontend, :options=>{}}},
+             :routes=>[
+                 {:rule=>"/", :options=>{:controller=>:main, :action=>:index, :layout=>:index}},
+                 {:rule=>"/:action", :options=>{:controller=>:main, :layout=>:internal}},
+                 {:rule=>"/:controller/:action", :options=>{:layout=>:internal}},
+                 {:rule=>"/:controller/:action/:id", :options=>{:layout=>:internal}},
+             ]},
+        ],
+        Alfa::Router.instance_variable_get(:@routes)
+    )
+  end
+
   # this test loads routes.rb files from data/test_router directory to simulate real project skeletron
-  def test_05 # load_from_files
+  def test_06 # load_from_files
+    Alfa::Router.reset
+    Alfa::Router.set_apps_dir File.expand_path('../data/test_router/apps', __FILE__)
+    load File.expand_path('../data/test_router/config/routes.rb', __FILE__)
+    #puts Alfa::Router.instance_variable_get(:@routes).inspect
     assert_equal([{rule: '/', options: {app: :frontend, controller: :main, action: :index, layout: :index}}, {}], Alfa::Router.find_route('/'))
     assert_equal([{rule: '/:action', options: {app: :frontend, controller: :main, layout: :internal}}, {action: 'foo'}], Alfa::Router.find_route('/foo'))
     assert_equal([{rule: '/:controller/:action', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar'}], Alfa::Router.find_route('/foo/bar'))
     assert_equal([{rule: '/:controller/:action/:id', options: {app: :frontend, layout: :internal}}, {controller: 'foo', action: 'bar', id: '8'}], Alfa::Router.find_route('/foo/bar/8'))
-    assert_equal([{rule: '/', options: {app: :admin, controller: :main, action: :index, layout: :admin}}, {}], Alfa::Router.find_route('/admin/'))
-    assert_equal([{rule: '/:controller', options: {app: :admin, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
+    assert_equal([{rule: '/', options: {app: :backend, controller: :main, action: :index, layout: :index}}, {}], Alfa::Router.find_route('/admin/'))
+    assert_equal([{rule: '/:controller', options: {app: :backend, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
   end
 
 end

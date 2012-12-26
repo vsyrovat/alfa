@@ -9,7 +9,7 @@ class TestAlfaWebApplication < Test::Unit::TestCase
   end
 
 
-  def test_02
+  def _test_02
     Alfa::WebApplication.config[:project_root] = File.expand_path('../data/test_web_application', __FILE__)
     assert_raise Alfa::Exceptions::E002, "Application requires config.project_root" do
       Alfa::WebApplication.init!
