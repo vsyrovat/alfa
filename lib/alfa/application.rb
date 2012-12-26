@@ -2,8 +2,8 @@ require 'alfa/logger'
 require 'alfa/config'
 require 'alfa/exceptions'
 
-Encoding.default_external='utf-8'
-Encoding.default_internal='utf-8'
+Encoding.default_external = 'utf-8'
+Encoding.default_internal = 'utf-8'
 
 module Alfa
 
@@ -14,7 +14,7 @@ module Alfa
   class Application
     private_class_method :new
 
-    include Alfa::ClassInheritance
+    include ClassInheritance
     inheritable_attributes :config
 
     @config = Alfa::Config.new
@@ -26,15 +26,17 @@ module Alfa
 
     def self.init!
       self.verify_config
-      @log_file = File.open(File.join(@config[:log][:file]), File::WRONLY | File::APPEND | File::CREAT)
-      @logger = Alfa::Logger.new(@log_file)
-      str = "Application (pid=#{$$}) started at #{DateTime.now}"
-      @logger.info "#{'='*str.length}\n#{str}"
-      @logger.info "  PROJECT_ROOT: #{@config[:project_root]}"
-      @logger.info "  DOCUMENT_ROOT: #{@config[:document_root]}\n"
-      @log_file.flush
-      ObjectSpace.define_finalizer(@logger, Proc.new {@logger.info "Application (pid=#{$$}) stopped at #{DateTime.now}\n\n"})
-      @config[:db].each_value { |db| db[:instance].loggers = [@logger] }
+      if @config[:log][:file]
+        @log_file = File.open(@config[:log][:file], File::WRONLY | File::APPEND | File::CREAT)
+        @logger = Alfa::Logger.new(@log_file)
+        str = "Application (pid=#{$$}) started at #{DateTime.now}"
+        @logger.info "#{'='*str.length}\n#{str}"
+        @logger.info "  PROJECT_ROOT: #{@config[:project_root]}"
+        @logger.info "  DOCUMENT_ROOT: #{@config[:document_root]}\n"
+        @log_file.flush
+        ObjectSpace.define_finalizer(@logger, Proc.new {@logger.info "Application (pid=#{$$}) stopped at #{DateTime.now}\n\n"})
+        @config[:db].each_value { |db| db[:instance].loggers = [@logger] }
+      end
       @inited = true
     end
 
@@ -48,6 +50,5 @@ module Alfa
     def self.verify_config
       raise Exceptions::E001 unless @config[:project_root]
     end
-
   end
 end

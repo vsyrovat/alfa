@@ -21,12 +21,17 @@ class AlfaApplicationTest < Test::Unit::TestCase
     assert_equal(2, Alfa::Application.config[:bar])
   end
 
+  # test config.project_root
   def test_03
     assert_raise Alfa::Exceptions::E001, "Application requires config.project_root" do
       Alfa::Application.init!
     end
     assert_raise Alfa::Exceptions::E001, "Application's project_root should not be nil" do
       Alfa::Application.config[:project_root] = nil
+      Alfa::Application.init!
+    end
+    assert_nothing_raised Exception, "Application should silent init when project_root is set" do
+      Alfa::Application.config[:project_root] = File.expand_path('../data/test_application', __FILE__)
       Alfa::Application.init!
     end
   end

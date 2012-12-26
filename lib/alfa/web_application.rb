@@ -72,7 +72,7 @@ module Alfa
             body = self.render_layout(app_sym.to_s, l_sym.to_s + '.tpl', {body: content})
             headers = {"Content-Type" => 'text/html; charset=utf-8'}
           end
-        rescue Alfa::RouteException404 => e
+        rescue Alfa::Exceptions::Route404 => e
           response_code = 404
           body = 'Url not found<br>urls map:<br>'
           body += self.routes.instance_variable_get(:@routes).inspect

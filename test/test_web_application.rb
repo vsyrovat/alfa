@@ -18,5 +18,9 @@ class TestAlfaWebApplication < Test::Unit::TestCase
       Alfa::WebApplication.config[:document_root] = nil
       Alfa::WebApplication.init!
     end
+    assert_nothing_raised Exception do
+      Alfa::WebApplication.config[:document_root] = File.expand_path('../data/test_web_application/public', __FILE__)
+      Alfa::WebApplication.init!
+    end
   end
 end
