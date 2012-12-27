@@ -19,3 +19,4 @@ doc/
 
 # IDE settings
 .idea/
+.project

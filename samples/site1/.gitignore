@@ -1,4 +1,7 @@
 /tmp/*
 /log/*.log
 public/~assets
-/.idea
+
+# IDE settings
+.idea/
+.project
