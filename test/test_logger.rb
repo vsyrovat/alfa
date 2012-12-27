@@ -89,4 +89,9 @@ class TestAlfaLogger < Test::Unit::TestCase
       assert_equal("Baramba\nCaramba!\n\nHello\nWorld\n\n", f.read)
     end
   end
+
+  # NullLogger
+  def test_07
+    assert Alfa::NullLogger.instance_methods.include?(:portion)
+  end
 end

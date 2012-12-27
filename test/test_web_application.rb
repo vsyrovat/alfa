@@ -23,4 +23,9 @@ class TestAlfaWebApplication < Test::Unit::TestCase
       Alfa::WebApplication.init!
     end
   end
+
+
+  def _test_03
+    puts Alfa::WebApplication.call({'PATH_INFO' => '/'})
+  end
 end

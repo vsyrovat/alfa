@@ -34,7 +34,7 @@ module Alfa
       response_code = nil # required for store context inside @logger.portion
       headers = {} # required for store context inside @logger.portion
       body = nil # required for store context inside @logger.portion
-      @logger.portion do |l|
+      @logger.portion(:sync=>true) do |l|
         @config[:db].each_value { |db| db[:instance].loggers = [l] }
         @env = env
         @bputs = []
@@ -93,8 +93,6 @@ module Alfa
         l.info "RESPONSE: #{response_code} (#{sprintf('%.4f', Time.now - start_time)} sec)"
         l << "\n"
       end
-      @log_file.flush
-      #@logger = nil
       return [response_code, headers, [body, @bputs.join('<br>')]]
     end
 

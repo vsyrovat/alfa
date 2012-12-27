@@ -36,6 +36,8 @@ module Alfa
         @log_file.flush
         ObjectSpace.define_finalizer(@logger, Proc.new {@logger.info "Application (pid=#{$$}) stopped at #{DateTime.now}\n\n"})
         @config[:db].each_value { |db| db[:instance].loggers = [@logger] }
+      else
+        @logger = Alfa::NullLogger.new
       end
       @inited = true
     end

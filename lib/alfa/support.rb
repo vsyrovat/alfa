@@ -28,9 +28,16 @@ module Alfa
     end
   end
 
-  class Support
-    def self.capitalize_name arg
+  module Support
+    extend self
+
+    def capitalize_name(arg)
       arg.to_s.split('/').last.split('_').map(&:capitalize).join
+    end
+
+    def parse_arguments(*arguments)
+      return arguments[0..-2], arguments.last if arguments.last.is_a?(Hash)
+      return arguments, {}
     end
   end
 
