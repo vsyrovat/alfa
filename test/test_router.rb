@@ -160,4 +160,28 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal([{rule: '/:controller', options: {app: :backend, action: :index}}, {controller: 'foo'}], Alfa::Router.find_route('/admin/foo'))
   end
 
+
+  def test_07
+    Alfa::Router.reset
+    Alfa::Router.draw do
+      route '/' => 'default#index'
+      route '/zoo' => 'default#zoo', :layout => :default
+      mount '/admin' => :backend
+      Alfa::Router.context :app => :backend do
+        route '/' => 'default#index', :layout => :fantastic
+      end
+    end
+    assert_equal(
+        [
+            {:rule=>"/~assets/:path**", :options=>{:type=>:asset}},
+            {:rule=>'/', :options=>{:controller=>:default, :action=>:index}},
+            {:rule=>'/zoo', :options=>{:controller=>:default, :action=>:zoo, :layout => :default}},
+            {:context=>{:app=>{:path=>'/admin/', :app=>:backend, :options=>{}}},
+             :routes=>[
+                 {:rule=>'/', :options=>{:controller=>:default, :action=>:index, :layout=>:fantastic}}
+             ]},
+        ],
+        Alfa::Router.instance_variable_get(:@routes)
+    )
+  end
 end

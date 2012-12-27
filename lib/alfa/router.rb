@@ -33,6 +33,7 @@ module Alfa
 
     def self.reset
       @routes.clear
+      @apps_dir = nil
     end
 
     # Set routes
@@ -61,7 +62,11 @@ module Alfa
     #   mount '/admin/', :admin
     # all requests to site.com/ and nested (site.com/*) will be sent to application 'frontend' (/apps/frontend)
     #   mount '/', :frontend
-    def self.mount path, app, options = {}
+    def self.mount path, app = nil, options = {}
+      if path.is_a?(Hash) && app == nil
+        path, a = path.first.to_a
+        app = a.to_sym
+      end
       @mounts << {:path => path, :app => app, :options => options}
       if @apps_dir
         self.context :app => app do
@@ -72,7 +77,16 @@ module Alfa
 
     # Sets route rule
     def self.route rule, options = {}
-      @cursor << {:rule => rule, :options => options}
+      if rule.is_a?(Hash)
+        r, o = rule.to_a.first
+        options = rule.dup
+        options.delete(r)
+        raise 'Expected hash rule have controller#action format' unless o.include? '#'
+        c, a = o.split('#')
+        @cursor << {:rule => r, :options => options.merge({:controller => c.to_sym, :action => a.to_sym})}
+      else
+        @cursor << {:rule => rule, :options => options}
+      end
       #puts "set rule '#{rule}', routes = #{@routes}"
     end
 
