@@ -1,5 +1,7 @@
 ---
-dsn: "mysql2://root:123456@localhost[:3306]/site"
+# dns format ([...] can be omitted):
+# adapter://user:password@host[:port]/database
+dsn: "mysql2://root:123456@localhost:3306/site"
 host: "localhost"
 user: "root"
 password: "123456"
