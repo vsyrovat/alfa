@@ -4,15 +4,9 @@ Legend:
 
 === HEAD
 
-~ Improvement logging
+~ Upgrade logging, routing (vsyrovat)
 
-+ Tests for Alfa::Logger
-
-+ Tests for Alfa::Controller
-
-+ Tests for Alfa::Application
-
-+ Tests for Alfa::Config
++ Tests for Config, Application, Controller, Logger, WebApplication (vsyrovat)
 
 + Rake base db: tasks (add-migration, migrate, migrate:up, migrate:down, reset) (vsyrovat)
 
