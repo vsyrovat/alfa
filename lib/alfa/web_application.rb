@@ -24,8 +24,9 @@ module Alfa
 
     def self.init!
       super
-      Alfa::Router.set_apps_dir File.join(@config[:project_root], 'apps')
-      require File.join(@config[:project_root], 'config/routes')
+      Alfa::Router.reset
+      Alfa::Router.apps_dir = File.join(@config[:project_root], 'apps')
+      load File.join(@config[:project_root], 'config/routes.rb')
     end
 
     # main rack routine
@@ -47,7 +48,7 @@ module Alfa
           #@logger.info "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}"
           #@logger.info "  PATH_INFO: #{env['PATH_INFO']}"
           response_code = 200
-          route, params = self.routes.find_route @env['PATH_INFO']
+          route, params = self.routes.find_route(@env['PATH_INFO'])
           t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
           if t_sym == :asset
             body = File.read(File.expand_path('../../../assets/' + params[:path], __FILE__))
@@ -63,8 +64,7 @@ module Alfa
             c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
             a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
             l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
-            controller = self.invoke_controller(app_sym, c_sym)
-            raise Alfa::RouteException404 unless controller.public_methods.include?(a_sym)
+            controller = self.invoke_controller_check_action(app_sym, c_sym, a_sym)
             controller.__send__(a_sym)
             data = controller._instance_variables_hash
             Ruty::Tags::RequireStyle.clean_cache
@@ -79,7 +79,7 @@ module Alfa
           l.info "404: Url not found (#{e.message})"
         rescue Exception => e
           response_code = 500
-          body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>#{e.backtrace.join("<br>")}"
+          body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>\n#{e.backtrace.join("<br>\n")}"
         end
         if t_sym == :default
           #debug_info = '<hr>Queries:<br>' + @logger.logs.map { |log|
@@ -114,10 +114,13 @@ module Alfa
       raise Exceptions::E002.new unless @config[:document_root]
     end
 
-    def self.invoke_controller application, controller
+    def self.invoke_controller_check_action application, controller, action
       @controllers ||= {}
       require File.join(@config[:project_root], 'apps', application.to_s, 'controllers', controller.to_s)
-      @controllers[[application, controller]] ||= Kernel.const_get(Alfa::Support.capitalize_name(controller)+'Controller').new
+      # @todo put klass to controllers cache
+      klass = Kernel.const_get(Alfa::Support.capitalize_name(controller)+'Controller')
+      raise Exceptions::Route404 unless klass.instance_methods(false).include?(action)
+      @controllers[[application, controller]] ||= klass.new
     end
 
     def self.render_template app, template, data = {}

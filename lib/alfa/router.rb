@@ -1,6 +1,10 @@
 module Alfa
   class Router
 
+    class << self
+      attr_accessor :apps_dir
+    end
+
     # initialize class variables
     @routes = []
     @cursor = @routes
@@ -9,10 +13,6 @@ module Alfa
     @apps_dir = nil
 
     def self.call &block
-    end
-
-    def self.set_apps_dir dir
-      @apps_dir = dir
     end
 
 
@@ -120,7 +120,7 @@ module Alfa
         rule_segments.zip(url_segments).each do |rule_segment, url_segment|
           skip_flag = true if rule_segment == '**'
           if rule_segment =~ /^:[a-z]+\w*$/i && url_segment =~ /^[a-z0-9_]+$/
-            pares[rule_segment[1..-1].to_sym] = url_segment
+            pares[rule_segment[1..-1].to_sym] = url_segment.to_sym
           elsif (rule_segment == url_segment) || (rule_segment == '*' && url_segment =~ /^[a-z0-9_]+$/) || (rule_segment == nil && skip_flag) || rule_segment == '**'
           else
             fail_flag = true
