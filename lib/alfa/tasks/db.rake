@@ -55,7 +55,7 @@ namespace :db do
   end
 
   desc "Create dumb migration for certain database and puts them into PROJECT_ROOT/db/%database%/migration"
-  task :'add-migration' => [:require_db, :stdout_logger] do
+  task :'new-migration' => [:require_db, :stdout_logger] do
     unless @db[:path]
       puts "Error: not specified path for database #{@db_name}"
       exit
