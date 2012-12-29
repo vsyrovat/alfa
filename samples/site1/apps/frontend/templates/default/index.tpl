@@ -1,7 +1,7 @@
 {{ name }}
 {{ items }}
 {% for item in items %}
-{# { item } #}
+{{ item }}
 {% endfor %}
 
 хобот

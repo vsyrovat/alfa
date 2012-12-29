@@ -63,15 +63,16 @@ namespace :db do
     ts = Time.now.utc.strftime('%Y%m%d%H%M%S')
     pattern = <<EOL
 # Migration #{ts}
-# You can rename this file before implement migration
+# Don't rename this file after implement migration
 
 Sequel.migration do
   up do
-    # put up migration code here
+    # Put up migration code here
+    # Use Sequel migration syntax (http://sequel.rubyforge.org/rdoc/files/doc/schema_modification_rdoc.html) or native SQL (run "SQL command")
   end
 
   down do
-    # put down migration code here
+    # Put down migration code here
   end
 end
 EOL
@@ -84,7 +85,7 @@ EOL
 
     File.open(migration_file, 'w') do |f|
       f.write pattern
-      puts "Created migration #{migration_file}"
+      puts "Create migration #{migration_file}"
     end
   end
 
