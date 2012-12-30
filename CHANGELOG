@@ -2,13 +2,13 @@ Legend:
 + = new feature, - = removed feature, ~ = update feature, b = bugfix, s = security issue, p = perfomance issue, * = other
 ! = important, . = minor
 
-=== HEAD
+=== 0.0.3.pre
 
 ~ Upgrade logging, routing (vsyrovat)
 
 + Tests for Config, Application, Controller, Logger, WebApplication (vsyrovat)
 
-+ Rake base db: tasks (add-migration, migrate, migrate:up, migrate:down, reset) (vsyrovat)
++ Rake base db: tasks (new-migration, migrate, migrate:up, migrate:down, reset) (vsyrovat)
 
 
 === 0.0.2.pre
