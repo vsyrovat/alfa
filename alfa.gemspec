@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   spec.name        = 'alfa'
-  spec.version     = '0.0.3.pre'
-  spec.date        = '2012-12-15'
+  spec.version     = '0.0.4.pre'
+  spec.date        = Time.now.utc.strftime('%Y-%m-%d')
   spec.summary     = "Alfa CMF"
   spec.description = ""
   spec.author      = "Valentin Syrovatskiy"
