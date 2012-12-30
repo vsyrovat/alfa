@@ -2,16 +2,18 @@ require File.expand_path('../../../../version', __FILE__)
 require 'fileutils'
 require 'alfa/support'
 
-sr = %w(
-  ALFA_VERSION
-).map{|const| ['#{%s}' % const, Kernel.const_get(const)]}
+PROJECT_NAME = $*[1]
 
-project_name = $*[1]
-target_dir = File.join(Dir.pwd, project_name)
-raise "file or directory #{project_name} already exists" if File.exists?(target_dir)
-Dir.mkdir project_name
+sr = {
+  '#{ALFA_VERSION}' => ALFA_VERSION,
+  '#{PROJECT_NAME}' => PROJECT_NAME,
+}
 
-puts "Created new project in #{project_name}"
+target_dir = File.join(Dir.pwd, PROJECT_NAME)
+raise "file or directory #{PROJECT_NAME} already exists" if File.exists?(target_dir)
+Dir.mkdir PROJECT_NAME
+
+puts "Created new project in #{PROJECT_NAME}"
 
 begin
   print "Copy dummy project... "
@@ -22,13 +24,12 @@ begin
     if File.directory?(path)
       FileUtils.mkdir_p target, :mode => 0755
     else
-      case relpath
-        when 'Gemfile'
-          File.open(target, File::WRONLY | File::CREAT) do |f|
-            f.write(File.read(path).strtr(sr))
-          end
-        else
-          FileUtils.cp(path, target)
+      if File.extname(relpath) == '.source'
+        File.open(target.chomp('.source'), File::WRONLY | File::CREAT) do |f|
+          f.write(File.read(path).strtr(sr))
+        end
+      else
+        FileUtils.cp(path, target)
       end
     end
   end
@@ -39,7 +40,7 @@ end
 
 begin
   print "Bundle install... "
-  FileUtils.cd project_name
+  FileUtils.cd PROJECT_NAME
   `bundle install`
   print "done"
 ensure
