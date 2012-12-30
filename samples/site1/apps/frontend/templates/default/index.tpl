@@ -1,9 +1,10 @@
-{{ name }}
+{{ name }}<br>
 {{ items }}
 {% for item in items %}
-{{ item }}
+{#{ item }#}
 {% endfor %}
 
-хобот
+<br>
+String from template / Строка из шаблона
 
 {% require_jquery %}
