@@ -1,7 +1,7 @@
 PATH
   remote: ../../
   specs:
-    alfa (0.0.2.pre)
+    alfa (0.0.5.pre)
       mysql2 (~> 0.3)
       rack (~> 1.4)
       rake (~> 10.0)
