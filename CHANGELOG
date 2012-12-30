@@ -2,6 +2,12 @@ Legend:
 + = new feature, - = removed feature, ~ = update feature, b = bugfix, s = security issue, p = perfomance issue, * = other
 ! = important, . = minor
 
+
+=== HEAD
+
++ Create new project by "alfa new PROJECT_NAME" command (vsyrovat)
+
+
 === 0.0.4.pre
 
 . No changes, just fix gem's build date
