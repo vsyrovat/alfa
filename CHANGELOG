@@ -2,6 +2,11 @@ Legend:
 + = new feature, - = removed feature, ~ = update feature, b = bugfix, s = security issue, p = perfomance issue, * = other
 ! = important, . = minor
 
+=== 0.0.4.pre
+
+. No changes, just fix gem's build date
+
+
 === 0.0.3.pre
 
 ~ Upgrade logging, routing (vsyrovat)
