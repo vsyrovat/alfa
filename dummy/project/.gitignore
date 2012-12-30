@@ -10,7 +10,7 @@
 /.classpath
 
 # IDE settings (JetBrains RubyMine)
-/*.iml
-/*.ipr
-/*.iws
+*.iml
+*.ipr
+*.iws
 /.idea/

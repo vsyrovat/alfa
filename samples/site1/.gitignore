@@ -1,7 +1,16 @@
-/tmp/*
-/log/*.log
-public/~assets
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# IDE settings
-.idea/
-.project
+/.bundle/
+/tmp/
+/log/*.log
+/public/~assets/
+
+# IDE settings (Eclipse)
+/.project
+/.classpath
+
+# IDE settings (JetBrains RubyMine)
+*.iml
+*.ipr
+*.iws
+/.idea/

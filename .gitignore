@@ -17,6 +17,12 @@ tmp
 _yardoc
 doc/
 
-# IDE settings
-.idea/
-.project
+# IDE settings (Eclipse)
+/.project
+/.classpath
+
+# IDE settings (JetBrains RubyMine)
+*.iml
+*.ipr
+*.iws
+/.idea/
