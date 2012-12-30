@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
-gem :alfa, ALFA_VERSION
+gem 'alfa', '#{ALFA_VERSION}'
 
-gem :mysql2
+# Using mysql2 as database adapter
+gem 'mysql2', '~> 0.3'  # 0.3.11

@@ -35,4 +35,9 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal([[[]], {}], Alfa::Support.parse_arguments([]))
     assert_equal([[], {}], Alfa::Support.parse_arguments({}))
   end
+
+  def test_strtr
+    assert_equal("BB AA", "AA BB".strtr("AA" => "BB", "BB" => "AA"))
+    assert_equal("BB AA", "AA BB".strtr([["AA", "BB"], ["BB", "AA"]]))
+  end
 end

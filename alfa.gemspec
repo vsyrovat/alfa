@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.description = ""
   spec.author      = "Valentin Syrovatskiy"
   spec.email       = 'vsyrovat@gmail.com'
-  spec.files       = Dir['lib/**/*.rb'] + Dir['test/**/*.rb'] + Dir['assets/**/*'] + Dir['bin/**/*'] + Dir['dummy/**/*']
+  spec.files       = Dir['lib/**/*.rb'] + Dir['test/**/*.rb'] + Dir['assets/**/*'] + Dir['bin/**/*'] + Dir['dummy/**/*'] + Dir['version.rb']
   spec.executables << 'alfa'
   spec.add_runtime_dependency 'rvm',    '~> 1.11' # 1.11.3.5
   spec.add_runtime_dependency 'rake',   '~> 10.0' # 10.0.3
