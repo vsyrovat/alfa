@@ -31,7 +31,7 @@ module Alfa
   module Support
     extend self
 
-    def capitalize_name(arg)
+    def camelcase_name(arg)
       arg.to_s.split('/').last.split('_').map(&:capitalize).join
     end
 

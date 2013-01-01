@@ -119,7 +119,7 @@ module Alfa
     def self.invoke_controller(application, controller)
       return @controllers[[application, controller]] if @controllers[[application, controller]]
       load File.join(@config[:project_root], 'apps', application.to_s, 'controllers', controller.to_s + '.rb')
-      klass_name = Alfa::Support.capitalize_name(controller)+'Controller'
+      klass_name = Alfa::Support.camelcase_name(controller)+'Controller'
       klass = Kernel.const_get(klass_name) # weakref?
       @controllers[[application, controller]] = klass.dup.new # weakref?
       Object.module_eval{remove_const(klass_name)}

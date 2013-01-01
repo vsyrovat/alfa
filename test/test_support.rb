@@ -6,15 +6,15 @@ class DB1 < Alfa::Database::MySQL; end
 class DB2 < Alfa::Database::MySQL; end
 
 class AlfaSupportTest < Test::Unit::TestCase
-  def test_capitalize_name
-    assert_equal('Foo', Alfa::Support.capitalize_name(:foo))
-    assert_equal('Foo', Alfa::Support.capitalize_name('foo'))
-    assert_equal('Foo', Alfa::Support.capitalize_name('FOO'))
-    assert_equal('Foo', Alfa::Support.capitalize_name('Foo'))
-    assert_equal('FooBar', Alfa::Support.capitalize_name(:foo_bar))
-    assert_equal('FooBar', Alfa::Support.capitalize_name('foo_bar'))
-    assert_equal('FooBar', Alfa::Support.capitalize_name(:foo__bar))
-    assert_equal('BarBaz', Alfa::Support.capitalize_name('foo/bar_baz'))
+  def test_camelcase_name
+    assert_equal('Foo', Alfa::Support.camelcase_name(:foo))
+    assert_equal('Foo', Alfa::Support.camelcase_name('foo'))
+    assert_equal('Foo', Alfa::Support.camelcase_name('FOO'))
+    assert_equal('Foo', Alfa::Support.camelcase_name('Foo'))
+    assert_equal('FooBar', Alfa::Support.camelcase_name(:foo_bar))
+    assert_equal('FooBar', Alfa::Support.camelcase_name('foo_bar'))
+    assert_equal('FooBar', Alfa::Support.camelcase_name(:foo__bar))
+    assert_equal('BarBaz', Alfa::Support.camelcase_name('foo/bar_baz'))
   end
 
   def test_inheritance

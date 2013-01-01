@@ -27,7 +27,7 @@ module Alfa
         raise "Unacceptible engine in #{path}/schema.yml, expected to be mysql of mysql2" unless ['mysql', 'mysql2'].include? data[:engine]
         Dir[File.join(path, 'models/*.rb')].each do |file|
           require file
-          Kernel::const_get(Alfa::Support.capitalize_name(File.basename(file, '.rb'))).register_database self
+          Kernel::const_get(Alfa::Support.camelcase_name(File.basename(file, '.rb'))).register_database self
         end
 
       end
