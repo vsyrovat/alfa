@@ -15,6 +15,7 @@ module Alfa
 
     @namespaces_stack = []
     @bputs = []
+    @controllers = {}
 
     def self.inherited subclass
       instance_variables.each do |var|
@@ -27,6 +28,7 @@ module Alfa
       Alfa::Router.reset
       Alfa::Router.apps_dir = File.join(@config[:project_root], 'apps')
       load File.join(@config[:project_root], 'config/routes.rb')
+      @controllers.clear
     end
 
     # main rack routine
@@ -64,7 +66,8 @@ module Alfa
             c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
             a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
             l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
-            controller = self.invoke_controller_check_action(app_sym, c_sym, a_sym)
+            controller = self.invoke_controller(app_sym, c_sym)
+            raise Exceptions::Route404 unless controller.class.instance_methods(false).include?(a_sym)
             controller.__send__(a_sym)
             data = controller._instance_variables_hash
             Ruty::Tags::RequireStyle.clean_cache
@@ -114,13 +117,14 @@ module Alfa
       raise Exceptions::E002.new unless @config[:document_root]
     end
 
-    def self.invoke_controller_check_action application, controller, action
-      @controllers ||= {}
-      require File.join(@config[:project_root], 'apps', application.to_s, 'controllers', controller.to_s)
-      # @todo put klass to controllers cache
-      klass = Kernel.const_get(Alfa::Support.capitalize_name(controller)+'Controller')
-      raise Exceptions::Route404 unless klass.instance_methods(false).include?(action)
-      @controllers[[application, controller]] ||= klass.new
+    def self.invoke_controller(application, controller)
+      return @controllers[[application, controller]] if @controllers[[application, controller]]
+      load File.join(@config[:project_root], 'apps', application.to_s, 'controllers', controller.to_s + '.rb')
+      klass_name = Alfa::Support.capitalize_name(controller)+'Controller'
+      klass = Kernel.const_get(klass_name) # weakref?
+      @controllers[[application, controller]] = klass.dup.new # weakref?
+      Object.module_eval{remove_const(klass_name)}
+      return @controllers[[application, controller]]
     end
 
     def self.render_template app, template, data = {}
