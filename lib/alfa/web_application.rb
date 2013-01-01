@@ -13,7 +13,6 @@ require 'ruty/tags/resources'
 module Alfa
   class WebApplication < Alfa::Application
 
-    @namespaces_stack = []
     @bputs = []
     @controllers = {}
 
