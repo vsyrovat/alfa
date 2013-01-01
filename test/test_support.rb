@@ -17,6 +17,18 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal('BarBaz', Alfa::Support.camelcase_name('foo/bar_baz'))
   end
 
+  def test_underscore
+    assert_equal('foo', Alfa::Support.underscore_name('Foo'))
+    assert_equal('foo_bar', Alfa::Support.underscore_name('FooBar'))
+    assert_equal('a_b_bar', Alfa::Support.underscore_name('ABBar'))
+    assert_equal('foobar', Alfa::Support.underscore_name('foobar'))
+    assert_equal('foo_bar', Alfa::Support.underscore_name('Foo_Bar'))
+    assert_equal('foo_bar', Alfa::Support.underscore_name('Foo__Bar'))
+    assert_equal('foo_bar', Alfa::Support.underscore_name('foo_bar'))
+    assert_equal('foo_bar', Alfa::Support.underscore_name(:foo_bar))
+    assert_equal('bar_baz', Alfa::Support.underscore_name('Foo/Bar_Baz'))
+  end
+
   def test_inheritance
     DB1.host = 'localhost'
     DB2.host = 'otherhost'

@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
++ Support::underscore_name (vsyrovat)
+
 + Controllers isolation tests (vsyrovat)
 
 + Create new project by "alfa new PROJECT_NAME" command (vsyrovat)

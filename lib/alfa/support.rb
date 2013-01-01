@@ -35,6 +35,10 @@ module Alfa
       arg.to_s.split('/').last.split('_').map(&:capitalize).join
     end
 
+    def underscore_name(arg)
+      arg.to_s.split('/').last.scan(/[A-Z][a-z]*|[a-z]+/).map(&:downcase).join('_')
+    end
+
     def parse_arguments(*arguments)
       return arguments[0..-2], arguments.last if arguments.last.is_a?(Hash)
       return arguments, {}
