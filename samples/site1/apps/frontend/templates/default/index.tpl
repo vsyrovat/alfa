@@ -1,3 +1,5 @@
+{% require_jquery %}
+
 {{ name }}<br>
 {{ items }}
 {% for item in items %}
@@ -6,5 +8,3 @@
 
 <br>
 String from template / Строка из шаблона
-
-{% require_jquery %}
