@@ -9,6 +9,7 @@ require 'ruty'
 require 'ruty/bugfix'
 require 'ruty/upgrade'
 require 'ruty/tags/resources'
+require 'rack/utils'
 
 module Alfa
   class WebApplication < Alfa::Application
@@ -49,7 +50,7 @@ module Alfa
           #@logger.info "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}"
           #@logger.info "  PATH_INFO: #{env['PATH_INFO']}"
           response_code = 200
-          route, params = self.routes.find_route(@env['PATH_INFO'])
+          route, params = self.routes.find_route(::Rack::Utils.unescape(@env['PATH_INFO']))
           t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
           if t_sym == :asset
             body = File.read(File.expand_path('../../../assets/' + params[:path], __FILE__))
