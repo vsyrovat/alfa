@@ -7,6 +7,7 @@ module Project
     instance_eval(File.read(File.expand_path('../config.rb', __FILE__)), File.expand_path('../config.rb', __FILE__))
     config[:run_mode] = :development # :development or :production or :test
     config[:log][:file] = File.join(PROJECT_ROOT, 'log/web.log')
+    config[:serve_static] = true
   end
 
   WebApplication.init!

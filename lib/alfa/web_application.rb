@@ -10,6 +10,7 @@ require 'ruty/bugfix'
 require 'ruty/upgrade'
 require 'ruty/tags/resources'
 require 'rack/utils'
+require 'alfa/rack/file'
 
 module Alfa
   class WebApplication < Alfa::Application
@@ -103,6 +104,18 @@ module Alfa
     # router
     def self.routes
       @router ||= Alfa::Router
+    end
+
+
+    def self.rackup(builder)
+      if @config[:serve_static]
+        builder.run ::Rack::Cascade.new([
+          Rack::File.new(@config[:document_root]),
+          self,
+        ])
+      else
+        builder.run self
+      end
     end
 
 

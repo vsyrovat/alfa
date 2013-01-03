@@ -1,3 +1,3 @@
 require File.expand_path('../config/web_application', __FILE__)
 
-run Project::WebApplication
+Project::WebApplication.rackup self
