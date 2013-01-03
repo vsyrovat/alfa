@@ -71,4 +71,14 @@ class TestAlfaWebApplication < Test::Unit::TestCase
     assert_equal({:some_var=>:some_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash)
     assert_equal({}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:admin, :default]]._instance_variables_hash)
   end
+
+  # Calls isolation
+  # Controller's variables should be cleared before (or after) each call
+  def test_07
+    prepare_web_application
+    Alfa::WebApplication.call({'PATH_INFO'=>'/test_06'})
+    assert_equal({:some_var=>:some_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash)
+    Alfa::WebApplication.call({'PATH_INFO'=>'/test_07'})
+    assert_equal({:other_var=>:other_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash)
+  end
 end

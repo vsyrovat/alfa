@@ -15,4 +15,8 @@ class DefaultController < Alfa::Controller
   def test_06
     @some_var = :some_value
   end
+
+  def test_07
+    @other_var = :other_value
+  end
 end
