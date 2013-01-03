@@ -29,7 +29,7 @@ module Alfa
       if @config[:log][:file]
         @log_file = File.open(@config[:log][:file], File::WRONLY | File::APPEND | File::CREAT)
         @logger = Alfa::Logger.new(@log_file)
-        str = "Application (pid=#{$$}) started at #{DateTime.now}"
+        str = "Application (pid=#{$$}) started in #{@config[:run_mode]} mode at #{DateTime.now}"
         @logger.info "#{'='*str.length}\n#{str}"
         @logger.info "  PROJECT_ROOT: #{@config[:project_root]}"
         @logger.info "  DOCUMENT_ROOT: #{@config[:document_root]}\n"
