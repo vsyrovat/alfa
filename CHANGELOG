@@ -5,7 +5,11 @@ Legend:
 
 === HEAD
 
-+ Support::underscore_name (vsyrovat)
++ Serving static files with Rack::Cascade + Rack::File (vsyrovat)
+
++ Support.underscore_name (vsyrovat)
+
+~ Rename Support.capitalize_name -> Support.camelcase_name (vsyrovat)
 
 + Controllers isolation tests (vsyrovat)
 
