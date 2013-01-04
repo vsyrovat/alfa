@@ -36,16 +36,16 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal('otherhost', DB2.host)
   end
 
-  def test_parse_arguments
-    assert_equal([[], {}], Alfa::Support.parse_arguments())
-    assert_equal([[1, 2], {}], Alfa::Support.parse_arguments(1, 2))
-    assert_equal([[1, 2], {3=>4}], Alfa::Support.parse_arguments(1, 2, 3=>4))
-    assert_equal([[1, 2], {3=>4}], Alfa::Support.parse_arguments(1, 2, {3=>4}))
-    assert_equal([[], {3=>4}], Alfa::Support.parse_arguments(3=>4))
-    assert_equal([[1, 2], {3=>4, 5=>6}], Alfa::Support.parse_arguments(1, 2, 3=>4, 5=>6))
-    assert_equal([[], {3=>4, 5=>6}], Alfa::Support.parse_arguments(3=>4, 5=>6))
-    assert_equal([[[]], {}], Alfa::Support.parse_arguments([]))
-    assert_equal([[], {}], Alfa::Support.parse_arguments({}))
+  def test_args_kwargs
+    assert_equal([[], {}], Alfa::Support.args_kwargs())
+    assert_equal([[1, 2], {}], Alfa::Support.args_kwargs(1, 2))
+    assert_equal([[1, 2], {3=>4}], Alfa::Support.args_kwargs(1, 2, 3=>4))
+    assert_equal([[1, 2], {3=>4}], Alfa::Support.args_kwargs(1, 2, {3=>4}))
+    assert_equal([[], {3=>4}], Alfa::Support.args_kwargs(3=>4))
+    assert_equal([[1, 2], {3=>4, 5=>6}], Alfa::Support.args_kwargs(1, 2, 3=>4, 5=>6))
+    assert_equal([[], {3=>4, 5=>6}], Alfa::Support.args_kwargs(3=>4, 5=>6))
+    assert_equal([[[]], {}], Alfa::Support.args_kwargs([]))
+    assert_equal([[], {}], Alfa::Support.args_kwargs({}))
   end
 
   def test_strtr

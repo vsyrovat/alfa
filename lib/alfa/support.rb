@@ -39,9 +39,9 @@ module Alfa
       arg.to_s.split('/').last.scan(/[A-Z][a-z]*|[a-z]+/).map(&:downcase).join('_')
     end
 
-    def parse_arguments(*arguments)
-      return arguments[0..-2], arguments.last if arguments.last.is_a?(Hash)
-      return arguments, {}
+    def args_kwargs(*args)
+      return args[0..-2], args.last if args.last.is_a?(Hash)
+      return args, {}
     end
   end
 
