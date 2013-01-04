@@ -70,6 +70,7 @@ module Alfa
             controller = self.invoke_controller(app_sym, c_sym)
             raise Exceptions::Route404 unless controller.class.instance_methods(false).include?(a_sym)
             controller._clear_instance_variables
+            controller.application = self
             controller.__send__(a_sym)
             data = controller._instance_variables_hash
             Ruty::Tags::RequireStyle.clean_cache
