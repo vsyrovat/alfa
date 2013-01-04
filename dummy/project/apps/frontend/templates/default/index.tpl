@@ -1,0 +1,1 @@
+apps/frontend/default#index
