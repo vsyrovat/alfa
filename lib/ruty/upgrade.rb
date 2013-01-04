@@ -1,4 +1,4 @@
-# escape variables by default
+# Escaping variables by default
 # {{ variable }} transforms to {{ variable|escape }}
 # {{ variable|raw }} transforms to {{ variable }}
 module Ruty
