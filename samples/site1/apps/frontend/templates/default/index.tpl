@@ -8,3 +8,4 @@
 
 <br>
 String from template / Строка из шаблона
+<div> link_to_admin: <a href="{{link_to_admin}}">{{link_to_admin}}</a> </div>

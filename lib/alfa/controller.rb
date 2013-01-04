@@ -9,5 +9,9 @@ module Alfa
     def _clear_instance_variables
       instance_variables.each {|name| remove_instance_variable(name)}
     end
+
+    def href(*o)
+      @application.routes.href(*o)
+    end
   end
 end
