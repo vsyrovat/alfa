@@ -101,6 +101,12 @@ class Hash
     end
     self
   end
+
+
+  def delete!(*keys)
+    keys.each{|key| self.delete(key)}
+    self
+  end
 end
 
 

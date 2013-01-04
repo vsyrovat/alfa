@@ -52,4 +52,10 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal("BB AA", "AA BB".strtr("AA" => "BB", "BB" => "AA"))
     assert_equal("BB AA", "AA BB".strtr([["AA", "BB"], ["BB", "AA"]]))
   end
+
+  def test_hash_delete!
+    assert_equal({:a=>1}, {:a=>1, :b=>2}.delete!(:b))
+    assert_equal({:a=>1}, {:a=>1, :b=>2, :c=>3}.delete!(:b, :c))
+    assert_equal({:a=>1, :c=>3}, {:a=>1, :b=>2, :c=>3}.delete!(:b))
+  end
 end
