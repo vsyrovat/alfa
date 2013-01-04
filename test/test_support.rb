@@ -58,4 +58,15 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal({:a=>1}, {:a=>1, :b=>2, :c=>3}.delete!(:b, :c))
     assert_equal({:a=>1, :c=>3}, {:a=>1, :b=>2, :c=>3}.delete!(:b))
   end
+
+  def test_hash_except
+    h = {:a=>1, :b=>2}
+    assert_equal({:a=>1}, h.except(:b))
+    assert_equal({:a=>1, :b=>2}, h)
+    h = {:a=>1, :b=>2, :c=>3}
+    assert_equal({:a=>1}, h.except(:b, :c))
+    assert_equal({:a=>1, :b=>2, :c=>3}, h)
+    assert_equal({:a=>1, :c=>3}, h.except(:b))
+    assert_equal({:a=>1, :b=>2, :c=>3}, h)
+  end
 end

@@ -107,6 +107,11 @@ class Hash
     keys.each{|key| self.delete(key)}
     self
   end
+
+
+  def except(*keys)
+    self.dup.delete!(*keys)
+  end
 end
 
 
