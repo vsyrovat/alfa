@@ -165,5 +165,24 @@ module Alfa
       raise Alfa::Exceptions::Route404
     end
 
+
+    def self.href(*o)
+      args, kwargs = Support.args_kwargs(*o)
+      @routes.each do |route|
+        if route[:context].is_a?(Hash) # container
+          if route[:context][:app][:app] == kwargs[:app]
+            route[:routes].each do |r|
+              r[:placeholders] = r[:rule].scan(/:([a-z_][a-z0-9_]*)/).map{|m| m[0].to_sym}.sort unless r[:placeholders]
+              if (r[:placeholders] - kwargs.keys).empty? &&
+                  (kwargs.keys & r[:options].keys).all?{|key| kwargs[key] == r[:options][key]} &&
+                  (kwargs.keys - [:app] - r[:placeholders] - r[:options].keys).empty?
+                return File.join(route[:context][:app][:path], r[:rule].strtr(kwargs.map{|key, value| [":#{key}", value.to_s]}))
+              end
+            end
+          end
+        end
+      end
+      raise Exceptions::E003
+    end
   end
 end

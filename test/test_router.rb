@@ -211,4 +211,22 @@ class AlfaRouterTest < Test::Unit::TestCase
     )
     #puts Alfa::Router.instance_variable_get(:@routes).inspect
   end
+
+  # Building urls
+  def test_09
+    Alfa::Router.reset
+    Alfa::Router.apps_dir = File.expand_path('../data/test_router/2/apps', __FILE__)
+    load File.expand_path('../data/test_router/2/config/routes.rb', __FILE__)
+    assert_equal('/', Alfa::Router.href(:app=>:frontend, :controller=>:main, :action=>:index))
+    assert_equal('/', Alfa::Router.href(:app=>:frontend))
+    assert_equal('/hello', Alfa::Router.href(:app=>:frontend, :controller=>:main, :action=>:hello))
+    assert_equal('/hello', Alfa::Router.href(:app=>:frontend, :action=>:hello))
+    assert_equal('/hello/babuin', Alfa::Router.href(:app=>:frontend, :controller=>:hello, :action=>:babuin))
+    assert_equal('/hello/babuin/11', Alfa::Router.href(:app=>:frontend, :controller=>:hello, :action=>:babuin, :id=>11))
+    assert_equal('/admin/', Alfa::Router.href(:app=>:backend, :controller=>:main, :action=>:index))
+    assert_equal('/admin/', Alfa::Router.href(:app=>:backend))
+    assert_equal('/admin/', Alfa::Router.href(:app=>:backend, :controller=>:main))
+    assert_equal('/admin/babuin', Alfa::Router.href(:app=>:backend, :controller=>:babuin, :action=>:index))
+    assert_equal('/admin/babuin', Alfa::Router.href(:app=>:backend, :controller=>:babuin))
+    end
 end
