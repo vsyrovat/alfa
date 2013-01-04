@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
++ ::Hash.delete!, ::Hash.except
+
 ~ Rename Support.parse_arguments -> Support.args_kwargs
 
 + Serving static files with Rack::Cascade + Rack::File (vsyrovat)
