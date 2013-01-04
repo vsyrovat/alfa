@@ -48,9 +48,22 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal([[], {}], Alfa::Support.args_kwargs({}))
   end
 
-  def test_strtr
-    assert_equal("BB AA", "AA BB".strtr("AA" => "BB", "BB" => "AA"))
-    assert_equal("BB AA", "AA BB".strtr([["AA", "BB"], ["BB", "AA"]]))
+  def test_string_strtr
+    s = "AA BB"
+    assert_equal("BB AA", s.strtr("AA" => "BB", "BB" => "AA"))
+    assert_equal("AA BB", s)
+    s = "AA BB"
+    assert_equal("BB AA", s.strtr([["AA", "BB"], ["BB", "AA"]]))
+    assert_equal("AA BB", s)
+  end
+
+  def test_string_strtr!
+    s = "AA BB"
+    assert_equal("BB AA", s.strtr!("AA" => "BB", "BB" => "AA"))
+    assert_equal("BB AA", s)
+    s = "AA BB"
+    assert_equal("BB AA", s.strtr!([["AA", "BB"], ["BB", "AA"]]))
+    assert_equal("BB AA", s)
   end
 
   def test_hash_delete!

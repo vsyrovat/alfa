@@ -124,4 +124,12 @@ class String
         /(#{keys.map{|a| Regexp.quote(a) }.join( ')|(' )})/
     ) { |match| values[keys.index(match)] }
   end
+
+  def strtr!(replace_pairs)
+    keys = replace_pairs.map {|a, b| a }
+    values = replace_pairs.map {|a, b| b }
+    self.gsub!(
+        /(#{keys.map{|a| Regexp.quote(a) }.join( ')|(' )})/
+    ) { |match| values[keys.index(match)] }
+  end
 end
