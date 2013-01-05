@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
++ href, href_to methods for controller and templates
+
 + ::Hash.delete!, ::Hash.except
 
 ~ Rename Support.parse_arguments -> Support.args_kwargs
