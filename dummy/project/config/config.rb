@@ -7,3 +7,4 @@ config[:db][:main] = {
     :path => File.join(PROJECT_ROOT, 'db/main'), # require both instance and path
     :maintain => true,
 }
+config[:groups] = Project::GROUPS

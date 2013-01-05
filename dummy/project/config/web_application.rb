@@ -1,6 +1,7 @@
 require 'alfa/web_application'
 require File.expand_path('../env', __FILE__)
 require File.expand_path('../db', __FILE__)
+require File.expand_path('../groups', __FILE__)
 
 module Project
   class WebApplication < Alfa::WebApplication
