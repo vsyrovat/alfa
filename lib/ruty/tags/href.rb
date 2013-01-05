@@ -8,4 +8,5 @@ class Ruty::Tags::Href < Ruty::Tag
     stream << Ruty::AUX_VARS[:controller].href(@argstring)
   end
   Ruty::Tags.register(self, :href)
+  Ruty::Tags.register(self, :href_to)
 end

@@ -18,6 +18,8 @@ module Alfa
       @application.routes.href(kwargs)
     end
 
+    alias :href_to :href
+
     def _extract_href_params(*o)
       args, kwargs = Support.args_kwargs(*o)
       if args.any?
