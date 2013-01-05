@@ -228,5 +228,11 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal('/admin/', Alfa::Router.href(:app=>:backend, :controller=>:main))
     assert_equal('/admin/babuin', Alfa::Router.href(:app=>:backend, :controller=>:babuin, :action=>:index))
     assert_equal('/admin/babuin', Alfa::Router.href(:app=>:backend, :controller=>:babuin))
-    end
+
+    # Build urls with GET params
+    assert_equal('/?foo=bar', Alfa::Router.href(:app=>:frontend, :controller=>:main, :action=>:index, :params=>{:foo=>:bar}))
+    assert_equal('/?staki=gKyE', Alfa::Router.href(:app=>:frontend, :params=>{:staki=>'gKyE'}))
+    assert_equal('/?company=AT%26T', Alfa::Router.href(:app=>:frontend, :params=>{:company=>'AT&T'}))
+  end
+
 end

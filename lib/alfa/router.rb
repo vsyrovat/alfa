@@ -1,4 +1,5 @@
 require 'alfa/exceptions'
+require 'rack/utils'
 
 module Alfa
   class Router
@@ -169,6 +170,8 @@ module Alfa
 
 
     def self.href(kwargs={})
+      params = kwargs[:params] || {}
+      kwargs.delete!(:params)
       @routes.each do |route|
         if route[:context].is_a?(Hash) # container
           if route[:context][:app][:app] == kwargs[:app]
@@ -177,7 +180,9 @@ module Alfa
               if (r[:placeholders] - kwargs.keys).empty? &&
                   (kwargs.keys & r[:options].keys).all?{|key| kwargs[key] == r[:options][key]} &&
                   (kwargs.keys - [:app] - r[:placeholders] - r[:options].keys).empty?
-                return File.join(route[:context][:app][:path], r[:rule].strtr(kwargs.map{|key, value| [":#{key}", value.to_s]}))
+                result = File.join(route[:context][:app][:path], r[:rule].strtr(kwargs.map{|key, value| [":#{key}", value.to_s]}))
+                result += "?#{::Rack::Utils.build_query(params)}" if params.any?
+                return result
               end
             end
           end
