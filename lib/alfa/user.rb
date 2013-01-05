@@ -1,5 +1,5 @@
 module Alfa
-  class AnonymousUser
+  class GuestUser
     def self.grants
       []
     end

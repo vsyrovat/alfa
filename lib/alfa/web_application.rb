@@ -31,7 +31,6 @@ module Alfa
 
     def self.init!
       super
-      @main_db = @config[:db][:main][:instance]
       Alfa::Router.reset
       Alfa::Router.apps_dir = File.join(@config[:project_root], 'apps')
       load File.join(@config[:project_root], 'config/routes.rb')
@@ -146,18 +145,18 @@ module Alfa
 
 
     def self.user
-      return @main_db[:users].find(session['user_id']) if session['user_id']
-      AnonymousUser
+      return @config[:db][:main][:instance][:users].find(session['user_id']) if session['user_id']
+      GuestUser
     end
 
 
     def self.try_register(username, password)
-      @main_db.transaction do
-        unless Users.first(:login=>username)
+      @config[:db][:main][:instance].transaction do
+        unless @config[:db][:main][:instance][:users].first(:login=>username)
           @logger.portion do |l|
             salt = SecureRandom.hex(5)
             passhash = Digest::MD5.hexdigest("#{salt}#{password}")
-            Users.insert(:login=>username, :salt=>salt, :passhash=>passhash)
+            @config[:db][:main][:instance][:users].insert(:login=>username, :salt=>salt, :passhash=>passhash)
             l.info("create new user login=#{username}, password=#{password}, salt=#{salt}, passhash=#{passhash}")
           end
           return true, "Registration done"
@@ -168,9 +167,9 @@ module Alfa
 
 
     def self.try_login(username, password)
-      u = Users.first(:login=>username)
+      u = @config[:db][:main][:instance][:users].first(:login=>username)
       raise "No such login: #{username}" unless u
-      if u.values[:passhash] == Digest::MD5.hexdigest("#{u.values[:salt]}#{password}")
+      if u[:passhash] == Digest::MD5.hexdigest("#{u[:salt]}#{password}")
         # success
         #@request.session.destroy_session
         return true
