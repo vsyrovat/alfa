@@ -16,4 +16,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'ruty',   '= 0.0.1' # 0.0.1
   spec.add_runtime_dependency 'mysql2', '~> 0.3'  # 0.3.11
   spec.add_runtime_dependency 'sequel', '~> 3.42' # 3.42.0
+  spec.add_runtime_dependency 'rack-session-sequel', '~> 0.0.1' # 0.0.1
 end

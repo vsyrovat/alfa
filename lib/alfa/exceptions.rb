@@ -3,6 +3,13 @@ module Alfa
     # Route not found
     class Route404 < StandardError; end
 
+    class HttpRedirect < StandardError
+      attr_reader :url, :code
+      def initialize(url, code)
+        @url, @code = url, code
+      end
+    end
+
     # Application's config.project_root required
     class E001 < StandardError; end
 

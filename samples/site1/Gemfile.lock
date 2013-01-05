@@ -4,6 +4,7 @@ PATH
     alfa (0.0.5.pre)
       mysql2 (~> 0.3)
       rack (~> 1.4)
+      rack-session-sequel (~> 0.0.1)
       rake (~> 10.0)
       ruty (= 0.0.1)
       rvm (~> 1.11)
@@ -14,6 +15,9 @@ GEM
   specs:
     mysql2 (0.3.11)
     rack (1.4.1)
+    rack-session-sequel (0.0.1)
+      rack
+      sequel
     rake (10.0.3)
     ruty (0.0.1)
     rvm (1.11.3.5)

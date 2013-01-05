@@ -6,14 +6,22 @@ require 'alfa/tfile'
 require 'alfa/controller'
 require 'alfa/router'
 require 'alfa/ruty'
+require 'alfa/user'
 require 'rack/utils'
-require 'alfa/rack/file'
+require 'rack/request'
+require 'rack/file_alfa'
+require 'digest/md5'
+require 'securerandom'
 
 module Alfa
   class WebApplication < Alfa::Application
 
     @bputs = []
     @controllers = {}
+
+    class << self
+      attr_reader :request
+    end
 
     def self.inherited subclass
       instance_variables.each do |var|
@@ -23,6 +31,7 @@ module Alfa
 
     def self.init!
       super
+      @main_db = @config[:db][:main][:instance]
       Alfa::Router.reset
       Alfa::Router.apps_dir = File.join(@config[:project_root], 'apps')
       load File.join(@config[:project_root], 'config/routes.rb')
@@ -30,7 +39,7 @@ module Alfa
     end
 
     # main rack routine
-    def self.call env
+    def self.call(env)
       start_time = Time.now
       response_code = nil # required for store context inside @logger.portion
       headers = {} # required for store context inside @logger.portion
@@ -48,41 +57,46 @@ module Alfa
           #@logger.info "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}"
           #@logger.info "  PATH_INFO: #{env['PATH_INFO']}"
           response_code = 200
-          route, params = self.routes.find_route(::Rack::Utils.unescape(@env['PATH_INFO']))
+          route, params = self.routes.find_route(Rack::Utils.unescape(@env['PATH_INFO']))
           t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
           if t_sym == :asset
             body = File.read(File.expand_path('../../../assets/' + params[:path], __FILE__))
             case File.extname(params[:path]).downcase
               when '.js'
-                headers = {'Content-Type' => 'application/javascript; charset=utf-8'}
+                headers['Content-Type'] = 'application/javascript; charset=utf-8'
               when '.css'
-                headers = {'Content-Type' => 'text/css; charset=utf-8'}
+                headers['Content-Type'] = 'text/css; charset=utf-8'
               else
             end
           else
+            @request = Rack::Request.new(env) # weakref?
             app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
             c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
             a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
             l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
             controller = self.invoke_controller(app_sym, c_sym)
             raise Exceptions::Route404 unless controller.class.instance_methods(false).include?(a_sym)
-            controller._clear_instance_variables
+            controller._clear_instance_variables # cleanup
             controller.application = self
             controller.app_sym = app_sym
             controller.c_sym = c_sym
             controller.__send__(a_sym)
             data = controller._instance_variables_hash
-            Ruty::Tags::RequireStyle.clean_cache
-            Ruty::Tags::RequireScript.clean_cache
+            Ruty::Tags::RequireStyle.clean_cache # cleanup
+            Ruty::Tags::RequireScript.clean_cache # cleanup
             content = self.render_template(app_sym, c_sym, a_sym, controller, data)
             body = self.render_layout(app_sym.to_s, l_sym.to_s + '.tpl', {body: content})
-            headers = {"Content-Type" => 'text/html; charset=utf-8'}
+            headers["Content-Type"] = 'text/html; charset=utf-8'
           end
         rescue Alfa::Exceptions::Route404 => e
           response_code = 404
           body = 'Url not found<br>urls map:<br>'
           body += self.routes.instance_variable_get(:@routes).inspect
           l.info "404: Url not found (#{e.message})"
+        rescue Exceptions::HttpRedirect => e
+          response_code = e.code
+          headers['Location'] = e.url.to_s
+          body = ''
         rescue Exception => e
           response_code = 500
           body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>\n#{e.backtrace.join("<br>\n")}"
@@ -109,9 +123,10 @@ module Alfa
 
 
     def self.rackup(builder)
+      builder.use Rack::Session::Cookie
       if @config[:serve_static]
-        builder.run ::Rack::Cascade.new([
-          Rack::File.new(@config[:document_root]),
+        builder.run Rack::Cascade.new([
+          Rack::FileAlfa.new(@config[:document_root]),
           self,
         ])
       else
@@ -124,6 +139,52 @@ module Alfa
       @bputs << "#{arg}\n"
     end
 
+
+    def self.session
+      @request.session
+    end
+
+
+    def self.user
+      return @main_db[:users].find(session['user_id']) if session['user_id']
+      AnonymousUser
+    end
+
+
+    def self.try_register(username, password)
+      @main_db.transaction do
+        unless Users.first(:login=>username)
+          @logger.portion do |l|
+            salt = SecureRandom.hex(5)
+            passhash = Digest::MD5.hexdigest("#{salt}#{password}")
+            Users.insert(:login=>username, :salt=>salt, :passhash=>passhash)
+            l.info("create new user login=#{username}, password=#{password}, salt=#{salt}, passhash=#{passhash}")
+          end
+          return true, "Registration done"
+        end
+        return false, "User with login #{username} already exists"
+      end
+    end
+
+
+    def self.try_login(username, password)
+      u = Users.first(:login=>username)
+      raise "No such login: #{username}" unless u
+      if u.values[:passhash] == Digest::MD5.hexdigest("#{u.values[:salt]}#{password}")
+        # success
+        #@request.session.destroy_session
+        return true
+      else
+        # fail
+        raise 'login fail'
+        return false
+      end
+    end
+
+
+    def self.redirect(url, code=302)
+      raise Exceptions::HttpRedirect.new(url, code)
+    end
 
   # private section
 

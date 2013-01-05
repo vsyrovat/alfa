@@ -1,1 +1,2 @@
-class Foo < Sequel::Model(DB::Main[:foo]); end
+class Foo < Sequel::Model(DB::Main[:foo])
+end

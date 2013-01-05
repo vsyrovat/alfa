@@ -39,13 +39,57 @@ module Alfa
     def _string_to_aca(str)
       res = {}
       s1 = str.split('@')
-      raise Exceptions::E004.new("E004: Bad href argument #{str}: it should contain at most one * symbol") if s1.length > 2
+      raise Exceptions::E004.new("E004: Bad href argument #{str}: it should contain at most one @ symbol") if s1.length > 2
       res[:app] = s1.last.to_sym if s1.length > 1
       s2 = s1.first.split('#')
       raise Exceptions::E004.new("E004: Bad href argument #{str}: it should contain at most one # symbol") if s2.length > 2
       res[:controller] = s2.first.to_sym if s2.length > 1
       res[:action] = s2.last.to_sym if s2.length > 0
       res
+    end
+
+
+    def session
+      @application.session
+    end
+
+    # Return current user
+    def user
+      @application.user
+    end
+
+
+    def grant?(grant)
+      user.grants.include? grant
+    end
+
+
+    [300, 301, 302, 303].each do |code|
+      define_method ("redirect_#{code}".to_sym) do |url|
+        @application.redirect(url, code)
+      end
+    end
+
+    alias :redirect :redirect_302
+
+
+    def request
+      @application.request
+    end
+
+
+    def try_login(*o)
+      @application.try_login(*o)
+    end
+
+
+    def try_register(*o)
+      @application.try_register(*o)
+    end
+
+    # Store flash message to session
+    def flash(message)
+
     end
   end
 end
