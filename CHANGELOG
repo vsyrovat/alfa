@@ -5,17 +5,17 @@ Legend:
 
 === HEAD
 
-+ href, href_to methods for controller and templates
++ Basic registration and authorization (vsyrovat)
 
-+ ::Hash.delete!, ::Hash.except
++ Redirects (vsyrovat)
 
-~ Rename Support.parse_arguments -> Support.args_kwargs
++ href, href_to methods for controller and templates (vsyrovat)
+
++ ::Hash.delete!, ::Hash.except methods (vsyrovat)
 
 + Serving static files with Rack::Cascade + Rack::File (vsyrovat)
 
-+ Support.underscore_name (vsyrovat)
-
-~ Rename Support.capitalize_name -> Support.camelcase_name (vsyrovat)
++ Support.camelcase_name, Support.underscore_name, Support.args_kwargs methods (vsyrovat)
 
 + Controllers isolation tests (vsyrovat)
 
