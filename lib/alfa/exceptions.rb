@@ -8,5 +8,8 @@ module Alfa
 
     # WebApplication's config.document_root required
     class E002 < StandardError; end
+
+    # Href can't be build
+    class E003 < StandardError; end
   end
 end

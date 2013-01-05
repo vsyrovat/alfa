@@ -1,3 +1,5 @@
+require 'alfa/exceptions'
+
 module Alfa
   class Router
 
@@ -182,7 +184,7 @@ module Alfa
           end
         end
       end
-      raise Exceptions::E003
+      raise Exceptions::E003.new("Can't build url by params #{o}")
     end
   end
 end
