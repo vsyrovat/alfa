@@ -1,5 +1,6 @@
 require 'test/unit'
 require 'alfa/controller'
+require 'alfa/exceptions'
 
 class TestAlfaController < Test::Unit::TestCase
   def test_01
@@ -18,5 +19,31 @@ EOL
     assert_equal({:foo=>:bar}, z._instance_variables_hash)
     z.other_action
     assert_equal({:foo=>:bar, :fuu=>:baz}, z._instance_variables_hash)
+  end
+
+  # _string_to_aca
+  def test_02
+    c = Alfa::Controller.new
+    assert_equal({:action=>:foo}, c._string_to_aca('foo'))
+    assert_equal({:action=>:foo, :controller=>:default}, c._string_to_aca('default#foo'))
+    assert_equal({:app=>:admin, :controller=>:default, :action=>:foo}, c._string_to_aca('admin*default#foo'))
+    assert_raise Alfa::Exceptions::E004 do c._string_to_aca('*admin*default#foo') end
+    assert_raise Alfa::Exceptions::E004 do c._string_to_aca('a*dmin*default#foo') end
+    assert_raise Alfa::Exceptions::E004 do c._string_to_aca('admin*default#f#oo') end
+  end
+
+  # _extract_href_params
+  def test_03
+    c = Alfa::Controller.new
+    c.app_sym = :frontend
+    c.c_sym = :default
+    assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params(:action=>:foo))
+    assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params(:action=>:foo, :controller=>:default))
+    assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params(:foo))
+    assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params('foo'))
+    assert_equal({:app=>:frontend, :controller=>:admin, :action=>:foo}, c._extract_href_params('admin#foo'))
+    assert_equal({:app=>:zoo, :controller=>:admin, :action=>:foo}, c._extract_href_params('admin#foo', :app=>:zoo))
+    assert_equal({:app=>:zoo, :controller=>:admin, :action=>:foo}, c._extract_href_params('zoo*admin#foo'))
+    assert_equal({:app=>:admin}, c._extract_href_params(:app=>:admin))
   end
 end

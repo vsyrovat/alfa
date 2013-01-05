@@ -168,8 +168,7 @@ module Alfa
     end
 
 
-    def self.href(*o)
-      args, kwargs = Support.args_kwargs(*o)
+    def self.href(kwargs={})
       @routes.each do |route|
         if route[:context].is_a?(Hash) # container
           if route[:context][:app][:app] == kwargs[:app]
@@ -184,7 +183,7 @@ module Alfa
           end
         end
       end
-      raise Exceptions::E003.new("Can't build url by params #{o}")
+      raise Exceptions::E003.new("Can't build url by params #{kwargs}")
     end
   end
 end

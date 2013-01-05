@@ -11,5 +11,8 @@ module Alfa
 
     # Href can't be build
     class E003 < StandardError; end
+
+    # Bad str for href format
+    class E004 < StandardError; end
   end
 end
