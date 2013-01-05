@@ -36,13 +36,13 @@ module Alfa
     # 'app*controller#action'
     def _string_to_aca(str)
       res = {}
-      s1 = str.split('*')
+      s1 = str.split('@')
       raise Exceptions::E004.new("E004: Bad href argument #{str}: it should contain at most one * symbol") if s1.length > 2
-      res[:app] = s1.first.to_sym if s1.length > 1
-      s2 = s1.last.split('#')
+      res[:app] = s1.last.to_sym if s1.length > 1
+      s2 = s1.first.split('#')
       raise Exceptions::E004.new("E004: Bad href argument #{str}: it should contain at most one # symbol") if s2.length > 2
       res[:controller] = s2.first.to_sym if s2.length > 1
-      res[:action] = s2.last.to_sym
+      res[:action] = s2.last.to_sym if s2.length > 0
       res
     end
   end

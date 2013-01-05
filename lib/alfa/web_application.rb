@@ -5,10 +5,7 @@ require 'alfa/application'
 require 'alfa/tfile'
 require 'alfa/controller'
 require 'alfa/router'
-require 'ruty'
-require 'ruty/bugfix'
-require 'ruty/upgrade'
-require 'ruty/tags/resources'
+require 'alfa/ruty'
 require 'rack/utils'
 require 'alfa/rack/file'
 
@@ -76,7 +73,8 @@ module Alfa
             controller.__send__(a_sym)
             data = controller._instance_variables_hash
             Ruty::Tags::RequireStyle.clean_cache
-            content = self.render_template(app_sym.to_s, File.join(c_sym.to_s, a_sym.to_s + '.tpl'), data)
+            Ruty::Tags::RequireScript.clean_cache
+            content = self.render_template(app_sym, c_sym, a_sym, controller, data)
             body = self.render_layout(app_sym.to_s, l_sym.to_s + '.tpl', {body: content})
             headers = {"Content-Type" => 'text/html; charset=utf-8'}
           end
@@ -144,8 +142,9 @@ module Alfa
       return @controllers[[application, controller]]
     end
 
-    def self.render_template app, template, data = {}
-      t = self.loader.get_template File.join(app, 'templates', template)
+    def self.render_template(app_sym, c_sym, a_sym, controller, data = {})
+      Ruty::AUX_VARS[:controller] = controller
+      t = self.loader.get_template File.join(app_sym.to_s, 'templates', c_sym.to_s, "#{a_sym}.tpl")
       t.render data
     end
 

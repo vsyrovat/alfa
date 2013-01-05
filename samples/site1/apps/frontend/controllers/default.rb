@@ -7,7 +7,7 @@ class DefaultController < Alfa::Controller
     @name = 'String from controller / Строка из контроллера'
     @link_to_admin = href(:app=>:admin)
     @link_to_foo = href :foo
-    @link_to_admin_foo = href 'admin*default#foo'
+    @link_to_admin_foo = href 'default#foo@admin'
   end
 
   def foo
