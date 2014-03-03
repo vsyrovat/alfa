@@ -8,7 +8,7 @@ Encoding.default_internal = 'utf-8'
 module Alfa
 
   # Dirty hack. Using constant-hash to store values. Ruby forbid dynamically change constants, but it allow change items of constant-structs
-  # 1st using - in rake tasks (see self.load_tasks)
+  # 1st using - in Rake tasks (see self.load_tasks)
   VARS = {}
 
   class Application
