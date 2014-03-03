@@ -36,7 +36,7 @@ module Alfa
       @controllers.clear
     end
 
-    # main rack routine
+    # main Rack routine
     def self.call(env)
       start_time = Time.now
       response_code = nil # required for store context inside @logger.portion
