@@ -1,4 +1,3 @@
-# coding: utf-8
 require 'alfa/support'
 require 'alfa/exceptions'
 require 'alfa/application'
