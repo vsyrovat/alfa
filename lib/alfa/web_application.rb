@@ -22,7 +22,7 @@ module Alfa
       attr_reader :request
     end
 
-    def self.inherited subclass
+    def self.inherited(subclass)
       instance_variables.each do |var|
         subclass.instance_variable_set(var, instance_variable_get(var))
       end
