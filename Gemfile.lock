@@ -6,7 +6,7 @@ GEM
     rack-session-sequel (0.0.1)
       rack
       sequel
-    rake (10.1.1)
+    rake (10.2.2)
     ruty (0.0.1)
     rvm (1.11.3.9)
     sequel (3.48.0)
