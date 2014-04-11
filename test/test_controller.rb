@@ -16,9 +16,9 @@ end
 EOL
     z = Z.new
     z.some_action
-    assert_equal({:foo=>:bar}, z._instance_variables_hash)
+    assert_equal({:@foo=>:bar}, z._instance_variables_hash)
     z.other_action
-    assert_equal({:foo=>:bar, :fuu=>:baz}, z._instance_variables_hash)
+    assert_equal({:@foo=>:bar, :@fuu=>:baz}, z._instance_variables_hash)
   end
 
   # _string_to_aca

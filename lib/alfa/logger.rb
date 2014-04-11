@@ -12,6 +12,9 @@ module Alfa
     def info(*args)
     end
 
+    def debug(*args)
+    end
+
     def <<(*args)
     end
   end

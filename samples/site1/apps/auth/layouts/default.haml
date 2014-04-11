@@ -1,0 +1,12 @@
+!!! 5
+%html
+  %head
+    %meta{charset: 'utf-8'}
+    %title<
+      = block(:title)
+    - require_style '960gs24', :text, :reset
+    = styles
+  %body
+    = block(:body) do
+      = @body
+    = scripts

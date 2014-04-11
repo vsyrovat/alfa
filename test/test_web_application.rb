@@ -11,6 +11,7 @@ class TestAlfaWebApplication < Test::Unit::TestCase
 
   def test_02
     Alfa::WebApplication.config[:project_root] = File.expand_path('../data/test_web_application', __FILE__)
+    Alfa::WebApplication.config[:templates_priority] = [:haml]
     assert_raise Alfa::Exceptions::E002, "WebApplication requires config.document_root" do
       Alfa::WebApplication.config.delete(:document_root)
       Alfa::WebApplication.init!
@@ -29,6 +30,7 @@ class TestAlfaWebApplication < Test::Unit::TestCase
   def prepare_web_application
     Alfa::WebApplication.config[:project_root] = File.expand_path('../data/test_web_application', __FILE__)
     Alfa::WebApplication.config[:document_root] = File.expand_path('../data/test_web_application/public', __FILE__)
+    Alfa::WebApplication.config[:templates_priority] = [:haml]
     Alfa::WebApplication.init!
   end
 
@@ -48,10 +50,10 @@ class TestAlfaWebApplication < Test::Unit::TestCase
   def test_04
     prepare_web_application
     #puts Alfa::Router.instance_variable_get(:@routes).inspect
-    assert_equal('Frontend', Alfa::WebApplication.call({'PATH_INFO'=>'/test_04'})[2].join)
-    assert_equal('Admin', Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_04'})[2].join)
-    assert_equal('Frontend', Alfa::WebApplication.call({'PATH_INFO'=>'/test_04'})[2].join) # call controller after calling same name controller should not interleave controller variables
-    assert_equal('Admin', Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_04'})[2].join)
+    assert_equal("Frontend\n", Alfa::WebApplication.call({'PATH_INFO'=>'/test_04'})[2].join)
+    assert_equal("Admin\n", Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_04'})[2].join)
+    assert_equal("Frontend\n", Alfa::WebApplication.call({'PATH_INFO'=>'/test_04'})[2].join) # call controller after calling same name controller should not interleave controller variables
+    assert_equal("Admin\n", Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_04'})[2].join)
   end
 
   # Controllers isolation (admin/DefaultController, frontend/DefaultController):
@@ -68,8 +70,8 @@ class TestAlfaWebApplication < Test::Unit::TestCase
     prepare_web_application
     Alfa::WebApplication.call({'PATH_INFO'=>'/test_06'})
     Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_06'})
-    assert_equal({:some_var=>:some_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:application, :app_sym, :c_sym))
-    assert_equal({}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:admin, :default]]._instance_variables_hash.except(:application, :app_sym, :c_sym))
+    assert_equal({:@some_var=>:some_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:@application, :@app_sym, :@c_sym))
+    assert_equal({}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:admin, :default]]._instance_variables_hash.except(:@application, :@app_sym, :@c_sym))
   end
 
   # Calls isolation
@@ -77,8 +79,8 @@ class TestAlfaWebApplication < Test::Unit::TestCase
   def test_07
     prepare_web_application
     Alfa::WebApplication.call({'PATH_INFO'=>'/test_06'})
-    assert_equal({:some_var=>:some_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:application, :app_sym, :c_sym))
+    assert_equal({:@some_var=>:some_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:@application, :@app_sym, :@c_sym))
     Alfa::WebApplication.call({'PATH_INFO'=>'/test_07'})
-    assert_equal({:other_var=>:other_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:application, :app_sym, :c_sym))
+    assert_equal({:@other_var=>:other_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:@application, :@app_sym, :@c_sym))
   end
 end

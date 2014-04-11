@@ -1,0 +1,15 @@
+%h1 Registration
+%form{href: href('registration'), method: :post}
+  %table
+    %tr
+      %td login:
+      %td
+        %input{type: :text, name: :login}
+    %tr
+      %td password:
+      %td
+        %input{type: :text, name: :password}
+    %tr
+      %td{colspan: 2}
+        %input{type: :submit}
+%p #{a 'Login', href('login')}

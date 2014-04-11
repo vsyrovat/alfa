@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    haml (4.0.5)
+      tilt
     mysql2 (0.3.15)
     rack (1.4.5)
     rack-session-sequel (0.0.1)
@@ -10,11 +12,16 @@ GEM
     ruty (0.0.1)
     rvm (1.11.3.9)
     sequel (3.48.0)
+    template-inheritance (0.3.1)
+      haml
+      tilt
+    tilt (2.0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  haml (~> 4.0)
   mysql2 (~> 0.3)
   rack (~> 1.4.1)
   rack-session-sequel (~> 0.0.1)
@@ -22,3 +29,4 @@ DEPENDENCIES
   ruty (= 0.0.1)
   rvm (~> 1.11)
   sequel (~> 3.42)
+  template-inheritance (~> 0.3.1)

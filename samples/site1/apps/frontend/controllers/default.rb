@@ -6,7 +6,7 @@ class DefaultController < Alfa::Controller
   end
 
   def foo
-
+    @var = 'value'
   end
 
 end

@@ -11,12 +11,16 @@ require 'rack/request'
 require 'rack/file_alfa'
 require 'digest/md5'
 require 'securerandom'
+require 'haml'
+require 'alfa/template-inheritance'
+require 'tilt/alfa_patch'
 
 module Alfa
   class WebApplication < Alfa::Application
 
     @bputs = []
     @controllers = {}
+    @haml_templates = {}
 
     class << self
       attr_reader :request
@@ -34,6 +38,7 @@ module Alfa
       Alfa::Router.apps_dir = File.join(@config[:project_root], 'apps')
       load File.join(@config[:project_root], 'config/routes.rb')
       @controllers.clear
+      TemplateInheritance.logger = @logger
     end
 
     # main Rack routine
@@ -44,16 +49,17 @@ module Alfa
       body = nil # required for store context inside @logger.portion
       @logger.portion(:sync=>true) do |l|
         @config[:db].each_value { |db| db[:instance].loggers = [l] }
+        TemplateInheritance.logger = l
         @env = env
         @bputs = []
         headers = {"Content-Type" => 'text/html; charset=utf-8'}
         t_sym = :default
         begin
           l.info "#{env['REQUEST_METHOD']} #{env['REQUEST_URI']} #{env['SERVER_PROTOCOL']} from #{env['REMOTE_ADDR']} at #{DateTime.now}"
-          #l.info "  HTTP_HOST: #{env['HTTP_HOST']}"
-          #@logger.info "  HTTP_ACCEPT: #{env['HTTP_ACCEPT']}"
-          #@logger.info "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}"
-          #@logger.info "  PATH_INFO: #{env['PATH_INFO']}"
+          # l.info "  HTTP_HOST: #{env['HTTP_HOST']}"
+          # l.info "  HTTP_ACCEPT: #{env['HTTP_ACCEPT']}"
+          # l.info "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}"
+          # l.info "  PATH_INFO: #{env['PATH_INFO']}"
           response_code = 200
           route, params = self.routes.find_route(Rack::Utils.unescape(@env['PATH_INFO']))
           t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
@@ -83,7 +89,7 @@ module Alfa
             Ruty::Tags::RequireStyle.clean_cache # cleanup
             Ruty::Tags::RequireScript.clean_cache # cleanup
             content = self.render_template(app_sym, c_sym, a_sym, controller, data)
-            body = self.render_layout(app_sym.to_s, l_sym.to_s + '.tpl', {body: content})
+            body = self.render_layout(app_sym.to_s, l_sym.to_s, {:@body => content})
             headers["Content-Type"] = 'text/html; charset=utf-8'
           end
         rescue Alfa::Exceptions::Route404 => e
@@ -189,6 +195,7 @@ module Alfa
     def self.verify_config
       super
       raise Exceptions::E002.new('config[:document_root] should be defined') unless @config[:document_root]
+      raise Exceptions::E002.new('config[:templates_priority] should be defined') unless @config[:templates_priority]
     end
 
     def self.invoke_controller(application, controller)
@@ -202,18 +209,62 @@ module Alfa
     end
 
     def self.render_template(app_sym, c_sym, a_sym, controller, data = {})
-      Ruty::AUX_VARS[:controller] = controller
-      t = self.loader.get_template File.join(app_sym.to_s, 'templates', c_sym.to_s, "#{a_sym}.tpl")
-      t.render data
+      render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, a_sym.to_s), controller: controller, data: data)
+      # template_fullpath = File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, "#{a_sym}.haml")
+      # if File.exist?(template_fullpath)
+      #   TemplateInheritance::TemplateHelpers::AUX_VARS[:controller] = controller
+      #   #Haml::Engine.new(File.read(template_fullpath)).render(Object.new, data)
+      #   #t = TemplateInheritance::Template.new(template_fullpath)
+      #   t = self.haml_template(template_fullpath)
+      #   t.render data
+      # else
+      #   Ruty::AUX_VARS[:controller] = controller
+      #   t = self.ruty_loader.get_template(File.join(app_sym.to_s, 'templates', c_sym.to_s, "#{a_sym}.tpl"))
+      #   t.render data
+      # end
     end
 
-    def self.render_layout app, layout, data = {}
-      t = self.loader.get_template File.join(app, 'layouts', layout)
-      t.render data
+    def self.render_layout(app, layout, data = {})
+      render(file: File.join(@config[:project_root], 'apps', app, 'layouts', layout.to_s), data: data)
+      # template_fullpath = File.join(@config[:project_root], 'apps', app, 'layouts', "#{layout}.haml")
+      # if File.exist?(template_fullpath)
+      #   #Haml::Engine.new(File.read(template_fullpath)).render(Object.new, data)
+      #   #t = TemplateInheritance::Template.new(template_fullpath)
+      #   t = self.haml_template(template_fullpath)
+      #   t.render data
+      # else
+      #   t = self.ruty_loader.get_template(File.join(app, 'layouts', "#{layout}.tpl"))
+      #   t.render data
+      # end
     end
 
-    def self.loader
-      @loader ||= Ruty::Loaders::Filesystem.new(:dirname => File.join(@config[:project_root], 'apps'))
+    def self.render(file: nil, controller: nil, data: {})
+      @config[:templates_priority].each do |ext|
+        f = "#{file}.#{ext}"
+        if File.exist?(f)
+          case ext
+            when :haml
+              TemplateInheritance::TemplateHelpers::AUX_VARS[:controller] = controller
+              return self.haml_template(f).render data
+            when :tpl
+              Ruty::AUX_VARS[:controller] = controller
+              return self.ruty_loader.get_template(f).render data
+            else
+              raise StandardError.new("Unknown template type: #{ext}")
+          end
+          break
+        end
+      end
+      raise StandardError.new("Can't find template #{file}.[#{@config[:templates_priority].join('|')}]")
+    end
+
+    def self.ruty_loader
+      @ruty_loader ||= Ruty::Loaders::Filesystem.new(:dirname => File.join(@config[:project_root], 'apps'))
+    end
+
+    def self.haml_template(file)
+      # @haml_templates[file.to_sym] ||= TemplateInheritance::Template.new(file)
+      TemplateInheritance::Template.new(file)
     end
 
   end

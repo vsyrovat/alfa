@@ -8,3 +8,4 @@ config[:db][:main] = {
     :maintain => true,
 }
 config[:groups] = Project::GROUPS
+config[:templates_priority] = [:haml]
