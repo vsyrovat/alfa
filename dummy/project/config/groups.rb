@@ -4,9 +4,9 @@ module Project
   GROUPS = {
       # Add custom groups here. Example:
       # :some_group => [:send_mails, :create_users, :moderate_forum],
-      # Note that :some_group=>[:some_grant] and :other_group=>[:some_grant] points to the same :some_grant
+      # Note that :some_group=>[:some_grant] and :other_group=>[:some_grant] points to same :some_grant
 
-      # :admin_index - browse admin app
+      # :admin_index - predefined (system required) grant for browse admin app
       :admin => [:admin_index],
 
       # Public group is associated with all users include non-logged in.
