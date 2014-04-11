@@ -1,3 +1,6 @@
+# This patch allows to use of @keys as well as keys
+# Example:
+#   template.render({:@name => 'Piter'})
 module Tilt
   class Template
     def local_extraction(local_keys)
