@@ -188,7 +188,7 @@ module Alfa
 
     def self.verify_config
       super
-      raise Exceptions::E002.new unless @config[:document_root]
+      raise Exceptions::E002.new('config[:document_root] should be defined') unless @config[:document_root]
     end
 
     def self.invoke_controller(application, controller)
