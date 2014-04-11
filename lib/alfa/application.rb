@@ -50,7 +50,7 @@ module Alfa
 
 
     def self.verify_config
-      raise Exceptions::E001 unless @config[:project_root]
+      raise Exceptions::E001.new('config[:project_root] should be defined') unless @config[:project_root]
     end
   end
 end
