@@ -5,7 +5,18 @@
     %title<
       = block(:title)
     - require_style '960gs24', :text, :reset
-    = styles
+    - require_style '/css/frontend.css'
+    != styles
   %body
-    = block(:body)
-    = scripts
+    %table.frame
+      %tr
+        %td.top
+          .container_24
+            .grid_24
+              %h1= block(:h1)
+              != block(:body)
+      %tr
+        %td.bottom
+          .container_24
+            .grid_24!= partial './footer'
+    != scripts

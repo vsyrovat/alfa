@@ -5,8 +5,21 @@
     %title<
       = block(:title)
     - require_style '960gs24', :text, :reset
-    = styles
+    - require_style '/css/auth.css'
+    != styles
   %body
-    = block(:body) do
-      = @body
+    %table.frame
+      %tr
+        %td.top
+          .container_24
+            .grid_24
+              %h1= @h1
+              != block(:body) do
+                != @body
+      %tr
+        %td.bottom
+          .container_24
+            .grid_24
+              :markdown
+                **Footer**
     = scripts

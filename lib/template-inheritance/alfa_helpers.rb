@@ -21,20 +21,30 @@ module TemplateInheritance
     def require_style(src, *modes)
       case src
         when :'960gs', '960gs'
+          require_style '/~assets/css/960gs/reset.css' if modes.include?(:reset)
+          require_style '/~assets/css/960gs/text.css' if modes.include?(:text)
           require_style '/~assets/css/960gs/960.css'
-          require_style '/~assets/css/960gs/text.css' if modes.include?(:text)
-          require_style '/~assets/css/960gs/reset.css' if modes.include?(:reset)
         when :'960gs24', '960gs24'
-          require_style '/~assets/css/960gs/960_24_col.css'
-          require_style '/~assets/css/960gs/text.css' if modes.include?(:text)
           require_style '/~assets/css/960gs/reset.css' if modes.include?(:reset)
+          require_style '/~assets/css/960gs/text.css' if modes.include?(:text)
+          require_style '/~assets/css/960gs/960_24_col.css'
+        when :alfa_classic, 'alfa_classic'
+
         else
           self.template.resources[:styles] << src
       end
     end
 
     def styles
-      self.template.resources[:styles].reverse.uniq.map{|s| "<link rel=\"stylesheet\" type=\"text/css\" href=\"#{s}\">\n" }.join('')
+      self.template.resources[:styles].uniq.map{|s|
+        if s.match(/^\/~assets\/(.*)/)
+          f = File.join(File.expand_path('../../../assets/', __FILE__), $1)
+        else
+          f = File.join(Alfa::WebApplication.config[:document_root], s)
+        end
+        mtime = File.exist?(f) ? File.mtime(f).to_i : nil
+        "<link rel=\"stylesheet\" type=\"text/css\" href=\"#{s}?#{mtime}\">\n"
+      }.join('')
     end
 
     def top_scripts
@@ -59,7 +69,7 @@ module TemplateInheritance
     end
 
     def a(text, url)
-      "<a href='#{url}'>#{text}</a>"
+      "<a href='#{url}'>#{Haml::Helpers.html_escape(text)}</a>"
     end
 
     alias :link_to :a

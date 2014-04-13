@@ -14,6 +14,7 @@ require 'securerandom'
 require 'haml'
 require 'alfa/template-inheritance'
 require 'tilt/alfa_patch'
+require 'haml/alfa_patch'
 
 module Alfa
   class WebApplication < Alfa::Application
@@ -89,7 +90,7 @@ module Alfa
             Ruty::Tags::RequireStyle.clean_cache # cleanup
             Ruty::Tags::RequireScript.clean_cache # cleanup
             content = self.render_template(app_sym, c_sym, a_sym, controller, data)
-            body = self.render_layout(app_sym.to_s, l_sym.to_s, {:@body => content})
+            body = self.render_layout(app_sym.to_s, l_sym.to_s, data.merge({:@body => content}))
             headers["Content-Type"] = 'text/html; charset=utf-8'
           end
         rescue Alfa::Exceptions::Route404 => e
@@ -245,10 +246,12 @@ module Alfa
           case ext
             when :haml
               TemplateInheritance::TemplateHelpers::AUX_VARS[:controller] = controller
-              return self.haml_template(f).render data
+              template = self.haml_template(f)
+              return template.render data
             when :tpl
               Ruty::AUX_VARS[:controller] = controller
-              return self.ruty_loader.get_template(f).render data
+              template = self.ruty_loader.get_template(f)
+              return template.render data
             else
               raise StandardError.new("Unknown template type: #{ext}")
           end

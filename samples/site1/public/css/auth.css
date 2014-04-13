@@ -1,0 +1,9 @@
+html, body {width:100%; height:100%; padding: 0; margin: 0;}
+table {border-collapse: collapse; border-spacing: 0;}
+table tr td {padding: 0;}
+img {border: 0;}
+
+
+table.frame {height: 100%; width: 100%; margin: 0;}
+td.top {vertical-align: top;}
+td.bottom {vertical-align: bottom;}

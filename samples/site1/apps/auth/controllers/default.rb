@@ -4,6 +4,7 @@ class DefaultController < Alfa::Controller
   end
 
   def login
+    @h1 = 'Login'
     if request.post?
       if try_login(request.POST['login'].strip, request.POST['password'].strip)
         flash 'Login successed'
@@ -20,6 +21,7 @@ class DefaultController < Alfa::Controller
   end
 
   def registration
+    @h1 = 'Registration'
     if request.post?
       session[:was_registration] = true
       session[:registration_success], session[:registration_message] = try_register(request.POST['login'].strip, request.POST['password'].strip)

@@ -1,6 +1,6 @@
 - if @was_registration
   - if @is_success
-    Регистрация Ок (@message)
+    Регистрация Ок (#{@message})
   - else
-    Ошибка регистрации (@message)
+    Ошибка регистрации (#{@message})
     #{a 'Try again', href('registration')} | #{a 'Go to index', href('@frontend')}

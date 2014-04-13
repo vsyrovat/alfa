@@ -2,7 +2,7 @@ PATH
   remote: ../../
   specs:
     alfa (0.0.5.pre)
-      haml (~> 4.0)
+      haml (= 4.0.5)
       mysql2 (~> 0.3)
       rack (~> 1.4)
       rack-session-sequel (~> 0.0.1)
@@ -10,7 +10,7 @@ PATH
       ruty (= 0.0.1)
       rvm (~> 1.11)
       sequel (~> 3.42)
-      template-inheritance (~> 0.3.1)
+      template-inheritance (= 0.3.1)
 
 GEM
   remote: https://rubygems.org/
@@ -23,6 +23,7 @@ GEM
       rack
       sequel
     rake (10.2.2)
+    redcarpet (3.1.1)
     ruty (0.0.1)
     rvm (1.11.3.9)
     sequel (3.48.0)
@@ -36,3 +37,4 @@ PLATFORMS
 
 DEPENDENCIES
   alfa!
+  redcarpet
