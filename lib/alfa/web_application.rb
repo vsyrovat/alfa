@@ -211,32 +211,10 @@ module Alfa
 
     def self.render_template(app_sym, c_sym, a_sym, controller, data = {})
       render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, a_sym.to_s), controller: controller, data: data)
-      # template_fullpath = File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, "#{a_sym}.haml")
-      # if File.exist?(template_fullpath)
-      #   TemplateInheritance::TemplateHelpers::AUX_VARS[:controller] = controller
-      #   #Haml::Engine.new(File.read(template_fullpath)).render(Object.new, data)
-      #   #t = TemplateInheritance::Template.new(template_fullpath)
-      #   t = self.haml_template(template_fullpath)
-      #   t.render data
-      # else
-      #   Ruty::AUX_VARS[:controller] = controller
-      #   t = self.ruty_loader.get_template(File.join(app_sym.to_s, 'templates', c_sym.to_s, "#{a_sym}.tpl"))
-      #   t.render data
-      # end
     end
 
     def self.render_layout(app, layout, data = {})
       render(file: File.join(@config[:project_root], 'apps', app, 'layouts', layout.to_s), data: data)
-      # template_fullpath = File.join(@config[:project_root], 'apps', app, 'layouts', "#{layout}.haml")
-      # if File.exist?(template_fullpath)
-      #   #Haml::Engine.new(File.read(template_fullpath)).render(Object.new, data)
-      #   #t = TemplateInheritance::Template.new(template_fullpath)
-      #   t = self.haml_template(template_fullpath)
-      #   t.render data
-      # else
-      #   t = self.ruty_loader.get_template(File.join(app, 'layouts', "#{layout}.tpl"))
-      #   t.render data
-      # end
     end
 
     def self.render(file: nil, controller: nil, data: {})
