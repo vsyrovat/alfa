@@ -68,7 +68,7 @@ namespace :db do
 Sequel.migration do
   up do
     # Put up migration code here
-    # Use Sequel migration syntax (http://sequel.rubyforge.org/rdoc/files/doc/schema_modification_rdoc.html) or native SQL (run "SQL command")
+    # Use Sequel migration syntax (http://sequel.jeremyevans.net/rdoc/files/doc/schema_modification_rdoc.html) or native SQL (run "SQL command")
   end
 
   down do
