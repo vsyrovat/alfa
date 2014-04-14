@@ -5,6 +5,6 @@ class DefaultController < Alfa::Controller
   end
 
   def foo
-
+    @h1 = 'Admin foo'
   end
 end
