@@ -5,7 +5,10 @@
     %title<
       = block(:title)
     - require_style '960gs24', :text, :reset
-    = styles
+    != styles
   %body
-    = block(:body)
-    = scripts
+    .container_24
+      .grid_24
+        %h1= @h1
+        != block(:body)
+    != scripts

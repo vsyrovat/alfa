@@ -60,7 +60,7 @@ module Alfa
 
 
     def grant?(grant)
-      user.grants.include? grant
+      user.grant?(grant)
     end
 
 

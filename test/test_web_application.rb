@@ -10,16 +10,22 @@ class TestAlfaWebApplication < Test::Unit::TestCase
 
 
   def test_02
-    Alfa::WebApplication.config[:project_root] = File.expand_path('../data/test_web_application', __FILE__)
-    Alfa::WebApplication.config[:templates_priority] = [:haml]
-    assert_raise Alfa::Exceptions::E002, "WebApplication requires config.document_root" do
+    prepare_web_application
+    assert_raise Alfa::Exceptions::E002, "config[:document_root] should be defined" do
       Alfa::WebApplication.config.delete(:document_root)
       Alfa::WebApplication.init!
     end
-    assert_raise Alfa::Exceptions::E002, "WebApplication's document_root should not be nil" do
-      Alfa::WebApplication.config[:document_root] = nil
+    prepare_web_application
+    assert_raise Alfa::Exceptions::E002, "config[:templates_priority] should be defined" do
+      Alfa::WebApplication.config.delete(:templates_priority)
       Alfa::WebApplication.init!
     end
+    prepare_web_application
+    assert_raise Alfa::Exceptions::E001, "config[:groups] should be a hash" do
+      Alfa::WebApplication.config.delete(:groups)
+      Alfa::WebApplication.init!
+    end
+    prepare_web_application
     assert_nothing_raised Exception do
       Alfa::WebApplication.config[:document_root] = File.expand_path('../data/test_web_application/public', __FILE__)
       Alfa::WebApplication.init!
@@ -31,6 +37,7 @@ class TestAlfaWebApplication < Test::Unit::TestCase
     Alfa::WebApplication.config[:project_root] = File.expand_path('../data/test_web_application', __FILE__)
     Alfa::WebApplication.config[:document_root] = File.expand_path('../data/test_web_application/public', __FILE__)
     Alfa::WebApplication.config[:templates_priority] = [:haml]
+    Alfa::WebApplication.config[:groups] = {public: []}
     Alfa::WebApplication.init!
   end
 

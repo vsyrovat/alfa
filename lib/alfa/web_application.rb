@@ -151,8 +151,7 @@ module Alfa
 
 
     def self.user
-      return @config[:db][:main][:instance][:users].find(session['user_id']) if session['user_id']
-      GuestUser
+      session[:user] || GuestUser
     end
 
 
@@ -173,14 +172,15 @@ module Alfa
 
 
     def self.try_login(username, password)
-      u = @config[:db][:main][:instance][:users].first(:login=>username)
-      raise "No such login: #{username}" unless u
-      if u[:passhash] == Digest::MD5.hexdigest("#{u[:salt]}#{password}")
+      user = @config[:db][:main][:instance][:users].first(login: username)
+      raise "No such login: #{username}" unless user
+      if user[:passhash] == Digest::MD5.hexdigest("#{user[:salt]}#{password}")
         # success
-        #@request.session.destroy_session
+        session[:user] = User.new(user)
         return true
       else
         # fail
+        session[:user] = nil
         raise 'login fail'
         return false
       end
@@ -197,6 +197,8 @@ module Alfa
       super
       raise Exceptions::E002.new('config[:document_root] should be defined') unless @config[:document_root]
       raise Exceptions::E002.new('config[:templates_priority] should be defined') unless @config[:templates_priority]
+      raise Exceptions::E001.new('config[:groups] should be a hash') unless @config[:groups].is_a?(::Hash)
+      @config[:groups][:public] = [] unless @config[:groups][:public]
     end
 
     def self.invoke_controller(application, controller)
