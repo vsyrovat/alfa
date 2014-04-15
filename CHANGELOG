@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
+~ Improve assets http cache control
+
 + Haml with template inheritance
 
 ~ Update jquery to 1.11.0
