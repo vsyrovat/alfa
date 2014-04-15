@@ -19,8 +19,9 @@ module Alfa
 
     @config = Alfa::Config.new
 
-    def self.config(kwargs={})
-      @config.merge! kwargs
+    def self.config(kwargs = nil)
+      @config.merge!(kwargs) if kwargs
+      @config
     end
 
 

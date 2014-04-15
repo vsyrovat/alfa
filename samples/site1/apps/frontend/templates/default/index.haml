@@ -1,4 +1,6 @@
 %div default#index@frontend
-Go to #{a 'admin', href('@admin')}
+#{a 'Admin', href('@admin')} | #{a 'Login', href('@auth')}
 
-%div= @session
+%div= @session.inspect
+%div= @user1.inspect
+%div= @user2.inspect

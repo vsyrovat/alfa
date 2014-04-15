@@ -3,7 +3,7 @@ require 'alfa/exceptions'
 
 module Alfa
   class Controller
-    attr_accessor :application, :app_sym, :c_sym
+    attr_accessor :application, :request, :config, :app_sym, :c_sym
 
     def _instance_variables_hash
       Hash[instance_variables.map { |name| [name.to_sym, instance_variable_get(name)] } ]
@@ -50,12 +50,18 @@ module Alfa
 
 
     def session
-      @application.session
+      @request.session
     end
 
     # Return current user
     def user
-      @application.user
+      @user ||= (
+        if @request.session[:user_id] && (u = @application.config[:db][:main][:instance][:users].first(id: @request.session[:user_id]))
+          User.new(u)
+        else
+          GuestUser.new
+        end
+      )
     end
 
 
@@ -73,18 +79,35 @@ module Alfa
     alias :redirect :redirect_302
 
 
-    def request
-      @application.request
+    def try_login(username, password)
+      u = @application.config[:db][:main][:instance][:users].first(login: username)
+      raise "No such login: #{username}" unless u
+      if u[:passhash] == Digest::MD5.hexdigest("#{u[:salt]}#{password}")
+        # success
+        session[:user_id] = u[:id]
+        return true
+      else
+        # fail
+        session[:user_id] = nil
+        raise 'login fail'
+        return false
+      end
     end
 
 
-    def try_login(*o)
-      @application.try_login(*o)
-    end
-
-
-    def try_register(*o)
-      @application.try_register(*o)
+    def try_register(username, password)
+      @config[:db][:main][:instance].transaction do
+        unless @config[:db][:main][:instance][:users].first(:login=>username)
+          @logger.portion do |l|
+            salt = SecureRandom.hex(5)
+            passhash = Digest::MD5.hexdigest("#{salt}#{password}")
+            @config[:db][:main][:instance][:users].insert(:login=>username, :salt=>salt, :passhash=>passhash)
+            l.info("create new user login=#{username}, password=#{password}, salt=#{salt}, passhash=#{passhash}")
+          end
+          return true, "Registration done"
+        end
+        return false, "User with login #{username} already exists"
+      end
     end
 
     # Store flash message to session

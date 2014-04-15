@@ -1,18 +1,18 @@
 module Alfa
   class GuestUser
-    def self.grants
+    def grants
       []
     end
 
-    def self.grant?(name)
+    def grant?(name)
       grants.include?(name.to_sym)
     end
 
-    def self.groups
+    def groups
       [:public]
     end
 
-    def self.group?(name)
+    def group?(name)
       groups.include?(name.to_sym)
     end
   end

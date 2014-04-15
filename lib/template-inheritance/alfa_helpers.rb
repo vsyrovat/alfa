@@ -14,10 +14,17 @@ module TemplateInheritance
     end
   end
 
-  module TemplateHelpers
-    # Global variable, bad code style
-    AUX_VARS = {}
 
+  class RenderScope
+    attr_reader :controller
+
+    def initialize(controller = nil)
+      @controller = controller
+    end
+  end
+
+
+  module TemplateHelpers
     def require_style(src, *modes)
       case src
         when :'960gs', '960gs'
@@ -65,7 +72,7 @@ module TemplateInheritance
     end
 
     def href(*o)
-      AUX_VARS[:controller].href(*o)
+      @controller.href(*o)
     end
 
     def a(text, url)
@@ -73,6 +80,10 @@ module TemplateInheritance
     end
 
     alias :link_to :a
+
+    def controller
+      @controller
+    end
   end
 end
 # End of patch

@@ -20,7 +20,6 @@ module Alfa
   class WebApplication < Alfa::Application
 
     @bputs = []
-    @controllers = {}
     @haml_templates = {}
 
     class << self
@@ -38,12 +37,11 @@ module Alfa
       Alfa::Router.reset
       Alfa::Router.apps_dir = File.join(@config[:project_root], 'apps')
       load File.join(@config[:project_root], 'config/routes.rb')
-      @controllers.clear
       TemplateInheritance.logger = @logger
     end
 
     # main Rack routine
-    def self.call(env)
+    def self.call(env, &block)
       start_time = Time.now
       response_code = nil # required for store context inside @logger.portion
       headers = {} # required for store context inside @logger.portion
@@ -51,7 +49,6 @@ module Alfa
       @logger.portion(:sync=>true) do |l|
         @config[:db].each_value { |db| db[:instance].loggers = [l] }
         TemplateInheritance.logger = l
-        @env = env
         @bputs = []
         headers = {"Content-Type" => 'text/html; charset=utf-8'}
         t_sym = :default
@@ -62,7 +59,7 @@ module Alfa
           # l.info "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}"
           # l.info "  PATH_INFO: #{env['PATH_INFO']}"
           response_code = 200
-          route, params = self.routes.find_route(Rack::Utils.unescape(@env['PATH_INFO']))
+          route, params = self.routes.find_route(Rack::Utils.unescape(env['PATH_INFO']))
           t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
           if t_sym == :asset
             realpath = File.expand_path('../../../assets/' + params[:path], __FILE__)
@@ -78,7 +75,7 @@ module Alfa
             headers['Cache-Control'] = 'max-age=2592000'
             headers['Expires'] = (Time.now + 2592000).httpdate
           else
-            @request = Rack::Request.new(env) # weakref?
+            request = Rack::Request.new(env) # weakref?
             app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
             c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
             a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
@@ -87,13 +84,14 @@ module Alfa
             raise Exceptions::Route404 unless controller.class.instance_methods(false).include?(a_sym)
             controller._clear_instance_variables # cleanup
             controller.application = self
+            controller.request = request
             controller.app_sym = app_sym
             controller.c_sym = c_sym
             controller.__send__(a_sym)
             data = controller._instance_variables_hash
             Ruty::Tags::RequireStyle.clean_cache # cleanup
             Ruty::Tags::RequireScript.clean_cache # cleanup
-            content = self.render_template(app_sym, c_sym, a_sym, controller, data)
+            content = self.render_template(app_sym, c_sym, a_sym, controller, data, &block)
             body = self.render_layout(app_sym.to_s, l_sym.to_s, data.merge({:@body => content}))
             headers["Content-Type"] = 'text/html; charset=utf-8'
           end
@@ -149,48 +147,6 @@ module Alfa
     end
 
 
-    def self.session
-      @request.session
-    end
-
-
-    def self.user
-      session[:user] || GuestUser
-    end
-
-
-    def self.try_register(username, password)
-      @config[:db][:main][:instance].transaction do
-        unless @config[:db][:main][:instance][:users].first(:login=>username)
-          @logger.portion do |l|
-            salt = SecureRandom.hex(5)
-            passhash = Digest::MD5.hexdigest("#{salt}#{password}")
-            @config[:db][:main][:instance][:users].insert(:login=>username, :salt=>salt, :passhash=>passhash)
-            l.info("create new user login=#{username}, password=#{password}, salt=#{salt}, passhash=#{passhash}")
-          end
-          return true, "Registration done"
-        end
-        return false, "User with login #{username} already exists"
-      end
-    end
-
-
-    def self.try_login(username, password)
-      user = @config[:db][:main][:instance][:users].first(login: username)
-      raise "No such login: #{username}" unless user
-      if user[:passhash] == Digest::MD5.hexdigest("#{user[:salt]}#{password}")
-        # success
-        session[:user] = User.new(user)
-        return true
-      else
-        # fail
-        session[:user] = nil
-        raise 'login fail'
-        return false
-      end
-    end
-
-
     def self.redirect(url, code=302)
       raise Exceptions::HttpRedirect.new(url, code)
     end
@@ -205,18 +161,17 @@ module Alfa
       @config[:groups][:public] = [] unless @config[:groups][:public]
     end
 
-    def self.invoke_controller(application, controller)
-      return @controllers[[application, controller]] if @controllers[[application, controller]]
-      load File.join(@config[:project_root], 'apps', application.to_s, 'controllers', controller.to_s + '.rb')
-      klass_name = Alfa::Support.camelcase_name(controller)+'Controller'
+    def self.invoke_controller(a_sym, c_sym)
+      load File.join(@config[:project_root], 'apps', a_sym.to_s, 'controllers', c_sym.to_s + '.rb')
+      klass_name = Alfa::Support.camelcase_name(c_sym)+'Controller'
       klass = Kernel.const_get(klass_name) # weakref?
-      @controllers[[application, controller]] = klass.dup.new # weakref?
+      instance = klass.new
       Object.module_eval{remove_const(klass_name)}
-      return @controllers[[application, controller]]
+      return instance
     end
 
-    def self.render_template(app_sym, c_sym, a_sym, controller, data = {})
-      render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, a_sym.to_s), controller: controller, data: data)
+    def self.render_template(app_sym, c_sym, a_sym, controller, data = {}, &block)
+      render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, a_sym.to_s), controller: controller, data: data, &block)
     end
 
     def self.render_layout(app, layout, data = {})
@@ -229,8 +184,8 @@ module Alfa
         if File.exist?(f)
           case ext
             when :haml
-              TemplateInheritance::TemplateHelpers::AUX_VARS[:controller] = controller
-              template = self.haml_template(f)
+              template = self.haml_template(f, controller)
+              yield(controller, template) if block_given? # required only for thread isolation test
               return template.render data
             when :tpl
               Ruty::AUX_VARS[:controller] = controller
@@ -249,9 +204,10 @@ module Alfa
       @ruty_loader ||= Ruty::Loaders::Filesystem.new(:dirname => File.join(@config[:project_root], 'apps'))
     end
 
-    def self.haml_template(file)
+    def self.haml_template(file, controller)
       # @haml_templates[file.to_sym] ||= TemplateInheritance::Template.new(file)
-      TemplateInheritance::Template.new(file)
+      scope = TemplateInheritance::RenderScope.new(controller)
+      TemplateInheritance::Template.new(file, scope)
     end
 
   end

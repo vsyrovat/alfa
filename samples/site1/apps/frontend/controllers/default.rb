@@ -2,7 +2,8 @@ class DefaultController < Alfa::Controller
 
   def index
     @session = session
-    @user = user
+    @user1 = user
+    @user2 = user
   end
 
   def foo

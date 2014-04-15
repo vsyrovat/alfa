@@ -15,6 +15,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    daemons (1.1.9)
+    eventmachine (1.0.3)
     haml (4.0.5)
       tilt
     mysql2 (0.3.15)
@@ -30,6 +32,10 @@ GEM
     template-inheritance (0.3.1)
       haml
       tilt
+    thin (1.6.2)
+      daemons (>= 1.0.9)
+      eventmachine (>= 1.0.0)
+      rack (>= 1.0.0)
     tilt (2.0.1)
 
 PLATFORMS
@@ -38,3 +44,4 @@ PLATFORMS
 DEPENDENCIES
   alfa!
   redcarpet
+  thin

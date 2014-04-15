@@ -71,23 +71,37 @@ class TestAlfaWebApplication < Test::Unit::TestCase
     assert_equal(404, Alfa::WebApplication.call({'PATH_INFO'=>'/admin/frontend_only'})[0]) # not defined in admin/DefaultController
   end
 
-  # Controllers isolation:
-  # variables, defined in controller, should not be accessible from other controllers
-  def test_06
+  # Threads isolation (thread safe)
+  # Controller's variables should be set independently on simultaneous calls
+  def test_08
     prepare_web_application
-    Alfa::WebApplication.call({'PATH_INFO'=>'/test_06'})
-    Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_06'})
-    assert_equal({:@some_var=>:some_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:@application, :@app_sym, :@c_sym))
-    assert_equal({}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:admin, :default]]._instance_variables_hash.except(:@application, :@app_sym, :@c_sym))
-  end
+    r1 = Alfa::WebApplication.call({'PATH_INFO'=>'/test_08'}) do |controller1, template1|
+      r2 = Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_08'}) do |controller2, template2|
+        assert_not_equal(controller1.hash, controller2.hash)
+        assert_not_equal(controller1.request.hash, controller2.request.hash)
+        assert_not_equal(controller1.session.hash, controller2.session.hash)
+        assert_equal(:bar, controller1.session[:foo])
+        assert_equal(:baz, controller2.session[:foo])
+      end
+      assert_equal("/admin/test_08\n/admin/test_08", r2[2].join.strip)
+    end
+    assert_equal("/test_08\n/test_08", r1[2].join.strip)
 
-  # Calls isolation
-  # Controller's variables should be cleared before (or after) each call
-  def test_07
     prepare_web_application
-    Alfa::WebApplication.call({'PATH_INFO'=>'/test_06'})
-    assert_equal({:@some_var=>:some_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:@application, :@app_sym, :@c_sym))
-    Alfa::WebApplication.call({'PATH_INFO'=>'/test_07'})
-    assert_equal({:@other_var=>:other_value}, Alfa::WebApplication.instance_variable_get(:@controllers)[[:frontend, :default]]._instance_variables_hash.except(:@application, :@app_sym, :@c_sym))
+    c1 = c2 = foo1 = foo2 = r1 = r2 = nil
+    r1 = Alfa::WebApplication.call({'PATH_INFO'=>'/test_08a'}) do |controller1, template1|
+      r2 = Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_08a'}) do |controller2, template2|
+        c1 = controller1
+        c2 = controller2
+        assert_not_equal(controller1.hash, controller2.hash)
+        assert_not_equal(controller1.request.hash, controller2.request.hash)
+        foo1 = controller1.session[:foo]
+        foo2 = controller2.session[:foo]
+      end
+    end
+    assert_equal(c2.hash.to_s, r2[2].join.strip)
+    assert_equal(c1.hash.to_s, r1[2].join.strip)
+    assert_equal(:far, foo1)
+    assert_equal(:faz, foo2)
   end
 end
