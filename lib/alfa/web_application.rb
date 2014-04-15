@@ -65,7 +65,8 @@ module Alfa
           route, params = self.routes.find_route(Rack::Utils.unescape(@env['PATH_INFO']))
           t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
           if t_sym == :asset
-            body = File.read(File.expand_path('../../../assets/' + params[:path], __FILE__))
+            realpath = File.expand_path('../../../assets/' + params[:path], __FILE__)
+            body = File.read(realpath)
             case File.extname(params[:path]).downcase
               when '.js'
                 headers['Content-Type'] = 'application/javascript; charset=utf-8'
@@ -73,6 +74,9 @@ module Alfa
                 headers['Content-Type'] = 'text/css; charset=utf-8'
               else
             end
+            headers['Last-Modified'] = File.mtime(realpath).httpdate
+            headers['Cache-Control'] = 'max-age=2592000'
+            headers['Expires'] = (Time.now + 2592000).httpdate
           else
             @request = Rack::Request.new(env) # weakref?
             app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
