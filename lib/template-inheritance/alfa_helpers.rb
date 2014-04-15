@@ -84,6 +84,10 @@ module TemplateInheritance
     def controller
       @controller
     end
+
+    def user
+      @controller.user
+    end
   end
 end
 # End of patch

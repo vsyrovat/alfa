@@ -8,8 +8,8 @@ class DefaultController < Alfa::Controller
     if request.post?
       if try_login(request.POST['login'].strip, request.POST['password'].strip)
         flash 'Login successed'
-        redirect request.POST['return_to'] if request.POST['return_to']
-        redirect href :index
+        # redirect request.POST['return_to'] if request.POST['return_to']
+        redirect href(:postlogin)
       else
         flash 'Login failed'
         redirect href :login
@@ -18,6 +18,10 @@ class DefaultController < Alfa::Controller
       # show login form
       @return_to = request.GET['return_to']
     end
+  end
+
+  def postlogin
+    redirect href(:login) unless user.logged?
   end
 
   def registration
@@ -35,5 +39,7 @@ class DefaultController < Alfa::Controller
   end
 
   def logout
+    try_logout
+    redirect href('@frontend')
   end
 end

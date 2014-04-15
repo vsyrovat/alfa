@@ -38,6 +38,7 @@ module Alfa
       Alfa::Router.apps_dir = File.join(@config[:project_root], 'apps')
       load File.join(@config[:project_root], 'config/routes.rb')
       TemplateInheritance.logger = @logger
+      Alfa.GROUPS = @config[:groups]
     end
 
     # main Rack routine

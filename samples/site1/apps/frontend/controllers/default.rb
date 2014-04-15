@@ -2,8 +2,9 @@ class DefaultController < Alfa::Controller
 
   def index
     @session = session
-    @user1 = user
-    @user2 = user
+    @user = user
+    @groups = user.groups
+    @grants = user.grants
   end
 
   def foo

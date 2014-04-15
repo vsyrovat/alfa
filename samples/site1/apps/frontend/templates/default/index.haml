@@ -1,6 +1,11 @@
 %div default#index@frontend
-#{a 'Admin', href('@admin')} | #{a 'Login', href('@auth')}
+#{a 'Admin', href('@admin')}
+- if user.logged?
+  | #{a 'Logout', href('default#logout@auth')}
+- else
+  | #{a 'Login', href('@auth')}
 
 %div= @session.inspect
-%div= @user1.inspect
-%div= @user2.inspect
+%div= @user.inspect
+%div groups: #{@groups}
+%div grants: #{@grants}

@@ -59,7 +59,7 @@ module Alfa
         if @request.session[:user_id] && (u = @application.config[:db][:main][:instance][:users].first(id: @request.session[:user_id]))
           User.new(u)
         else
-          GuestUser.new
+          GuestUser
         end
       )
     end
@@ -108,6 +108,12 @@ module Alfa
         end
         return false, "User with login #{username} already exists"
       end
+    end
+
+
+    def try_logout
+      session[:user_id] = nil
+      @user = GuestUser
     end
 
     # Store flash message to session

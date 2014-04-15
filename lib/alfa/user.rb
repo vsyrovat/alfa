@@ -1,19 +1,31 @@
 module Alfa
+  class << self
+    attr_accessor :GROUPS
+  end
+
   class GuestUser
-    def grants
-      []
+    def self.grants
+      @grants ||= Alfa.GROUPS[:public]
     end
 
-    def grant?(name)
+    def self.grant?(name)
       grants.include?(name.to_sym)
     end
 
-    def groups
-      [:public]
+    def self.groups
+      []
     end
 
-    def group?(name)
+    def self.group?(name)
       groups.include?(name.to_sym)
+    end
+
+    def self.logged?
+      false
+    end
+
+    def [](key)
+      nil
     end
   end
 
@@ -23,19 +35,29 @@ module Alfa
     end
 
     def grants
-      []
+      @groups_p ||= groups + [:public]
+      @groups_p.map{|g| Alfa.GROUPS[g] || []}.flatten
     end
 
     def grant?(name)
       grants.include?(name.to_sym)
     end
 
+    # @return Array
     def groups
-      []
+      @groups ||= @properties[:groups].to_s.split(',').map{|s| s.strip.to_sym}
     end
 
     def group?(name)
       groups.include?(name.to_sym)
+    end
+
+    def logged?
+      true
+    end
+
+    def [](key)
+      @properties[key]
     end
   end
 end
