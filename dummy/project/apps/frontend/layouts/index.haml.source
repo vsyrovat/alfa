@@ -1,0 +1,7 @@
+- extends './base.haml'
+
+- block(:title) do
+  #{PROJECT_NAME}
+
+- block(:body) do
+  != @body

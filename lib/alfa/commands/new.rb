@@ -38,12 +38,14 @@ ensure
   puts ""
 end
 
-begin
-  print "Bundle install... "
-  FileUtils.cd PROJECT_NAME
-  `bundle install`
-  print "done"
-ensure
-  FileUtils.cd '..'
-  puts ""
-end
+puts "Run 'cd #{PROJECT_NAME} && bundle install' manually"
+
+# begin
+#   print "Bundle install... "
+#   FileUtils.cd PROJECT_NAME
+#   `bundle install`
+#   print "done"
+# ensure
+#   FileUtils.cd '..'
+#   puts ""
+# end

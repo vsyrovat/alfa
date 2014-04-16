@@ -2,5 +2,10 @@ source 'https://rubygems.org'
 
 gem 'alfa', '#{ALFA_VERSION}'
 
-# Using mysql2 as database adapter
-gem 'mysql2', '~> 0.3'  # 0.3.11
+# Use mysql2 as database adapter
+gem 'mysql2', '~> 0.3', '>= 0.3.15'
+
+# Uncomment following gems if necessary:
+#
+# gem 'thin'
+# gem 'redcarpet'

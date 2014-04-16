@@ -3,13 +3,13 @@ PATH
   specs:
     alfa (0.0.5.pre)
       haml (= 4.0.5)
-      mysql2 (~> 0.3)
-      rack (~> 1.4)
-      rack-session-sequel (~> 0.0.1)
-      rake (~> 10.0)
+      mysql2 (~> 0.3, >= 0.3.15)
+      rack (~> 1.5, >= 1.5.2)
+      rack-session-sequel (~> 0.0, >= 0.0.1)
+      rake (~> 10.3, >= 10.3.0)
       ruty (= 0.0.1)
-      rvm (~> 1.11)
-      sequel (~> 3.42)
+      rvm (~> 1.11, >= 1.11.3)
+      sequel (~> 4.8, >= 4.8.0)
       template-inheritance (= 0.3.1)
 
 GEM
@@ -24,11 +24,11 @@ GEM
     rack-session-sequel (0.0.1)
       rack
       sequel
-    rake (10.2.2)
+    rake (10.3.0)
     redcarpet (3.1.1)
     ruty (0.0.1)
     rvm (1.11.3.9)
-    sequel (3.48.0)
+    sequel (4.8.0)
     template-inheritance (0.3.1)
       haml
       tilt
