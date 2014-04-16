@@ -21,7 +21,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  haml (~> 4.0)
+  haml (= 4.0.5)
   mysql2 (~> 0.3)
   rack (~> 1.4.1)
   rack-session-sequel (~> 0.0.1)
@@ -29,4 +29,4 @@ DEPENDENCIES
   ruty (= 0.0.1)
   rvm (~> 1.11)
   sequel (~> 3.42)
-  template-inheritance (~> 0.3.1)
+  template-inheritance (= 0.3.1)
