@@ -8,15 +8,15 @@ Gem::Specification.new do |spec|
   spec.description = ""
   spec.author      = "Valentin Syrovatskiy"
   spec.email       = 'vsyrovat@gmail.com'
-  spec.files       = Dir['lib/**/*.rb'] + Dir['test/**/*.rb'] + Dir['assets/**/*'] + Dir['bin/**/*'] + Dir['dummy/**/*'] + Dir['version.rb']
+  spec.files       = Dir['lib/**/*'] + Dir['test/**/*'] + Dir['assets/**/*'] + Dir['bin/**/*'] + Dir.glob('dummy/**/*', File::FNM_DOTMATCH) + Dir['version.rb']
   spec.executables << 'alfa'
-  spec.add_runtime_dependency 'rvm',    '~> 1.11' # 1.11.3.5
-  spec.add_runtime_dependency 'rake',   '~> 10.0' # 10.0.3
-  spec.add_runtime_dependency 'rack',   '~> 1.4'  # 1.4.1
-  spec.add_runtime_dependency 'ruty',   '= 0.0.1' # 0.0.1
-  spec.add_runtime_dependency 'mysql2', '~> 0.3'  # 0.3.11
-  spec.add_runtime_dependency 'sequel', '~> 3.42' # 3.42.0
-  spec.add_runtime_dependency 'rack-session-sequel', '~> 0.0.1' # 0.0.1
+  spec.add_runtime_dependency 'rvm',    '~> 1.11', '>= 1.11.3'
+  spec.add_runtime_dependency 'rake',   '~> 10.3', '>= 10.3.0'
+  spec.add_runtime_dependency 'rack',   '~> 1.5', '>= 1.5.2'
+  spec.add_runtime_dependency 'ruty',   '0.0.1'
+  spec.add_runtime_dependency 'mysql2', '~> 0.3', '>= 0.3.15'
+  spec.add_runtime_dependency 'sequel', '~> 4.8', '>= 4.8.0'
+  spec.add_runtime_dependency 'rack-session-sequel', '~> 0.0', '>= 0.0.1'
   spec.add_runtime_dependency 'haml',   '4.0.5'
   spec.add_runtime_dependency 'template-inheritance', '0.3.1'
 end
