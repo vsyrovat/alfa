@@ -1,0 +1,8 @@
+---
+# dns format ([...] can be omitted):
+# adapter://user:[password]@host[:port]/database
+dsn: "mysql2://user:password@localhost:3306/#{PROJECT_NAME}"
+host: "localhost"
+user: "user"
+password: "password"
+dbname: "#{PROJECT_NAME}"
