@@ -131,4 +131,21 @@ EOL
     end
   end
 
+  desc "Test databases connection parameters"
+  task :test do
+    errors = 0
+    dbs.each do |name, db|
+      begin
+        db[:instance].run("SHOW TABLES")
+      rescue Sequel::DatabaseConnectionError => e
+        errors = errors + 1
+        puts e
+      end
+    end
+    if errors > 0
+      puts "Some DSN problems found. Check config/passwords/db-*.yml"
+    else
+      puts "All DSNs are ok!"
+    end
+  end
 end
