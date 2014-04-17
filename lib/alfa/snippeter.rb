@@ -6,15 +6,19 @@ module Alfa
 
     class << self
       attr_accessor :config
+      attr_writer :mounts
     end
 
     # @param Symbol app
-    def self.load(app)
-      path = File.join(@config[:project_root], 'apps', app.to_s, 'snippets.rb')
-      @cursor = app
-      @snippets[@cursor] ||= {}
-      if File.exist?(path)
-        load_in_instance_context path
+    def self.load
+      @mounts.each do |m|
+        app = m[:app]
+        path = File.join(@config[:project_root], 'apps', app.to_s, 'snippets.rb')
+        @cursor = app
+        @snippets[@cursor] ||= {}
+        if File.exist?(path)
+          load_in_instance_context path
+        end
       end
     end
 
@@ -28,6 +32,10 @@ module Alfa
 
 
     def self.[](name)
+      if @config[:run_mode] == :development
+        @snippets.clear
+        self.load
+      end
       @snippets[name]
     end
   end

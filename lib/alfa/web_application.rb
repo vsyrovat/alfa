@@ -43,9 +43,8 @@ module Alfa
       TemplateInheritance.logger = @logger
       Alfa.GROUPS = @config[:groups]
       Alfa::Snippeter.config = @config
-      Alfa::Router.mounts.each do |m|
-        Alfa::Snippeter.load m[:app]
-      end
+      Alfa::Snippeter.mounts = Alfa::Router.mounts
+      Alfa::Snippeter.load
     end
 
     # main Rack routine
