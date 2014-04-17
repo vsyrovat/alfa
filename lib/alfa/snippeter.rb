@@ -17,7 +17,7 @@ module Alfa
         @cursor = app
         @snippets[@cursor] ||= {}
         if File.exist?(path)
-          load_in_instance_context path
+          load_here path
         end
       end
     end
