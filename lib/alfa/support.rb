@@ -60,8 +60,9 @@ end
 
 
 class BasicObject
-  def load_in_instance_context file
-    instance_eval file, file
+  def load_in_instance_context(file)
+    raise LoadError.new("#{file} does not exists") unless ::File.exist?(file)
+    instance_eval ::File.read(file), file
   end
 end
 

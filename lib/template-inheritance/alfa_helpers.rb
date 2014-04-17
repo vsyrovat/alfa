@@ -16,10 +16,11 @@ module TemplateInheritance
 
 
   class RenderScope
-    attr_reader :controller
+    attr_reader :controller, :wrapper
 
-    def initialize(controller = nil)
+    def initialize(controller = nil, wrapper = nil)
       @controller = controller
+      @wrapper = wrapper
     end
   end
 
@@ -72,7 +73,7 @@ module TemplateInheritance
     end
 
     def href(*o)
-      @controller.href(*o)
+      @wrapper.href(*o)
     end
 
     def a(text, url)
@@ -81,12 +82,20 @@ module TemplateInheritance
 
     alias :link_to :a
 
+    def application
+      @wrapper.application
+    end
+
     def controller
       @controller
     end
 
     def user
-      @controller.user
+      @wrapper.user
+    end
+
+    def snippet(name)
+      @wrapper.application.snippet(name, @wrapper)
     end
   end
 end

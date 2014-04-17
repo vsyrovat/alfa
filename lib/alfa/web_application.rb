@@ -6,6 +6,8 @@ require 'alfa/controller'
 require 'alfa/router'
 require 'alfa/ruty'
 require 'alfa/user'
+require 'alfa/snippeter'
+require 'alfa/wrapper'
 require 'rack/utils'
 require 'rack/request'
 require 'rack/file_alfa'
@@ -32,6 +34,7 @@ module Alfa
       end
     end
 
+    # noinspection RubyResolve
     def self.init!
       super
       Alfa::Router.reset
@@ -39,6 +42,10 @@ module Alfa
       load File.join(@config[:project_root], 'config/routes.rb')
       TemplateInheritance.logger = @logger
       Alfa.GROUPS = @config[:groups]
+      Alfa::Snippeter.config = @config
+      Alfa::Router.mounts.each do |m|
+        Alfa::Snippeter.load m[:app]
+      end
     end
 
     # main Rack routine
@@ -90,10 +97,11 @@ module Alfa
             controller.c_sym = c_sym
             controller.__send__(a_sym)
             data = controller._instance_variables_hash
+            wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym)
             Ruty::Tags::RequireStyle.clean_cache # cleanup
             Ruty::Tags::RequireScript.clean_cache # cleanup
-            content = self.render_template(app_sym, c_sym, a_sym, controller, data, &block)
-            body = self.render_layout(app_sym.to_s, l_sym.to_s, data.merge({:@body => content}))
+            content = self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data, &block)
+            body = self.render_layout(app_sym.to_s, l_sym.to_s, controller, wrapper, data.merge({:@body => content}))
             headers["Content-Type"] = 'text/html; charset=utf-8'
           end
         rescue Alfa::Exceptions::Route404 => e
@@ -130,6 +138,22 @@ module Alfa
     end
 
 
+    def self.snippets
+      @snippeter ||= Alfa::Snippeter
+    end
+
+    # Evaluate snippet with given name
+    # @param Symbol name
+    # @param Alfa::Controller controller
+    # return String
+    def self.snippet(name, wrapper)
+      block = snippets[wrapper.app_sym][name]
+      wrapper.instance_eval(&block)
+      data = wrapper._instance_variables_hash
+      render_snippet(wrapper.app_sym, name, wrapper, data)
+    end
+
+
     def self.rackup(builder)
       builder.use Rack::Session::Cookie
       if @config[:serve_static]
@@ -152,6 +176,7 @@ module Alfa
       raise Exceptions::HttpRedirect.new(url, code)
     end
 
+
   # private section
 
     def self.verify_config
@@ -171,21 +196,25 @@ module Alfa
       return instance
     end
 
-    def self.render_template(app_sym, c_sym, a_sym, controller, data = {}, &block)
-      render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, a_sym.to_s), controller: controller, data: data, &block)
+    def self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data = {}, &block)
+      render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, a_sym.to_s), controller: controller, data: data, wrapper: wrapper, &block)
     end
 
-    def self.render_layout(app, layout, data = {})
-      render(file: File.join(@config[:project_root], 'apps', app, 'layouts', layout.to_s), data: data)
+    def self.render_layout(app, layout, controller, wrapper, data = {})
+      render(file: File.join(@config[:project_root], 'apps', app, 'layouts', layout.to_s), controller: controller, wrapper: wrapper, data: data)
     end
 
-    def self.render(file: nil, controller: nil, data: {})
+    def self.render_snippet(app_sym, snip_sym, wrapper, data = {})
+      render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates/_snippets', snip_sym.to_s), wrapper: wrapper, data: data)
+    end
+
+    def self.render(file: nil, controller: nil, wrapper: nil, data: {})
       @config[:templates_priority].each do |ext|
         f = "#{file}.#{ext}"
         if File.exist?(f)
           case ext
             when :haml
-              template = self.haml_template(f, controller)
+              template = self.haml_template(f, controller, wrapper)
               yield(controller, template) if block_given? # required only for thread isolation test
               return template.render data
             when :tpl
@@ -205,9 +234,9 @@ module Alfa
       @ruty_loader ||= Ruty::Loaders::Filesystem.new(:dirname => File.join(@config[:project_root], 'apps'))
     end
 
-    def self.haml_template(file, controller)
+    def self.haml_template(file, controller, wrapper)
       # @haml_templates[file.to_sym] ||= TemplateInheritance::Template.new(file)
-      scope = TemplateInheritance::RenderScope.new(controller)
+      scope = TemplateInheritance::RenderScope.new(controller, wrapper)
       TemplateInheritance::Template.new(file, scope)
     end
 

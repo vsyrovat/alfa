@@ -6,6 +6,8 @@ module Alfa
 
     class << self
       attr_accessor :apps_dir
+      attr_reader :apps
+      attr_reader :mounts
     end
 
     # initialize class variables
@@ -36,6 +38,9 @@ module Alfa
 
     def self.reset
       @routes.clear
+      @cursor = @routes
+      @cursors_stack = []
+      @mounts.clear
       @apps_dir = nil
     end
 
@@ -70,6 +75,7 @@ module Alfa
         path, a = path.first.to_a
         app = a.to_sym
       end
+      path = "#{path}/" unless path[-1] == '/'
       @mounts << {:path => path, :app => app, :options => options}
       if @apps_dir
         self.context :app => app do

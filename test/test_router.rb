@@ -176,10 +176,10 @@ class AlfaRouterTest < Test::Unit::TestCase
         [
             {:rule=>"/~assets/:path**", :options=>{:type=>:asset}},
             {:rule=>'/', :options=>{:controller=>:default, :action=>:index}},
-            {:rule=>'/zoo', :options=>{:controller=>:default, :action=>:zoo, :layout => :default}},
+            {:rule=>'/zoo', :options=>{:layout => :default, :controller=>:default, :action=>:zoo}},
             {:context=>{:app=>{:path=>'/admin/', :app=>:backend, :options=>{}}},
              :routes=>[
-                 {:rule=>'/', :options=>{:controller=>:kfk, :action=>:index, :layout=>:fantastic}}
+                 {:rule=>'/', :options=>{:layout=>:fantastic, :controller=>:kfk, :action=>:index}}
              ]},
         ],
         Alfa::Router.instance_variable_get(:@routes)
