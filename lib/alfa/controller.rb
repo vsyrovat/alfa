@@ -79,9 +79,9 @@ module Alfa
     alias :redirect :redirect_302
 
 
-    def try_login(username, password)
-      u = @application.config[:db][:main][:instance][:users].first(login: username)
-      raise "No such login: #{username}" unless u
+    def try_login(login, password)
+      u = @application.config[:db][:main][:instance][:users].first(login: login)
+      raise "No such login: #{login}" unless u
       if u[:passhash] == Digest::MD5.hexdigest("#{u[:salt]}#{password}")
         # success
         session[:user_id] = u[:id]
@@ -95,19 +95,8 @@ module Alfa
     end
 
 
-    def try_register(username, password)
-      @config[:db][:main][:instance].transaction do
-        unless @config[:db][:main][:instance][:users].first(:login=>username)
-          @logger.portion do |l|
-            salt = SecureRandom.hex(5)
-            passhash = Digest::MD5.hexdigest("#{salt}#{password}")
-            @config[:db][:main][:instance][:users].insert(:login=>username, :salt=>salt, :passhash=>passhash)
-            l.info("create new user login=#{username}, password=#{password}, salt=#{salt}, passhash=#{passhash}")
-          end
-          return true, "Registration done"
-        end
-        return false, "User with login #{username} already exists"
-      end
+    def try_register(login, password)
+      @application.try_register(login, password)
     end
 
 

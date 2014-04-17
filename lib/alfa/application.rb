@@ -53,5 +53,21 @@ module Alfa
     def self.verify_config
       raise Exceptions::E001.new('config[:project_root] should be defined') unless @config[:project_root]
     end
+
+
+    def self.try_register(login, password)
+      @config[:db][:main][:instance].transaction do
+        unless @config[:db][:main][:instance][:users].first(:login=>login)
+          @logger.portion do |l|
+            salt = SecureRandom.hex(5)
+            passhash = Digest::MD5.hexdigest("#{salt}#{password}")
+            @config[:db][:main][:instance][:users].insert(:login=>login, :salt=>salt, :passhash=>passhash)
+            l.info("create new user login=#{login}, password=***, salt=#{salt}, passhash=#{passhash}")
+          end
+          return true, "Registration done"
+        end
+        return false, "User with login #{login} already exists"
+      end
+    end
   end
 end
