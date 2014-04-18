@@ -147,6 +147,7 @@ module Alfa
     # return String
     def self.snippet(name, wrapper)
       block = snippets[wrapper.app_sym][name]
+      raise "Not found snippet #{name} for app #{wrapper.app_sym}" unless block
       wrapper.instance_eval(&block)
       data = wrapper._instance_variables_hash
       render_snippet(wrapper.app_sym, name, wrapper, data)
