@@ -72,10 +72,10 @@ module TemplateInheritance
     def scripts
       @resourcer.scripts.uniq.map{|s|
         if (s[:src])
-          if s.match(/^\/~assets\/(.*)/)
+          if s[:src].match(/^\/~assets\/(.*)/)
             f = File.join(File.expand_path('../../../assets/', __FILE__), $1)
           else
-            f = File.join(Alfa::WebApplication.config[:document_root], s)
+            f = File.join(Alfa::WebApplication.config[:document_root], s[:src])
           end
           mtime = File.exist?(f) ? File.mtime(f).to_i : nil
           "<script type='#{s[:type]}' src='#{s[:src]}?#{mtime}'></script>\n"

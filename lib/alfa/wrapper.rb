@@ -114,13 +114,14 @@ module Alfa
   class Wrapper
     include Alfa::WrapperMethods
 
-    attr_reader :application, :request, :app_sym, :c_sym
+    attr_reader :application, :request, :app_sym, :c_sym, :resourcer
 
-    def initialize(application: nil, request: nil, app_sym: nil, c_sym: nil)
+    def initialize(application: nil, request: nil, app_sym: nil, c_sym: nil, resourcer: nil)
       @application = application
       @request = request
       @app_sym = app_sym
       @c_sym = c_sym
+      @resourcer = resourcer
     end
   end
 end

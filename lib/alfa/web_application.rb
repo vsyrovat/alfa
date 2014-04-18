@@ -8,6 +8,7 @@ require 'alfa/ruty'
 require 'alfa/user'
 require 'alfa/snippeter'
 require 'alfa/wrapper'
+require 'alfa/resourcer'
 require 'rack/utils'
 require 'rack/request'
 require 'rack/file_alfa'
@@ -96,7 +97,8 @@ module Alfa
             controller.c_sym = c_sym
             controller.__send__(a_sym)
             data = controller._instance_variables_hash
-            wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym)
+            resourcer = Alfa::Resourcer.new
+            wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym, resourcer: resourcer)
             Ruty::Tags::RequireStyle.clean_cache # cleanup
             Ruty::Tags::RequireScript.clean_cache # cleanup
             content = self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data, &block)
@@ -197,14 +199,17 @@ module Alfa
     end
 
     def self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data = {}, &block)
+      wrapper.resourcer.level = :action
       render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates', c_sym.to_s, a_sym.to_s), controller: controller, data: data, wrapper: wrapper, &block)
     end
 
     def self.render_layout(app, layout, controller, wrapper, data = {})
+      wrapper.resourcer.level = :layout
       render(file: File.join(@config[:project_root], 'apps', app, 'layouts', layout.to_s), controller: controller, wrapper: wrapper, data: data)
     end
 
     def self.render_snippet(app_sym, snip_sym, wrapper, data = {})
+      wrapper.resourcer.level = :snippet
       render(file: File.join(@config[:project_root], 'apps', app_sym.to_s, 'templates/_snippets', snip_sym.to_s), wrapper: wrapper, data: data)
     end
 
@@ -236,7 +241,7 @@ module Alfa
 
     def self.haml_template(file, controller, wrapper)
       # @haml_templates[file.to_sym] ||= TemplateInheritance::Template.new(file)
-      scope = TemplateInheritance::RenderScope.new(controller, wrapper)
+      scope = TemplateInheritance::RenderScope.new(controller, wrapper, wrapper.resourcer)
       TemplateInheritance::Template.new(file, scope)
     end
 
