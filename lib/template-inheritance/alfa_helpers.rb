@@ -62,7 +62,12 @@ module TemplateInheritance
 
     def require_script(src, type: 'text/javascript')
       raise ArgumentError, 'src required' if src.nil?
-      @resourcer[:scripts] << {src: src, type: type}
+      case src
+        when :jquery, 'jquery'
+          @resourcer[:scripts] << {src: '/~assets/js/jquery/jquery-1.11.0.min.js', type: 'text/javascript'}
+        else
+          @resourcer[:scripts] << {src: src, type: type}
+      end
     end
 
     def add_script(type: 'text/javascript', &block)
