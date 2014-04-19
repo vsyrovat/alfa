@@ -50,6 +50,7 @@ class TestAlfaWebApplication < Test::Unit::TestCase
     assert_equal(200, Alfa::WebApplication.call({'PATH_INFO' => '/bar'})[0])
     assert_equal(404, Alfa::WebApplication.call({'PATH_INFO' => '/methods'})[0])
     assert_equal(404, Alfa::WebApplication.call({'PATH_INFO' => '/inspect'})[0])
+    assert_equal(200, Alfa::WebApplication.call({'PATH_INFO' => '/second'})[0])
   end
 
   # Controllers isolation (admin/DefaultController, frontend/DefaultController):
@@ -103,5 +104,11 @@ class TestAlfaWebApplication < Test::Unit::TestCase
     assert_equal(c1.hash.to_s, r1[2].join.strip)
     assert_equal(:far, foo1)
     assert_equal(:faz, foo2)
+  end
+
+  # Test for serial routes such as /:action then /:controller or /:controller then /:action
+  def test_09
+    assert_equal("second#index@frontend\n", Alfa::WebApplication.call({'PATH_INFO'=>'/second'})[2].join)
+    assert_equal("second#index@admin\n", Alfa::WebApplication.call({'PATH_INFO'=>'/admin/second'})[2].join)
   end
 end

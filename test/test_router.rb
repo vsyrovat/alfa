@@ -70,6 +70,7 @@ class AlfaRouterTest < Test::Unit::TestCase
         Alfa::Router.draw do
           route '/', :controller => :main, :action => :index, :layout => :index
           route '/:action', :controller => :main, :layout => :internal
+          route '/:controller', :action => :index, :layout => :internal
           route '/:controller/:action', :layout => :internal
           route '/:controller/:action/:id', :layout => :internal
         end
@@ -94,6 +95,7 @@ class AlfaRouterTest < Test::Unit::TestCase
              :routes=>[
                  {:rule=>"/", :options=>{:controller=>:main, :action=>:index, :layout=>:index}},
                  {:rule=>"/:action", :options=>{:controller=>:main, :layout=>:internal}},
+                 {:rule=>"/:controller", :options=>{:action=>:index, :layout=>:internal}},
                  {:rule=>"/:controller/:action", :options=>{:layout=>:internal}},
                  {:rule=>"/:controller/:action/:id", :options=>{:layout=>:internal}},
              ]},
@@ -138,6 +140,7 @@ class AlfaRouterTest < Test::Unit::TestCase
              :routes=>[
                  {:rule=>"/", :options=>{:controller=>:main, :action=>:index, :layout=>:index}},
                  {:rule=>"/:action", :options=>{:controller=>:main, :layout=>:internal}},
+                 {:rule=>"/:controller", :options=>{:action=>:index, :layout=>:internal}},
                  {:rule=>"/:controller/:action", :options=>{:layout=>:internal}},
                  {:rule=>"/:controller/:action/:id", :options=>{:layout=>:internal}},
              ]},
@@ -203,6 +206,7 @@ class AlfaRouterTest < Test::Unit::TestCase
              :routes=>[
                  {:rule=>"/", :options=>{:controller=>:main, :action=>:index, :layout=>:index}},
                  {:rule=>"/:action", :options=>{:controller=>:main, :layout=>:internal}},
+                 {:rule=>"/:controller", :options=>{:action=>:index, :layout=>:internal}},
                  {:rule=>"/:controller/:action", :options=>{:layout=>:internal}},
                  {:rule=>"/:controller/:action/:id", :options=>{:layout=>:internal}},
              ]},

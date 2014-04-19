@@ -84,11 +84,16 @@ module Alfa
             headers['Expires'] = (Time.now + 2592000).httpdate
           else
             request = Rack::Request.new(env) # weakref?
-            app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
-            c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
-            a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
-            l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
+            app_sym, c_sym, a_sym, l_sym = route_to_symbols(route, params)
             controller = self.invoke_controller(app_sym, c_sym)
+            unless controller.class.instance_methods(false).include?(a_sym)
+              if route[:rule] =~ /^\/:(controller|action)\/?$/
+                route, params = self.routes.find_route(Rack::Utils.unescape(env['PATH_INFO']), exclude: [route[:rule]])
+                app_sym, c_sym, a_sym, l_sym = route_to_symbols(route, params)
+                controller = self.invoke_controller(app_sym, c_sym)
+                raise Exceptions::Route404 unless controller
+              end
+            end
             raise Exceptions::Route404 unless controller.class.instance_methods(false).include?(a_sym)
             controller._clear_instance_variables # cleanup
             controller.application = self
@@ -131,6 +136,15 @@ module Alfa
         l << "\n"
       end
       return [response_code, headers, [body, @bputs.join('<br>')]]
+    end
+
+
+    def self.route_to_symbols(route, params)
+      app_sym = route[:options].has_key?(:app) ? route[:options][:app] : params[:app]
+      c_sym = route[:options].has_key?(:controller) ? route[:options][:controller] : params[:controller]
+      a_sym = route[:options].has_key?(:action) ? route[:options][:action] : params[:action]
+      l_sym = route[:options].has_key?(:layout) ? route[:options][:layout] : :default
+      return app_sym, c_sym, a_sym, l_sym
     end
 
     # router
@@ -190,7 +204,9 @@ module Alfa
     end
 
     def self.invoke_controller(a_sym, c_sym)
-      load File.join(@config[:project_root], 'apps', a_sym.to_s, 'controllers', c_sym.to_s + '.rb')
+      f = File.join(@config[:project_root], 'apps', a_sym.to_s, 'controllers', c_sym.to_s + '.rb')
+      return nil unless File.exists?(f)
+      load f
       klass_name = Alfa::Support.camelcase_name(c_sym)+'Controller'
       klass = Kernel.const_get(klass_name) # weakref?
       instance = klass.new

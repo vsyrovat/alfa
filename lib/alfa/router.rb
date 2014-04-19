@@ -153,15 +153,17 @@ module Alfa
     # @return route, params
     # route is route that given in routes.rb
     # params is detected params
-    def self.find_route url
+    def self.find_route(url, exclude: [])
       @routes.each do |route|
         if route[:context].is_a? Hash # container
           if self.app_match?(route[:context][:app][:path], url)
             url = url[(route[:context][:app][:path].length-1)..-1]
             route[:routes].each do |r|
-              is_success, params = self.route_match?(r[:rule], url)
-              r[:options][:app] = route[:context][:app][:app]
-              return r, params if is_success
+              unless exclude.include?(r[:rule])
+                is_success, params = self.route_match?(r[:rule], url)
+                r[:options][:app] = route[:context][:app][:app]
+                return r, params if is_success
+              end
             end
             raise Alfa::Exceptions::Route404
           end
