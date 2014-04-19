@@ -1,2 +1,2 @@
-class Users < Sequel::Model(DB::Main[:users])
+class User < Sequel::Model(DB::Main[:users])
 end

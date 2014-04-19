@@ -27,11 +27,15 @@ module Alfa
     def [](key)
       nil
     end
+
+    def method_missing(key)
+      nil
+    end
   end
 
   class User
-    def initialize(properties)
-      @properties = properties
+    def initialize(object)
+      @object = object
     end
 
     def grants
@@ -45,7 +49,7 @@ module Alfa
 
     # @return Array
     def groups
-      @groups ||= @properties[:groups].to_s.split(',').map{|s| s.strip.to_sym}
+      @groups ||= @object.groups.to_s.split(',').map{|s| s.strip.to_sym}
     end
 
     def group?(name)
@@ -57,7 +61,11 @@ module Alfa
     end
 
     def [](key)
-      @properties[key]
+      @object[key]
+    end
+
+    def method_missing(key)
+      @object.send(key)
     end
   end
 end

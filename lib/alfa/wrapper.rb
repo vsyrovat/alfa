@@ -54,8 +54,8 @@ module Alfa
     # Return current user
     def user
       @user ||= (
-        if @request.session[:user_id] && (u = @application.config[:db][:main][:instance][:users].first(id: @request.session[:user_id]))
-          User.new(u)
+        if @request.session[:user_id] && (u = ::User.first(id: @request.session[:user_id]))
+          Alfa::User.new(u)
         else
           GuestUser
         end
