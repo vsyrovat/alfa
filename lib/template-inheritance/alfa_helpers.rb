@@ -98,6 +98,10 @@ module TemplateInheritance
       "<a href='#{url}'>#{Haml::Helpers.html_escape(text)}</a>"
     end
 
+    def a_post(text, url)
+      "<a href='#' onclick='{var form=document.createElement(\"form\"); form.setAttribute(\"method\", \"post\"); form.setAttribute(\"action\", \"#{url}\"); document.body.appendChild(form); form.submit();}'>#{Haml::Helpers.html_escape(text)}</a>"
+    end
+
     alias :link_to :a
 
     def application
