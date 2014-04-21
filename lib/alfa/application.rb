@@ -36,7 +36,7 @@ module Alfa
         @logger.info "  DOCUMENT_ROOT: #{@config[:document_root]}\n"
         @log_file.flush
         ObjectSpace.define_finalizer(@logger, Proc.new {@logger.info "Application (pid=#{$$}) stopped at #{DateTime.now}\n\n"})
-        @config[:db].each_value { |db| db[:instance].loggers = [@logger] }
+        @config[:db].each_value { |db| db[:instance].logger = @logger }
       else
         @logger = Alfa::NullLogger.new
       end
@@ -57,12 +57,12 @@ module Alfa
 
     def self.try_register(login, password)
       @config[:db][:main][:instance].transaction do
-        unless @config[:db][:main][:instance][:users].first(:login=>login)
+        unless User.first(:login=>login)
           @logger.portion do |l|
             salt = SecureRandom.hex(5)
             passhash = Digest::MD5.hexdigest("#{salt}#{password}")
-            @config[:db][:main][:instance][:users].insert(:login=>login, :salt=>salt, :passhash=>passhash)
-            l.info("create new user login=#{login}, password=***, salt=#{salt}, passhash=#{passhash}")
+            User.create(:login=>login, :salt=>salt, :passhash=>passhash)
+            l.info("created new user login=#{login}, password=***, salt=#{salt}, passhash=#{passhash}")
           end
           return true, "Registration done"
         end
