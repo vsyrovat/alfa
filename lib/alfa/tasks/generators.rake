@@ -51,7 +51,11 @@ EOL
 
     pattern = <<EOL
 class #{model_classname} < Sequel::Model(DB::#{db_classname}[:#{model_filename}s])
-  plugin :timestamps, update_on_create: true
+  # Uncomment following plugins if necessary:
+  # plugin :timestamps, update_on_create: true
+  # plugin :prepared_statements
+  # plugin :serialization, %method%, %field%
+  # Read more about available plugins: http://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins.html
 end
 EOL
     filename = "#{model_filename}.rb"
