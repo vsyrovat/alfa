@@ -148,4 +148,15 @@ EOL
       puts "All DSNs are ok!"
     end
   end
+
+  desc 'Seed chosen Database'
+  task :seed => [:optional_db, :stdout_logger] do
+    if @db
+      Kernel.load File.join(@db[:path], 'seed.rb')
+    else
+      dbs.each do |name, db|
+        Kernel.load File.join(db[:path], 'seed.rb')
+      end
+    end
+  end
 end
