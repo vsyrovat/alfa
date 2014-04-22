@@ -33,14 +33,14 @@ module Alfa
     end
   end
 
+
   class User
     def initialize(object)
       @object = object
     end
 
     def grants
-      @groups_p ||= groups + [:public]
-      @groups_p.map{|g| Alfa.GROUPS[g] || []}.flatten
+      (groups + [:public]).map{|g| Alfa.GROUPS[g] || []}.flatten
     end
 
     def grant?(name)
@@ -49,7 +49,7 @@ module Alfa
 
     # @return Array
     def groups
-      @groups ||= @object.groups.to_s.split(',').map{|s| s.strip.to_sym}
+      @object.groups.map{|s| s.strip.to_sym}
     end
 
     def group?(name)
@@ -64,8 +64,12 @@ module Alfa
       @object[key]
     end
 
-    def method_missing(key)
-      @object.send(key)
+    def method_missing(*o)
+      @object.send(*o)
+    end
+
+    def self.method_missing(*o)
+      @object.class.send(*o)
     end
   end
 end
