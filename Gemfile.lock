@@ -4,14 +4,14 @@ GEM
     haml (4.0.5)
       tilt
     mysql2 (0.3.15)
-    rack (1.4.5)
+    rack (1.5.2)
     rack-session-sequel (0.0.1)
       rack
       sequel
-    rake (10.3.0)
+    rake (10.3.1)
     ruty (0.0.1)
     rvm (1.11.3.9)
-    sequel (3.48.0)
+    sequel (4.9.0)
     template-inheritance (0.3.1)
       haml
       tilt
@@ -23,10 +23,10 @@ PLATFORMS
 DEPENDENCIES
   haml (= 4.0.5)
   mysql2 (~> 0.3)
-  rack (~> 1.4.1)
+  rack (~> 1.5, >= 1.5.2)
   rack-session-sequel (~> 0.0.1)
   rake (~> 10.3, >= 10.3.0)
   ruty (= 0.0.1)
   rvm (~> 1.11)
-  sequel (~> 3.42)
+  sequel (~> 4.9, >= 4.9.0)
   template-inheritance (= 0.3.1)
