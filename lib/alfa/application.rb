@@ -1,6 +1,7 @@
 require 'alfa/logger'
 require 'alfa/config'
 require 'alfa/exceptions'
+require 'alfa/user'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'

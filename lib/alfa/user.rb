@@ -1,3 +1,6 @@
+require 'digest/md5'
+require 'securerandom'
+
 module Alfa
   class << self
     attr_accessor :GROUPS
@@ -28,7 +31,7 @@ module Alfa
       nil
     end
 
-    def method_missing(key)
+    def method_missing(*o)
       nil
     end
   end
@@ -70,6 +73,26 @@ module Alfa
 
     def self.method_missing(*o)
       @object.class.send(*o)
+    end
+  end
+
+  # Prepend this module in User model in your Project
+  # Example:
+  #   class User < Sequel::Model(DB::Main[:users])
+  #     prepend Alfa::UserModule
+  #   end
+  module UserModule
+    def password=(p)
+      self.salt = SecureRandom.hex(5)
+      self.passhash = Digest::MD5.hexdigest("#{self.salt}#{p}")
+    end
+
+    def password_valid?(p)
+      self.passhash == Digest::MD5.hexdigest("#{self.salt}#{p}")
+    end
+
+    def groups=(g)
+      super(Array(g))
     end
   end
 end
