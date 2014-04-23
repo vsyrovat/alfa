@@ -119,6 +119,7 @@ module Alfa
         rescue Exception => e
           response_code = 500
           body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>\n#{e.backtrace.join("<br>\n")}"
+          l.fatal "FATAL ERROR: #{e.message} at #{e.backtrace.first}"
         end
         if t_sym == :default
           #debug_info = '<hr>Queries:<br>' + @logger.logs.map { |log|
