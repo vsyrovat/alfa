@@ -49,8 +49,15 @@ namespace :db do
     end
   end
 
-  desc "Reset schema (drop all tables)"
-  task :reset => [:require_db, :stdout_logger] do
+  desc "Drop all tables in schema"
+  task :drop => [:require_db, :stdout_logger] do
+    @db[:instance].tables.each do |table|
+      @db[:instance].foreign_key_list(table).each do |key|
+        @db[:instance].alter_table table do
+          drop_foreign_key(key[:columns])
+        end
+      end
+    end
     @db[:instance].drop_table(*@db[:instance].tables)
   end
 
