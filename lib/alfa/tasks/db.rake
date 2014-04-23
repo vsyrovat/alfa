@@ -143,10 +143,10 @@ EOL
     errors = 0
     dbs.each do |name, db|
       begin
-        db[:instance].run("SHOW TABLES")
+        db[:instance].test_connection
       rescue Sequel::DatabaseConnectionError => e
         errors = errors + 1
-        puts e
+        puts e.message
       end
     end
     if errors > 0
