@@ -48,6 +48,9 @@ module Alfa
     def self.load_tasks
       VARS[:rakeapp_instance] = self
       require 'alfa/tasks'
+      Dir[File.join(@config[:project_root], 'tasks', '*.rake')].each do |f|
+        Kernel.load f
+      end
     end
 
 
