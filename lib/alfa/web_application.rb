@@ -15,6 +15,7 @@ require 'haml'
 require 'alfa/template-inheritance'
 require 'tilt/alfa_patch'
 require 'haml/alfa_patch'
+require 'json'
 
 module Alfa
   class WebApplication < Alfa::Application
@@ -97,15 +98,21 @@ module Alfa
             controller.request = request
             controller.app_sym = app_sym
             controller.c_sym = c_sym
-            controller.__send__(a_sym)
-            data = controller._instance_variables_hash
-            resourcer = Alfa::Resourcer.new
-            wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym, resourcer: resourcer)
-            Ruty::Tags::RequireStyle.clean_cache # cleanup
-            Ruty::Tags::RequireScript.clean_cache # cleanup
-            content = self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data, &block)
-            body = self.render_layout(app_sym.to_s, l_sym.to_s, controller, wrapper, data.merge({:@body => content}))
-            headers["Content-Type"] = 'text/html; charset=utf-8'
+            data = controller.__send__(a_sym)
+            case controller.class.get_content_type(a_sym)
+              when :json
+                headers['Content-Type'] = 'application/json; charset=utf-8'
+                body = JSON.generate(data, quirks_mode: true)
+              else
+                data = controller._instance_variables_hash
+                resourcer = Alfa::Resourcer.new
+                wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym, resourcer: resourcer)
+                Ruty::Tags::RequireStyle.clean_cache # cleanup
+                Ruty::Tags::RequireScript.clean_cache # cleanup
+                content = self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data, &block)
+                body = self.render_layout(app_sym.to_s, l_sym.to_s, controller, wrapper, data.merge({:@body => content}))
+                headers["Content-Type"] = 'text/html; charset=utf-8'
+            end
           end
         rescue Alfa::Exceptions::Route404 => e
           response_code = 404
@@ -119,7 +126,7 @@ module Alfa
         rescue Exception => e
           response_code = 500
           body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>\n#{e.backtrace.join("<br>\n")}"
-          l.fatal "FATAL ERROR: #{e.message} at #{e.backtrace.first}"
+          l.error "ERROR: #{e.message} at #{e.backtrace.first}"
         end
         if t_sym == :default
           #debug_info = '<hr>Queries:<br>' + @logger.logs.map { |log|
