@@ -110,7 +110,11 @@ module Alfa
                 Ruty::Tags::RequireStyle.clean_cache # cleanup
                 Ruty::Tags::RequireScript.clean_cache # cleanup
                 content = self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data, &block)
-                body = self.render_layout(app_sym.to_s, l_sym.to_s, controller, wrapper, data.merge({:@body => content}))
+                if controller.class.get_render(a_sym) == :partial
+                  body = content
+                else
+                  body = self.render_layout(app_sym.to_s, l_sym.to_s, controller, wrapper, data.merge({:@body => content}))
+                end
                 headers["Content-Type"] = 'text/html; charset=utf-8'
             end
           end
