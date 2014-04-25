@@ -5,7 +5,7 @@ require 'alfa/support'
 module Alfa
   class NullLogger
     def portion(*args, &block)
-      l = WeakRef.new(self.class.new)
+      l = self.class.new
       yield(l)
     end
 
