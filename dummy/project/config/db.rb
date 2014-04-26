@@ -22,3 +22,5 @@ end
 Dir[File.join(PROJECT_ROOT, 'db/main/models/*.rb')].each do |f|
   require f
 end
+
+Sequel.extension :blank
