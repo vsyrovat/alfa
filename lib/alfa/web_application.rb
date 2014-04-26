@@ -115,7 +115,7 @@ module Alfa
                 else
                   body = self.render_layout(app_sym.to_s, l_sym.to_s, controller, wrapper, data.merge({:@body => content}))
                 end
-                headers["Content-Type"] = 'text/html; charset=utf-8'
+                headers['Content-Type'] = 'text/html; charset=utf-8'
             end
           end
         rescue Alfa::Exceptions::Route404 => e
@@ -126,7 +126,7 @@ module Alfa
         rescue Exceptions::HttpRedirect => e
           response_code = e.code
           headers['Location'] = e.url.to_s
-          body = ''
+          body = "You was redirected to #{e.url}"
         rescue Exception => e
           response_code = 500
           body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>\n#{e.backtrace.join("<br>\n")}"

@@ -50,11 +50,11 @@ end
 
 class Module
   def load_in_module_context file
-    module_eval file, file
+    module_eval ::File.read(file), file
   end
 
   def load_in_class_context file
-    class_eval file, file
+    class_eval ::File.read(file), file
   end
 end
 
