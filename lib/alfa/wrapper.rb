@@ -29,6 +29,7 @@ module Alfa
       end
       kwargs = {:app=>@app_sym}.merge kwargs
       kwargs = {:controller=>@c_sym}.merge kwargs if kwargs[:action]
+      kwargs[:action] = :index if kwargs[:controller] && !kwargs[:action]
       kwargs
     end
 
@@ -39,10 +40,14 @@ module Alfa
       s1 = str.split('@')
       raise Exceptions::E004.new("E004: Bad href argument #{str}: it should contain at most one @ symbol") if s1.length > 2
       res[:app] = s1.last.to_sym if s1.length > 1
-      s2 = s1.first.split('#')
+      s2 = s1.first.split('#', -1)
       raise Exceptions::E004.new("E004: Bad href argument #{str}: it should contain at most one # symbol") if s2.length > 2
-      res[:controller] = s2.first.to_sym if s2.length > 1
-      res[:action] = s2.last.to_sym if s2.length > 0
+      if s2.length > 0
+        res[:action] = s2.last.to_sym unless s2.last.empty?
+        if s2.length > 1
+          res[:controller] = s2.first.to_sym unless s2.first.empty?
+        end
+      end
       res
     end
 

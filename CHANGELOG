@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
++ Short href syntax: '#action', 'controller#' and 'controller#@app'
+
 + breadcrumb_match? helper's and controller's method
 
 + Sequel plugin igrep
