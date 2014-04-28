@@ -95,6 +95,7 @@ module TemplateInheritance
     end
 
     def a(text, url)
+      url = href(url.to_s) if url.is_a?(Symbol)
       "<a href='#{url}'>#{Haml::Helpers.html_escape(text)}</a>"
     end
 

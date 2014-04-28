@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
++ Symbols href syntax in templates. Now #{a 'Title', :'controller#action@app'} is same as #{a 'Title', href('controller#action@app')}
+
 + Short href syntax: '#action', 'controller#' and 'controller#@app'
 
 + breadcrumb_match? helper's and controller's method
