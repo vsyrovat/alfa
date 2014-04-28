@@ -5,6 +5,37 @@ Legend:
 
 === HEAD
 
++ breadcrumb_match? helper's and controller's method
+
++ Sequel plugin igrep
+
++ Content-type json and partial rendering
+
++ Support of rake:test for projects
+
+~ rake db:reset renamed to db:drop and improved
+
++ rake db:seed
+
++ rake +:model
+
++ a_post helper method
+
++ Serial route rules support
+
++ Resources support
+
++ Snippets support
+
++ rake db:test
+
+~ Improve account support
+
++ Thread safety
+
+
+=== 0.0.5.pre
+
 ~ Improve assets http cache control
 
 + Haml with template inheritance
