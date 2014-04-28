@@ -68,7 +68,7 @@ module Alfa
     end
 
 
-    [300, 301, 302, 303, 401, 403].each do |code|
+    [300, 301, 302, 303].each do |code|
       define_method ("redirect_#{code}".to_sym) do |url|
         @application.redirect(url, code)
       end
