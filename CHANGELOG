@@ -9,7 +9,7 @@ Legend:
 
 + breadcrumb_match? helper's and controller's method
 
-+ Sequel plugin igrep
++ Sequel extension igrep
 
 + Content-type json and partial rendering
 
