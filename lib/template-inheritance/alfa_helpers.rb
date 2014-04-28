@@ -119,6 +119,10 @@ module TemplateInheritance
     def snippet(name)
       @wrapper.application.snippet(name, @wrapper)
     end
+
+    def breadcrumb_match?(*o)
+      @wrapper.breadcrumb_match?(*o)
+    end
   end
 end
 # End of patch

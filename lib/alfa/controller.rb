@@ -2,9 +2,13 @@ require 'alfa/wrapper'
 
 module Alfa
   class Controller
-    attr_accessor :application, :request, :config, :app_sym, :c_sym
-
     include Alfa::WrapperMethods
+
+    attr_accessor :application, :request, :config, :app_sym, :c_sym, :params
+
+    def initialize(route: nil)
+      @route = route
+    end
 
     def self.__options
       @__options ||= {}

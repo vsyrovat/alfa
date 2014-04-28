@@ -107,6 +107,12 @@ module Alfa
     def flash(message)
 
     end
+
+
+    def breadcrumb_match?(controller: nil, action: nil)
+      (controller ? (@route[:options][:controller] ? @route[:options][:controller] == controller : @params[:controller] == controller) : true) &&
+      (action ? (@route[:options][:action] ? @route[:options][:action] == action : @params[:action] == action) : true)
+    end
   end
 
 
@@ -114,14 +120,16 @@ module Alfa
   class Wrapper
     include Alfa::WrapperMethods
 
-    attr_reader :application, :request, :app_sym, :c_sym, :resourcer
+    attr_reader :application, :request, :app_sym, :c_sym, :resourcer, :params
 
-    def initialize(application: nil, request: nil, app_sym: nil, c_sym: nil, resourcer: nil)
+    def initialize(application: nil, request: nil, app_sym: nil, c_sym: nil, resourcer: nil, params: nil, route: nil)
       @application = application
       @request = request
       @app_sym = app_sym
       @c_sym = c_sym
       @resourcer = resourcer
+      @params = params
+      @route = route
     end
   end
 end

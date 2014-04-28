@@ -129,7 +129,9 @@ module Alfa
         rule_segments.zip(url_segments).each do |rule_segment, url_segment|
           skip_flag = true if rule_segment == '**'
           if rule_segment =~ /^:[a-z]+\w*$/i && url_segment =~ /^[a-z0-9_]+$/
-            pares[rule_segment[1..-1].to_sym] = url_segment.to_sym
+            key = rule_segment[1..-1].to_sym
+            url_segment = url_segment.to_sym if [:controller, :action].include?(key)
+            pares[key] = url_segment
           elsif (rule_segment == url_segment) || (rule_segment == '*' && url_segment =~ /^[a-z0-9_]+$/) || (rule_segment == nil && skip_flag) || rule_segment == '**'
           else
             fail_flag = true

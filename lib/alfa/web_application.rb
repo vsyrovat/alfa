@@ -83,12 +83,12 @@ module Alfa
           else
             request = Rack::Request.new(env) # weakref?
             app_sym, c_sym, a_sym, l_sym = route_to_symbols(route, params)
-            controller = self.invoke_controller(app_sym, c_sym)
+            controller = self.invoke_controller(app_sym, c_sym, route)
             unless controller.class.instance_methods(false).include?(a_sym)
               if route[:rule] =~ /^\/:(controller|action)\/?$/
                 route, params = self.routes.find_route(Rack::Utils.unescape(env['PATH_INFO']), exclude: [route[:rule]])
                 app_sym, c_sym, a_sym, l_sym = route_to_symbols(route, params)
-                controller = self.invoke_controller(app_sym, c_sym)
+                controller = self.invoke_controller(app_sym, c_sym, route)
                 raise Exceptions::Route404 unless controller
               end
             end
@@ -98,6 +98,7 @@ module Alfa
             controller.request = request
             controller.app_sym = app_sym
             controller.c_sym = c_sym
+            controller.params = params
             data = controller.__send__(a_sym)
             case controller.class.get_content_type(a_sym)
               when :json
@@ -106,7 +107,7 @@ module Alfa
               else
                 data = controller._instance_variables_hash
                 resourcer = Alfa::Resourcer.new
-                wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym, resourcer: resourcer)
+                wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym, resourcer: resourcer, params: params, route: route)
                 Ruty::Tags::RequireStyle.clean_cache # cleanup
                 Ruty::Tags::RequireScript.clean_cache # cleanup
                 content = self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data, &block)
@@ -212,13 +213,13 @@ module Alfa
       @config[:groups][:public] = [] unless @config[:groups][:public]
     end
 
-    def self.invoke_controller(a_sym, c_sym)
+    def self.invoke_controller(a_sym, c_sym, route)
       f = File.join(@config[:project_root], 'apps', a_sym.to_s, 'controllers', c_sym.to_s + '.rb')
       return nil unless File.exists?(f)
       load f
       klass_name = Alfa::Support.camelcase_name(c_sym)+'Controller'
       klass = Kernel.const_get(klass_name) # weakref?
-      instance = klass.new
+      instance = klass.new(route: route)
       Object.module_eval{remove_const(klass_name)}
       return instance
     end
