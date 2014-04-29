@@ -26,7 +26,7 @@ Sequel.migration do
   up do
     # Use Sequel migration syntax (http://sequel.jeremyevans.net/rdoc/files/doc/schema_modification_rdoc.html) or native SQL (run "SQL command")
     create_table :#{model_filename}s do
-      primary_key :id, type: :integer, unsigned: true
+      primary_key :id
       # ...
       column :created_at, DateTime
       column :updated_at, DateTime
@@ -56,6 +56,14 @@ class #{model_classname} < Sequel::Model(DB::#{db_classname}[:#{model_filename}s
   # plugin :prepared_statements
   # plugin :serialization, %method%, %field%
   # Read more about available plugins: http://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins.html
+
+  # Use associations:
+  # one_to_one :association_name, class: :OtherModel, key: :key_name
+  # one_to_many ...
+  # many_to_one ...
+  # many_to_many ...
+  # one_through_one ...
+  # Read more about association basics: http://sequel.jeremyevans.net/rdoc/files/doc/association_basics_rdoc.html
 end
 EOL
     filename = "#{model_filename}.rb"
