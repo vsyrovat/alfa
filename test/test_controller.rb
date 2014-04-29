@@ -43,13 +43,18 @@ EOL
     c.c_sym = :default
     assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params(:action=>:foo))
     assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params(:action=>:foo, :controller=>:default))
-    assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params(:foo))
     assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params('foo'))
+    assert_equal({:app=>:frontend, :controller=>:default, :action=>:foo}, c._extract_href_params(:foo))
     assert_equal({:app=>:frontend, :controller=>:admin, :action=>:foo}, c._extract_href_params('admin#foo'))
+    assert_equal({:app=>:frontend, :controller=>:admin, :action=>:foo}, c._extract_href_params(:'admin#foo'))
     assert_equal({:app=>:frontend, :controller=>:admin, :action=>:index}, c._extract_href_params('admin#'))
+    assert_equal({:app=>:frontend, :controller=>:admin, :action=>:index}, c._extract_href_params(:'admin#'))
     assert_equal({:app=>:zoo, :controller=>:admin, :action=>:foo}, c._extract_href_params('admin#foo', :app=>:zoo))
+    assert_equal({:app=>:zoo, :controller=>:admin, :action=>:foo}, c._extract_href_params(:'admin#foo', :app=>:zoo))
     assert_equal({:app=>:zoo, :controller=>:admin, :action=>:foo}, c._extract_href_params('admin#foo@zoo'))
+    assert_equal({:app=>:zoo, :controller=>:admin, :action=>:foo}, c._extract_href_params(:'admin#foo@zoo'))
     assert_equal({:app=>:zoo, :controller=>:admin, :action=>:index}, c._extract_href_params('admin#@zoo'))
+    assert_equal({:app=>:zoo, :controller=>:admin, :action=>:index}, c._extract_href_params(:'admin#@zoo'))
     assert_equal({:app=>:admin}, c._extract_href_params(:app=>:admin))
   end
 end

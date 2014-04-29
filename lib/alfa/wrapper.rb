@@ -20,13 +20,7 @@ module Alfa
 
     def _extract_href_params(*o)
       args, kwargs = Support.args_kwargs(*o)
-      if args.any?
-        if args.first.is_a?(Symbol)
-          kwargs[:action] = args.first
-        else
-          kwargs.merge! _string_to_aca(args.first.to_s)
-        end
-      end
+      kwargs.merge!(_string_to_aca(args.first.to_s)) if args.any?
       kwargs = {:app=>@app_sym}.merge kwargs
       kwargs = {:controller=>@c_sym}.merge kwargs if kwargs[:action]
       kwargs[:action] = :index if kwargs[:controller] && !kwargs[:action]

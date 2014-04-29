@@ -94,13 +94,25 @@ module TemplateInheritance
       @wrapper.href(*o)
     end
 
-    def a(text, url)
-      url = href(url.to_s) if url.is_a?(Symbol)
-      "<a href='#{url}'>#{Haml::Helpers.html_escape(text)}</a>"
+    def a(text, url, attributes = {})
+      active_class = 'active'
+      if url.is_a?(Symbol)
+        active_class = attributes[:active_class] if attributes.has_key?(:active_class)
+        zp = @wrapper._string_to_aca(url.to_s)
+        attributes[:class] = "#{attributes[:class]} #{active_class}".strip if breadcrumb_match?(controller: zp[:controller], action: zp[:action])
+        url = href(url.to_s)
+      end
+      attributes.delete(:active_class)
+      attributes[:href] = url
+      capture_haml do
+        haml_tag(:a, text, attributes)
+      end
     end
 
-    def a_post(text, url)
-      "<a href='#' onclick='{var form=document.createElement(\"form\"); form.setAttribute(\"method\", \"post\"); form.setAttribute(\"action\", \"#{url}\"); document.body.appendChild(form); form.submit();}'>#{Haml::Helpers.html_escape(text)}</a>"
+    def a_post(text, url, attributes = {})
+      url_str = url.is_a?(Symbol) ? href(url.to_s) : url.to_s
+      attributes[:onclick] = "{var form=document.createElement(\"form\"); form.setAttribute(\"method\", \"post\"); form.setAttribute(\"action\", \"#{url_str}\"); document.body.appendChild(form); form.submit(); return false;}"
+      a(text, url, attributes)
     end
 
     alias :link_to :a
@@ -121,8 +133,8 @@ module TemplateInheritance
       @wrapper.application.snippet(name, @wrapper)
     end
 
-    def breadcrumb_match?(*o)
-      @wrapper.breadcrumb_match?(*o)
+    def breadcrumb_match?(controller: nil, action: nil)
+      @wrapper.breadcrumb_match?(controller: controller, action: action)
     end
   end
 end
