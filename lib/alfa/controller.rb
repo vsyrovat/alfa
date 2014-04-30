@@ -15,12 +15,15 @@ module Alfa
     end
 
     def render(type)
-      m = caller_locations(1, 1)[0].label.to_sym
-      self.class.options(m, {render: type})
+      self.class.options(caller_locations(1, 1)[0].label.to_sym, {render: type})
     end
 
     def self.options(method, opts)
       __options[method.to_sym] = __options[method.to_sym] ? __options[method.to_sym].merge(opts) : opts
+    end
+
+    def set_options(opts = {})
+      self.class.options(caller_locations(1, 1)[0].label.to_sym, opts)
     end
 
     def self.get_content_type(method)

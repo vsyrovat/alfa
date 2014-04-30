@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
++ set_options method
+
 + Native breacrumb support for links with urls set as Symbols.
   Class 'active' (can be changed with :active_class param in tag) automatically append to all "a", "link_to" and "a_post" tags matched with current page by controller and action.
   Only for interpolated tags yet.
