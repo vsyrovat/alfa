@@ -1,12 +1,15 @@
 require File.expand_path('../../../../version', __FILE__)
 require 'fileutils'
 require 'alfa/support'
+require 'securerandom'
 
 PROJECT_NAME = $*[1]
+SESSION_SECRET = SecureRandom.base64(24)
 
 sr = {
   '#{ALFA_VERSION}' => ALFA_VERSION,
   '#{PROJECT_NAME}' => PROJECT_NAME,
+  '#{SESSION_SECRET}' => SESSION_SECRET
 }
 
 target_dir = File.join(Dir.pwd, PROJECT_NAME)
