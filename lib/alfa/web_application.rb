@@ -184,7 +184,7 @@ module Alfa
       builder.use Rack::Session::Cookie, key: @config[:session][:key], secret: @config[:session][:secret]
       if @config[:serve_static]
         builder.run Rack::Cascade.new([
-          Rack::FileAlfa.new(@config[:document_root]),
+          Rack::FileAlfa.new(@config[:document_root], {'Cache-Control'=>'max-age=2592000'}),
           self,
         ])
       else
