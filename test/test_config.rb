@@ -19,8 +19,8 @@ class AlfaConfigTest < Test::Unit::TestCase
     assert_raise RuntimeError do
       config.store(:log, nil)
     end
-    assert_equal({:db=>{}, :log=>{}}, config)
+    assert_equal({:db=>{}, :log=>{}, :session=>{:key=>'session', :secret=>nil}}, config)
     config[:foo] = 1
-    assert_equal({:db=>{}, :log=>{}, :foo=>1}, config)
+    assert_equal({:db=>{}, :log=>{}, :session=>{:key=>'session', :secret=>nil}, :foo=>1}, config)
   end
 end
