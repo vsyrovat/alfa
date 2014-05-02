@@ -117,6 +117,12 @@ module TemplateInheritance
 
     alias :link_to :a
 
+    def img(attributes = {})
+      capture_haml do
+        haml_tag(:img, attributes)
+      end
+    end
+
     def application
       @wrapper.application
     end

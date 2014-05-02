@@ -18,7 +18,7 @@ end
 module TemplateInheritance
   class Template
     def template(options = {})
-      options = {:escape_html => true, :raw_interpolated_tags => [:a, :link_to, :a_post]}.merge(options)
+      options = {:escape_html => true, :raw_interpolated_tags => [:a, :link_to, :a_post, :img]}.merge(options)
       @template ||= Tilt.new(self.fullpath, nil, options)
     end
   end
