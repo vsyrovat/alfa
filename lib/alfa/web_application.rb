@@ -181,6 +181,7 @@ module Alfa
 
 
     def self.rackup(builder)
+      builder.use Rack::Lock
       builder.use Rack::Session::Cookie, key: @config[:session][:key], secret: @config[:session][:secret]
       if @config[:serve_static]
         builder.run Rack::Cascade.new([
