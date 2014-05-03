@@ -88,4 +88,43 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal({:a=>1, :c=>3}, h.except(:b))
     assert_equal({:a=>1, :b=>2, :c=>3}, h)
   end
+
+  def test_nil_operations
+    assert_equal(nil, 1 * nil)
+    assert_equal(nil, nil * 1)
+    assert_equal(nil, 1.1 * nil)
+    assert_equal(nil, nil * 1.1)
+
+    assert_equal(nil, 1 + nil)
+    assert_equal(nil, nil + 1)
+    assert_equal(nil, 1.1 + nil)
+    assert_equal(nil, nil + 1.1)
+
+    assert_equal(nil, 1 - nil)
+    assert_equal(nil, nil - 1)
+    assert_equal(nil, 1.1 - nil)
+    assert_equal(nil, nil - 1.1)
+
+    assert_equal(nil, 1 / nil)
+    assert_equal(nil, nil / 1)
+    assert_equal(nil, 1.1 / nil)
+    assert_equal(nil, nil / 1.1)
+
+    assert_equal(nil, 1.fdiv(nil))
+    assert_equal(nil, nil.fdiv(1))
+    assert_equal(nil, 1.1.fdiv(nil))
+    assert_equal(nil, nil.fdiv(1.1))
+
+    assert_equal(nil, 1.div(nil))
+    assert_equal(nil, nil.div(1))
+    assert_equal(nil, 1.1.div(nil))
+    assert_equal(nil, nil.div(1.1))
+
+    assert_equal(nil, nil * nil)
+    assert_equal(nil, nil + nil)
+    assert_equal(nil, nil - nil)
+    assert_equal(nil, nil / nil)
+    assert_equal(nil, nil.div(nil))
+    assert_equal(nil, nil.fdiv(nil))
+  end
 end
