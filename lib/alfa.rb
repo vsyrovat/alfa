@@ -1,4 +1,3 @@
-
 require 'alfa/support'
 require 'alfa/exceptions'
 require 'alfa/web_application'
