@@ -1,9 +1,5 @@
 require 'test/unit'
 require 'alfa/support'
-require 'alfa/database/mysql'
-
-class DB1 < Alfa::Database::MySQL; end
-class DB2 < Alfa::Database::MySQL; end
 
 class AlfaSupportTest < Test::Unit::TestCase
   def test_camelcase_name
@@ -27,13 +23,6 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal('foo_bar', Alfa::Support.underscore_name('foo_bar'))
     assert_equal('foo_bar', Alfa::Support.underscore_name(:foo_bar))
     assert_equal('bar_baz', Alfa::Support.underscore_name('Foo/Bar_Baz'))
-  end
-
-  def test_inheritance
-    DB1.host = 'localhost'
-    DB2.host = 'otherhost'
-    assert_equal('localhost', DB1.host)
-    assert_equal('otherhost', DB2.host)
   end
 
   def test_args_kwargs
