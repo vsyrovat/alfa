@@ -1,5 +1,6 @@
 require 'test/unit'
-require 'alfa/support'
+require 'alfa/support/common'
+require 'alfa/support/nil_operations'
 
 class AlfaSupportTest < Test::Unit::TestCase
   def test_camelcase_name
