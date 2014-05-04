@@ -4,7 +4,7 @@ module Alfa
   class Controller
     include Alfa::WrapperMethods
 
-    attr_accessor :application, :request, :config, :app_sym, :c_sym, :params
+    attr_accessor :application, :request, :config, :app_sym, :c_sym, :params, :resourcer, :route
 
     def initialize(route: nil)
       @route = route

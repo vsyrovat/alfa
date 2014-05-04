@@ -121,14 +121,24 @@ module Alfa
 
     attr_reader :application, :request, :app_sym, :c_sym, :resourcer, :params
 
-    def initialize(application: nil, request: nil, app_sym: nil, c_sym: nil, resourcer: nil, params: nil, route: nil)
-      @application = application
-      @request = request
-      @app_sym = app_sym
-      @c_sym = c_sym
-      @resourcer = resourcer
-      @params = params
-      @route = route
+    def initialize(application: nil, request: nil, app_sym: nil, c_sym: nil, resourcer: nil, params: nil, route: nil, caller: nil)
+      if caller
+        @application = caller.application
+        @request = caller.request
+        @app_sym = caller.app_sym
+        @c_sym = caller.c_sym
+        @resourcer = caller.resourcer
+        @params = caller.params
+        @route = caller.route
+      else
+        @application = application
+        @request = request
+        @app_sym = app_sym
+        @c_sym = c_sym
+        @resourcer = resourcer
+        @params = params
+        @route = route
+      end
     end
   end
 end
