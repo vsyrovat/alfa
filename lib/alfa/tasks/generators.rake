@@ -38,7 +38,7 @@ Sequel.migration do
   end
 end
 EOL
-    filename = "#{ts}_#{model_filename}.rb"
+    filename = "#{ts}_#{model_filename}s.rb"
     migration_file = File.join(@db[:path], 'migrations', filename)
     if File.exist?(migration_file)
       puts "Error: file #{migration_file} already exists, exiting"
