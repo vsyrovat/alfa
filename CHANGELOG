@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
++ Sequel extension with_pks
+
 + Session secret
 
 + set_options method
