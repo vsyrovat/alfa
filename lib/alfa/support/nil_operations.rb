@@ -16,6 +16,10 @@ class NilKnown < SimpleDelegator
     @delegate_sd_obj.nil?
   end
 
+  def is?
+    !(@delegate_sd_obj.nil? || @delegate_sd_obj === false)
+  end
+
   def +(arg)
     if nil? || arg.nil?
       arg_known = arg.respond_to?(:known) ? arg.known : nil
@@ -36,6 +40,22 @@ class NilKnown < SimpleDelegator
     end
   end
 
+  def *(arg)
+    if nil? || arg.nil?
+      arg_known = arg.respond_to?(:known) ? arg.known : nil
+      k = (
+      if known.nil? || arg_known.nil?
+        0
+      else
+        known * arg_known
+      end
+      )
+      k.nil? ? nil : NilKnown.new(nil, k)
+    else
+      NilKnown.new(@delegate_sd_obj * arg)
+    end
+  end
+
   def to_ar2
     [value, known]
   end
@@ -50,6 +70,10 @@ module Alfa
 
     def to_nkn
       NilKnown.new(self)
+    end
+
+    def is?
+      self
     end
   end
 end
