@@ -15,6 +15,9 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal([true, {controller: :foo}], Alfa::Router.route_match?('/:controller/**', '/foo/bar/baz'))
     assert_equal([true, {path: 'js/jquery/jquery-latest.js', type: :asset}], Alfa::Router.route_match?('/~assets/:path**', '/~assets/js/jquery/jquery-latest.js'))
     assert_equal([true, {}], Alfa::Router.route_match?('/hello.html', '/hello.html'))
+    assert_equal([true, {action: :index}], Alfa::Router.route_match?('/foo/:action?', '/foo'))
+    assert_equal([true, {action: :index}], Alfa::Router.route_match?('/foo/:action?/', '/foo/'))
+    assert_equal([true, {action: :bar}], Alfa::Router.route_match?('/foo/:action?', '/foo/bar'))
 
     # string rules, negative cases
     assert_equal([false, {action: :foo}], Alfa::Router.route_match?('/:action', '/foo/'))

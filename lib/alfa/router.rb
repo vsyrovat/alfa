@@ -132,6 +132,14 @@ module Alfa
             key = rule_segment[1..-1].to_sym
             url_segment = url_segment.to_sym if [:controller, :action].include?(key)
             pares[key] = url_segment
+          elsif rule_segment.to_s[-1..-1] == '?'
+            key = rule_segment[1..-2].to_sym
+            if [:action].include?(key)
+              url_segment = url_segment.nil? ? :index : url_segment.to_sym
+            else
+              url_segment = nil
+            end
+            pares[key] = url_segment
           elsif (rule_segment == url_segment) || (rule_segment == '*' && url_segment =~ /^[a-z0-9_]+$/) || (rule_segment == nil && skip_flag) || rule_segment == '**'
           else
             fail_flag = true

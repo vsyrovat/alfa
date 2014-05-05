@@ -5,6 +5,8 @@ Legend:
 
 === HEAD
 
++ Routes with optional action: "/controller/:action?"
+
 + Sequel extension with_pks
 
 + Session secret
