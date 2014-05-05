@@ -157,5 +157,11 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal([nil, 0], (1.to_nkn * nil).to_ar2)
     assert_equal([2, 2], (1.to_nkn * 2.to_nkn).to_ar2)
     assert_equal([nil, 24], (4.to_nkn * NilKnown.new(nil, 6)).to_ar2)
+
+    # other
+    assert(1.to_nkn.is?)
+    assert(0.to_nkn.is?)
+    assert(!nil.to_nkn.is?)
+    assert(1.1.to_nkn.is?)
   end
 end
