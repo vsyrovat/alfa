@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'alfa/support/common'
+require 'alfa/support'
 require 'alfa/support/nil_operations'
 
 class AlfaSupportTest < Test::Unit::TestCase
@@ -80,41 +80,76 @@ class AlfaSupportTest < Test::Unit::TestCase
   end
 
   def test_nil_operations
-    assert_equal(nil, 1 * nil)
-    assert_equal(nil, nil * 1)
-    assert_equal(nil, 1.1 * nil)
-    assert_equal(nil, nil * 1.1)
+    assert_nil(NilKnown.new(nil))
+    assert_equal([nil, nil], nil.to_nkn.to_ar2)
+    assert_equal(1, NilKnown.new(1))
+    assert_equal([1, 1], 1.to_nkn.to_ar2)
 
-    assert_equal(nil, 1 + nil)
-    assert_equal(nil, nil + 1)
-    assert_equal(nil, 1.1 + nil)
-    assert_equal(nil, nil + 1.1)
+    a = NilKnown.new(1) + 1
+    assert_equal(2, a)
+    assert_equal(2, a.known)
+    a = NilKnown.new(1) + nil
+    assert_nil(a)
+    assert_equal(1, a.known)
+    a = NilKnown.new(nil) + 1
+    assert_nil(a)
+    assert_equal(1, a.known)
+    a = NilKnown.new(nil) + nil
+    assert_nil(a)
+    assert_nil(a.known)
 
-    assert_equal(nil, 1 - nil)
-    assert_equal(nil, nil - 1)
-    assert_equal(nil, 1.1 - nil)
-    assert_equal(nil, nil - 1.1)
+    a = NilKnown.new(1) + NilKnown.new(1)
+    assert_equal(2, a)
+    assert_equal(2, a.known)
+    a = NilKnown.new(1) + NilKnown.new(nil)
+    assert_nil(a)
+    assert_equal(1, a.known)
+    a = NilKnown.new(nil) + NilKnown.new(1)
+    assert_nil(a)
+    assert_equal(1, a.known)
+    a = NilKnown.new(nil) + NilKnown.new(nil)
+    assert_nil(a)
+    assert_nil(a.known)
 
-    assert_equal(nil, 1 / nil)
-    assert_equal(nil, nil / 1)
-    assert_equal(nil, 1.1 / nil)
-    assert_equal(nil, nil / 1.1)
+    a = 1.to_nkn
+    b = 2.to_nkn
+    c = a + b
+    assert_not_equal(c.hash, a.hash)
+    assert_not_equal(c.hash, b.hash)
 
-    assert_equal(nil, 1.fdiv(nil))
-    assert_equal(nil, nil.fdiv(1))
-    assert_equal(nil, 1.1.fdiv(nil))
-    assert_equal(nil, nil.fdiv(1.1))
+    assert_equal(1.1, NilKnown.new(1.1))
 
-    assert_equal(nil, 1.div(nil))
-    assert_equal(nil, nil.div(1))
-    assert_equal(nil, 1.1.div(nil))
-    assert_equal(nil, nil.div(1.1))
+    a = NilKnown.new(1.1) + 1.1
+    assert_equal(2.2, a)
+    assert_equal(2.2, a.known)
+    a = NilKnown.new(1.1) + nil
+    assert_nil(a)
+    assert_equal(1.1, a.known)
+    a = NilKnown.new(nil) + 1.1
+    assert_nil(a)
+    assert_equal(1.1, a.known)
+    a = NilKnown.new(nil) + nil
+    assert_nil(a)
+    assert_nil(a.known)
 
-    assert_equal(nil, nil * nil)
-    assert_equal(nil, nil + nil)
-    assert_equal(nil, nil - nil)
-    assert_equal(nil, nil / nil)
-    assert_equal(nil, nil.div(nil))
-    assert_equal(nil, nil.fdiv(nil))
+    a = NilKnown.new(1.1) + NilKnown.new(1.1)
+    assert_equal(2.2, a)
+    assert_equal(2.2, a.known)
+    a = NilKnown.new(1.1) + NilKnown.new(nil)
+    assert_nil(a)
+    assert_equal(1.1, a.known)
+    a = NilKnown.new(nil) + NilKnown.new(1.1)
+    assert_nil(a)
+    assert_equal(1.1, a.known)
+    a = NilKnown.new(nil) + NilKnown.new(nil)
+    assert_nil(a)
+    assert_nil(a.known)
+
+    assert_raise ::ArgumentError do
+      NilKnown.new(1, 2)
+    end
+
+    assert_equal([nil, 102], (NilKnown.new(nil, 100) + 2).to_ar2)
+    assert_equal([nil, 202], (NilKnown.new(nil, 100) + NilKnown.new(nil, 102)).to_ar2)
   end
 end

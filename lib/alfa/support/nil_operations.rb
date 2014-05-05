@@ -1,69 +1,62 @@
+require 'delegate'
+
 # Nil operations
 # Nil mean "unknown" or "no data set", so operations with nil return nil too
-class NilClass
-  def *(arg)
-    nil
+class NilKnown < SimpleDelegator
+  attr_accessor :known
+  alias :value :__getobj__
+
+  def initialize(obj, k = nil)
+    __raise__ ::ArgumentError, 'obj and k should not be nil simultaneously' if !obj.nil? && !k.nil?
+    super(obj)
+    @known = obj ? obj : k
+  end
+
+  def nil?
+    @delegate_sd_obj.nil?
   end
 
   def +(arg)
-    nil
+    if nil? || arg.nil?
+      arg_known = arg.respond_to?(:known) ? arg.known : nil
+      k = (
+       if known.nil? && arg_known.nil?
+         nil
+       elsif known.nil?
+         arg_known
+       elsif arg_known.nil?
+         known
+       else
+         known + arg_known
+       end
+      )
+      k.nil? ? nil : NilKnown.new(nil, k)
+    else
+      NilKnown.new(@delegate_sd_obj + arg)
+    end
   end
 
-  def -(arg)
-    nil
-  end
-
-  def /(arg)
-    nil
-  end
-
-  def div(arg)
-    nil
-  end
-
-  def fdiv(arg)
-    nil
+  def to_ar2
+    [value, known]
   end
 end
 
 
 module Alfa
   module NilOperations
-    def self.included(base)
-      base.send(:alias_method, :_mul, :*)
-      base.send(:alias_method, :_sum, :+)
-      base.send(:alias_method, :_sub, :-)
-      base.send(:alias_method, :_div, :/)
-      base.send(:alias_method, :_fdiv, :fdiv)
-      base.prepend InstanceMethods
+    def known
+      self
     end
 
-    module InstanceMethods
-      def *(arg)
-        arg.nil? ? nil : _mul(arg)
-      end
-
-      def +(arg)
-        arg.nil? ? nil : _sum(arg)
-      end
-
-      def -(arg)
-        arg.nil? ? nil : _sub(arg)
-      end
-
-      def /(arg)
-        arg.nil? ? nil : _div(arg)
-      end
-
-      def div(arg)
-        arg.nil? ? nil : _div(arg)
-      end
-
-      def fdiv(arg)
-        arg.nil? ? nil : _fdiv(arg)
-      end
+    def to_nkn
+      NilKnown.new(self)
     end
   end
+end
+
+
+class NilClass
+  include Alfa::NilOperations
 end
 
 
@@ -74,4 +67,11 @@ end
 
 class Fixnum
   include Alfa::NilOperations
+end
+
+
+class Array
+  def to_nkn
+    NilKnown.new(self[0], self[1])
+  end
 end
