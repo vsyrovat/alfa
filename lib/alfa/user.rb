@@ -52,7 +52,7 @@ module Alfa
 
     # @return Array
     def groups
-      @object.groups.map{|s| s.strip.to_sym}
+      @object.groups.map{|s| s.to_s.strip.to_sym}
     end
 
     def group?(name)
