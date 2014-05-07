@@ -96,11 +96,17 @@ module TemplateInheritance
 
     def a(text, url, attributes = {})
       active_class = 'active'
+      if url.is_a?(Array)
+        args, params = ::Alfa::Support.args_kwargs(*url)
+        url = args.first
+      else
+        params = {}
+      end
       if url.is_a?(Symbol)
         active_class = attributes[:active_class] if attributes.has_key?(:active_class)
         zp = @wrapper._string_to_aca(url.to_s)
         attributes[:class] = "#{attributes[:class]} #{active_class}".strip if breadcrumb_match?(controller: zp[:controller], action: zp[:action])
-        url = href(url.to_s)
+        url = href(url.to_s, params)
       end
       attributes.delete(:active_class)
       attributes[:href] = url
