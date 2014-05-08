@@ -141,6 +141,10 @@ module TemplateInheritance
       @wrapper.user
     end
 
+    def grant?(*o)
+      user.grant?(*o)
+    end
+
     def snippet(name)
       @wrapper.application.snippet(name, @wrapper)
     end
