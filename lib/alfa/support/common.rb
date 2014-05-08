@@ -134,3 +134,37 @@ class String
     ) { |match| values[keys.index(match)] }
   end
 end
+
+
+class Fixnum
+  # hround(digits) -> string
+  #
+  # Returns string with human-adopted representation of number, rounded to digit after dot
+  #
+  #   123.456.hround(1) #=> "123.5"
+  #   123.hround(1)     #=> "123"
+  #   0.123.hround(1)   #=> "0.1"
+  #
+  # @param digits Fixnum
+  # @return String
+  def hround(digits)
+    '%g' % ("%.#{digits}f" % self)
+  end
+end
+
+
+class Float
+  # hround(digits) -> string
+  #
+  # Returns string with human-adopted representation of number, rounded to digit after dot
+  #
+  #   123.456.hround(1) #=> "123.5"
+  #   123.hround(1)     #=> "123"
+  #   0.123.hround(1)   #=> "0.1"
+  #
+  # @param digits Fixnum
+  # @return String
+  def hround(digits)
+    '%g' % ("%.#{digits}f" % self)
+  end
+end

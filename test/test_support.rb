@@ -164,4 +164,15 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert(!nil.to_nkn.is?)
     assert(1.1.to_nkn.is?)
   end
+
+  def test_hround
+    assert_equal('123', 123.hround(1))
+    assert_equal('123.5', 123.456.hround(1))
+    assert_equal('123.2', 123.222.hround(1))
+    assert_equal('0.1', 0.123.hround(1))
+    assert_equal('-123', -123.hround(1))
+    assert_equal('-123.5', -123.456.hround(1))
+    assert_equal('-123.2', -123.222.hround(1))
+    assert_equal('-0.1', -0.123.hround(1))
+  end
 end
