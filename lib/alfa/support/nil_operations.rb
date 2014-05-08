@@ -16,6 +16,12 @@ class NilKnown < SimpleDelegator
     @delegate_sd_obj.nil?
   end
 
+  alias :implicit? :nil?
+
+  def explicit?
+    !implicit?
+  end
+
   def is?
     !(@delegate_sd_obj.nil? || @delegate_sd_obj === false)
   end
@@ -56,8 +62,16 @@ class NilKnown < SimpleDelegator
     end
   end
 
-  def to_ar2
+  def to_a
     [value, known]
+  end
+
+  def to_h
+    {value: value, known: known}
+  end
+
+  def to_nkn
+    self
   end
 end
 
@@ -65,6 +79,10 @@ end
 module Alfa
   module NilOperations
     def known
+      self
+    end
+
+    def value
       self
     end
 

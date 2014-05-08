@@ -82,9 +82,9 @@ class AlfaSupportTest < Test::Unit::TestCase
   def test_nil_operations
     # addition
     assert_nil(NilKnown.new(nil))
-    assert_equal([nil, nil], nil.to_nkn.to_ar2)
+    assert_equal([nil, nil], nil.to_nkn.to_a)
     assert_equal(1, NilKnown.new(1))
-    assert_equal([1, 1], 1.to_nkn.to_ar2)
+    assert_equal([1, 1], 1.to_nkn.to_a)
 
     a = NilKnown.new(1) + 1
     assert_equal(2, a)
@@ -150,13 +150,13 @@ class AlfaSupportTest < Test::Unit::TestCase
       NilKnown.new(1, 2)
     end
 
-    assert_equal([nil, 102], (NilKnown.new(nil, 100) + 2).to_ar2)
-    assert_equal([nil, 202], (NilKnown.new(nil, 100) + NilKnown.new(nil, 102)).to_ar2)
+    assert_equal([nil, 102], (NilKnown.new(nil, 100) + 2).to_a)
+    assert_equal([nil, 202], (NilKnown.new(nil, 100) + NilKnown.new(nil, 102)).to_a)
 
     # multiplication
-    assert_equal([nil, 0], (1.to_nkn * nil).to_ar2)
-    assert_equal([2, 2], (1.to_nkn * 2.to_nkn).to_ar2)
-    assert_equal([nil, 24], (4.to_nkn * NilKnown.new(nil, 6)).to_ar2)
+    assert_equal([nil, 0], (1.to_nkn * nil).to_a)
+    assert_equal([2, 2], (1.to_nkn * 2.to_nkn).to_a)
+    assert_equal([nil, 24], (4.to_nkn * NilKnown.new(nil, 6)).to_a)
 
     # other
     assert(1.to_nkn.is?)
