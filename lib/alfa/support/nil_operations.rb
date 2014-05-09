@@ -7,7 +7,7 @@ class NilKnown < SimpleDelegator
   alias :value :__getobj__
 
   def initialize(obj, k = nil)
-    __raise__ ::ArgumentError, 'obj and k should not be nil simultaneously' if !obj.nil? && !k.nil?
+    raise ::ArgumentError, 'obj and k should not be nil simultaneously' if !obj.nil? && !k.nil?
     super(obj)
     @known = obj ? obj : k
   end
