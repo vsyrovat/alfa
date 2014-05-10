@@ -194,13 +194,15 @@ module Alfa
         if route[:context].is_a?(Hash) # container
           if route[:context][:app][:app] == kwargs[:app]
             route[:routes].each do |r|
-              r[:placeholders] = r[:rule].scan(/:([a-z_][a-z0-9_]*)/).map{|m| m[0].to_sym}.sort unless r[:placeholders]
-              if (r[:placeholders] - kwargs.keys).empty? &&
-                  (kwargs.keys & r[:options].keys).all?{|key| kwargs[key] == r[:options][key]} &&
-                  (kwargs.keys - [:app] - r[:placeholders] - r[:options].keys).empty?
-                result = File.join(route[:context][:app][:path], r[:rule].strtr(kwargs.map{|key, value| [":#{key}", value.to_s]}))
-                result += "?#{::Rack::Utils.build_query(params)}" if params.any?
-                return result
+              unless r[:rule].is_a?(Fixnum)
+                r[:placeholders] = r[:rule].scan(/:([a-z_][a-z0-9_]*)/).map{|m| m[0].to_sym}.sort unless r[:placeholders]
+                if (r[:placeholders] - kwargs.keys).empty? &&
+                    (kwargs.keys & r[:options].keys).all?{|key| kwargs[key] == r[:options][key]} &&
+                    (kwargs.keys - [:app] - r[:placeholders] - r[:options].keys).empty?
+                  result = File.join(route[:context][:app][:path], r[:rule].strtr(kwargs.map{|key, value| [":#{key}", value.to_s]}))
+                  result += "?#{::Rack::Utils.build_query(params)}" if params.any?
+                  return result
+                end
               end
             end
           end
