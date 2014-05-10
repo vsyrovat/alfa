@@ -22,8 +22,8 @@ module Alfa
 
   class Logger < ::Logger
 
-    def initialize(logdev, shift_age = 0, shift_size = 1048576)
-      super
+    def initialize(logdev)
+      super(nil)
       @logdev = logdev
       @formatter = Formatter.new
     end
@@ -32,6 +32,7 @@ module Alfa
       io = VirtualIO.new
       l = Logger.new(io)
       l.formatter = @formatter
+      l.level = @level
       yield(l)
       self << io.join
       flush if kwargs[:sync]
