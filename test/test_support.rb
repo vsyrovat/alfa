@@ -158,11 +158,45 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal([2, 2], (1.to_nkn * 2.to_nkn).to_a)
     assert_equal([nil, 24], (4.to_nkn * NilKnown.new(nil, 6)).to_a)
 
+    # substraction
+    assert_equal([nil, 1], (1.to_nkn - nil).to_a)
+    assert_equal([nil, -1], (nil.to_nkn - 1).to_a)
+    assert_equal(nil, nil.to_nkn - nil)
+    assert_equal([0, 0], (1.to_nkn - 1).to_a)
+    assert_equal([1, 1], (2.to_nkn - 1).to_a)
+    assert_equal([-1, -1], (1.to_nkn - 2).to_a)
+
+    # division
+    assert_equal([nil, 0], nil.to_nkn.fdiv(1).to_a)
+    assert_equal([0, 0], 0.to_nkn.fdiv(1).to_a)
+    assert_equal([nil, Float::INFINITY], nil.to_nkn.fdiv(nil).to_a)
+    assert_equal([Float::INFINITY, Float::INFINITY], 1.to_nkn.fdiv(0).to_a)
+    assert_equal([nil, Float::INFINITY], 1.to_nkn.fdiv(nil).to_a)
+    assert_equal([1.5, 1.5], 3.to_nkn.fdiv(2).to_a)
+
+    assert_equal([nil, 0], nil.to_nkn.div(1).to_a)
+    assert_equal([0, 0], 0.to_nkn.div(1).to_a)
+    assert_raise(ZeroDivisionError){ nil.to_nkn.div(nil) }
+    assert_raise(ZeroDivisionError){ 1.to_nkn.div(0) }
+    assert_raise(ZeroDivisionError){ 1.1.to_nkn.div(0) }
+    assert_raise(ZeroDivisionError){ 1.to_nkn.div(nil) }
+    assert_equal([1, 1], 3.to_nkn.div(2).to_a)
+
+    assert_equal([nil, 0], (nil.to_nkn / 1).to_a)
+    assert_equal([0, 0], (0.to_nkn / 1).to_a)
+    assert_equal([nil, Float::INFINITY], (nil.to_nkn / nil).to_a)
+    assert_raise(ZeroDivisionError){ 1.to_nkn / 0 }
+    assert_raise(ZeroDivisionError){ 1.to_nkn / nil }
+    assert_equal([Float::INFINITY, Float::INFINITY], (1.1.to_nkn / 0).to_a)
+    assert_equal([1, 1], (3.to_nkn / 2).to_a)
+    assert_equal([1.5, 1.5], (3.0.to_nkn / 2.0).to_a)
+
     # other
     assert(1.to_nkn.is?)
     assert(0.to_nkn.is?)
     assert(!nil.to_nkn.is?)
     assert(1.1.to_nkn.is?)
+    assert_equal(Float::INFINITY, NilKnown.new(nil, Float::INFINITY).known)
   end
 
   def test_hround

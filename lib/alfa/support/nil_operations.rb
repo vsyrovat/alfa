@@ -30,15 +30,15 @@ class NilKnown < SimpleDelegator
     if nil? || arg.nil?
       arg_known = arg.respond_to?(:known) ? arg.known : nil
       k = (
-       if known.nil? && arg_known.nil?
-         nil
-       elsif known.nil?
-         arg_known
-       elsif arg_known.nil?
-         known
-       else
-         known + arg_known
-       end
+        if known.nil? && arg_known.nil?
+          nil
+        elsif known.nil?
+          arg_known
+        elsif arg_known.nil?
+          known
+        else
+          known + arg_known
+        end
       )
       k.nil? ? nil : NilKnown.new(nil, k)
     else
@@ -46,19 +46,91 @@ class NilKnown < SimpleDelegator
     end
   end
 
+  def -(arg)
+    if nil? || arg.nil?
+      arg_known = arg.respond_to?(:known) ? arg.known : nil
+      k = (
+        if known.nil? && arg_known.nil?
+          nil
+        elsif known.nil?
+          -arg_known
+        elsif arg_known.nil?
+          known
+        else
+          known - arg_known
+        end
+      )
+      k.nil? ? nil : NilKnown.new(nil, k)
+    else
+      NilKnown.new(@delegate_sd_obj - arg)
+    end
+  end
+
   def *(arg)
     if nil? || arg.nil?
       arg_known = arg.respond_to?(:known) ? arg.known : nil
       k = (
-      if known.nil? || arg_known.nil?
-        0
-      else
-        known * arg_known
-      end
+        if known.nil? || arg_known.nil?
+          0
+        else
+          known * arg_known
+        end
       )
       k.nil? ? nil : NilKnown.new(nil, k)
     else
       NilKnown.new(@delegate_sd_obj * arg)
+    end
+  end
+
+  def fdiv(arg)
+    if nil? || arg.nil?
+      arg_known = arg.respond_to?(:known) ? arg.known : nil
+      k = (
+        if arg_known.nil?
+          Float::INFINITY
+        elsif known.nil?
+          0
+        end
+      )
+      k.nil? ? nil : NilKnown.new(nil, k)
+    else
+      NilKnown.new(@delegate_sd_obj.fdiv(arg))
+    end
+  end
+
+  def /(arg)
+    if nil? || arg.nil?
+      arg_known = arg.respond_to?(:known) ? arg.known : nil
+      k = (
+      if arg_known.nil?
+        if @delegate_sd_obj.is_a?(Float) || @delegate_sd_obj.is_a?(NilClass)
+          Float::INFINITY
+        else
+          raise ZeroDivisionError
+        end
+      elsif known.nil?
+        0
+      end
+      )
+      k.nil? ? nil : NilKnown.new(nil, k)
+    else
+      NilKnown.new(@delegate_sd_obj / arg)
+    end
+  end
+
+  def div(arg)
+    if nil? || arg.nil?
+      arg_known = arg.respond_to?(:known) ? arg.known : nil
+      k = (
+      if arg_known.nil?
+        raise ZeroDivisionError
+      elsif known.nil?
+        0
+      end
+      )
+      k.nil? ? nil : NilKnown.new(nil, k)
+    else
+      NilKnown.new(@delegate_sd_obj.div(arg))
     end
   end
 
