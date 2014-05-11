@@ -136,35 +136,33 @@ class String
 end
 
 
-class Fixnum
-  # hround(digits) -> string
-  #
-  # Returns string with human-adopted representation of number, rounded to digit after dot
-  #
-  #   123.456.hround(1) #=> "123.5"
-  #   123.hround(1)     #=> "123"
-  #   0.123.hround(1)   #=> "0.1"
-  #
-  # @param digits Fixnum
-  # @return String
-  def hround(digits)
-    '%g' % ("%.#{digits}f" % self)
+module Alfa
+  module Hround
+    # hround(digits) -> string
+    #
+    # Returns string with human-adopted representation of number, rounded to digit after dot
+    #
+    #   123.456.hround(1) #=> "123.5"
+    #   123.hround(1)     #=> "123"
+    #   0.123.hround(1)   #=> "0.1"
+    #
+    # @param digits Fixnum
+    # @return String
+    def hround(digits)
+      '%g' % ("%.#{digits}f" % self)
+    end
   end
 end
 
 
+class Fixnum
+  include Alfa::Hround
+end
+
 class Float
-  # hround(digits) -> string
-  #
-  # Returns string with human-adopted representation of number, rounded to digit after dot
-  #
-  #   123.456.hround(1) #=> "123.5"
-  #   123.hround(1)     #=> "123"
-  #   0.123.hround(1)   #=> "0.1"
-  #
-  # @param digits Fixnum
-  # @return String
-  def hround(digits)
-    '%g' % ("%.#{digits}f" % self)
-  end
+  include Alfa::Hround
+end
+
+class String
+  include Alfa::Hround
 end
