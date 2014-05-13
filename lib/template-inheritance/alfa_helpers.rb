@@ -94,6 +94,7 @@ module TemplateInheritance
       @wrapper.href(*o)
     end
 
+    # TODO: Fix casual white-spaces around returned tag string
     def a(text, url, attributes = {})
       active_class = 'active'
       if url.is_a?(Array)
@@ -123,6 +124,7 @@ module TemplateInheritance
 
     alias :link_to :a
 
+    # TODO: Fix casual white-spaces around returned tag string
     def img(attributes = {})
       capture_haml do
         haml_tag(:img, attributes)
