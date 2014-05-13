@@ -3,6 +3,7 @@ module Alfa
     # Route not found
     class Route404 < StandardError; end
 
+    class Route403 < StandardError; end
 
     class HttpRedirect < StandardError
       attr_reader :url, :code

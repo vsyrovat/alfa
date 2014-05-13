@@ -124,6 +124,10 @@ module Alfa
           body = 'Url not found<br>urls map:<br>'
           body += self.routes.instance_variable_get(:@routes).inspect
           l.info "404: Url not found (#{e.message})"
+        rescue Alfa::Exceptions::Route403 => e
+          response_code = 403
+          body = 'Error 403: Forbidden'
+          l.info "403: Forbidden"
         rescue Exceptions::HttpRedirect => e
           response_code = e.code
           headers['Location'] = e.url.to_s
