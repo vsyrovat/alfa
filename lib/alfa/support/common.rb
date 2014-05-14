@@ -36,7 +36,7 @@ module Alfa
     end
 
     def underscore_name(arg)
-      arg.to_s.split('/').last.scan(/[A-Z][a-z]*|[a-z]+/).map(&:downcase).join('_')
+      arg.to_s.split('/').last.scan(/[A-Z][a-z]*|[a-z]+|\d+/).map(&:downcase).join('_')
     end
 
     def args_kwargs(*args)

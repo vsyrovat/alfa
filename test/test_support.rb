@@ -12,6 +12,7 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal('FooBar', Alfa::Support.camelcase_name('foo_bar'))
     assert_equal('FooBar', Alfa::Support.camelcase_name(:foo__bar))
     assert_equal('BarBaz', Alfa::Support.camelcase_name('foo/bar_baz'))
+    assert_equal('Foo2Bar', Alfa::Support.camelcase_name('foo_2_bar'))
   end
 
   def test_underscore
@@ -24,6 +25,7 @@ class AlfaSupportTest < Test::Unit::TestCase
     assert_equal('foo_bar', Alfa::Support.underscore_name('foo_bar'))
     assert_equal('foo_bar', Alfa::Support.underscore_name(:foo_bar))
     assert_equal('bar_baz', Alfa::Support.underscore_name('Foo/Bar_Baz'))
+    assert_equal('foo_2_bar', Alfa::Support.underscore_name('Foo2Bar'))
   end
 
   def test_args_kwargs
