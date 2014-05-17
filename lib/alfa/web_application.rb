@@ -121,7 +121,7 @@ module Alfa
           end
         rescue Alfa::Exceptions::Route404 => e
           response_code = 404
-          body = 'Url not found<br>urls map:<br>'
+          body = "Url not found (#{e.message}) <br>urls map:<br>"
           body += self.routes.instance_variable_get(:@routes).inspect
           l.info "404: Url not found (#{e.message})"
         rescue Alfa::Exceptions::Route403 => e
