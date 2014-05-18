@@ -145,6 +145,14 @@ class NilKnown < SimpleDelegator
   def to_nkn
     self
   end
+
+  def hround(digits)
+    self.nil? ? '' : @delegate_sd_obj.hround(digits)
+  end
+
+  def mround(zeroes = false)
+    self.nil? ? '' : @delegate_sd_obj.mround(zeroes)
+  end
 end
 
 
@@ -183,6 +191,10 @@ class Fixnum
   include Alfa::NilOperations
 end
 
+
+class BigDecimal
+  include Alfa::NilOperations
+end
 
 class Array
   def to_nkn

@@ -139,7 +139,7 @@ end
 
 
 module Alfa
-  module Hround
+  module HMround
     # hround(digits) -> string
     #
     # Returns string with human-adopted representation of number, rounded to digit after dot
@@ -153,22 +153,43 @@ module Alfa
     def hround(digits)
       '%g' % ("%.#{digits}f" % self)
     end
+
+    # mround -> string
+    #
+    # Return string with money representation of number
+    #
+    #   123.456.mround    #=> "123.46"
+    #   123.mround        #=> "123"
+    #   123.mround(true)  #=> "123.00"
+    #   0.123.mround      #=> "0.12"
+    #   1.1.mround        #=> "1.10"
+    #
+    # @param zeroes Boolean
+    # @return String
+    def mround(zeroes = false)
+      if !zeroes
+        y = self.round(2)
+        y.modulo(1) == 0 ? y.to_i.to_s : '%.2f' % y
+      else
+        '%.2f' % self
+      end
+    end
   end
 end
 
 
 class Fixnum
-  include Alfa::Hround
+  include Alfa::HMround
 end
 
 class Float
-  include Alfa::Hround
+  include Alfa::HMround
 end
 
 class String
-  include Alfa::Hround
+  include Alfa::HMround
 end
 
 class BigDecimal
-  include Alfa::Hround
+  include Alfa::HMround
 end

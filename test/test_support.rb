@@ -204,11 +204,29 @@ class AlfaSupportTest < Test::Unit::TestCase
   def test_hround
     assert_equal('123', 123.hround(1))
     assert_equal('123.5', 123.456.hround(1))
+    assert_equal('123.46', 123.456.hround(2))
     assert_equal('123.2', 123.222.hround(1))
     assert_equal('0.1', 0.123.hround(1))
     assert_equal('-123', -123.hround(1))
     assert_equal('-123.5', -123.456.hround(1))
+    assert_equal('-123.46', -123.456.hround(2))
     assert_equal('-123.2', -123.222.hround(1))
     assert_equal('-0.1', -0.123.hround(1))
+    assert_equal('123.5', BigDecimal.new('123.456').hround(1))
+    assert_equal('123.46', BigDecimal.new('123.456').hround(2))
+  end
+
+  def test_mround
+    assert_equal('123', 123.mround)
+    assert_equal('123.00', 123.mround(true))
+    assert_equal('123.46', 123.456.mround)
+    assert_equal('123.22', 123.222.mround)
+    assert_equal('0.12', 0.123.mround)
+    assert_equal('-123', -123.mround)
+    assert_equal('-123.00', -123.mround(true))
+    assert_equal('-123.46', -123.456.mround)
+    assert_equal('-123.22', -123.222.mround)
+    assert_equal('-0.12', -0.123.mround)
+    assert_equal('123.46', BigDecimal.new('123.456').mround)
   end
 end
