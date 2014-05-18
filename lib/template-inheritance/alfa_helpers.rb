@@ -46,7 +46,7 @@ module TemplateInheritance
 
     def styles
       @resourcer.styles.uniq.map{|s|
-        if s.match(/^\/~assets\/(.*)/)
+        if s.match(/\A\/~assets\/(.*)/)
           f = File.join(File.expand_path('../../../assets/', __FILE__), $1)
         else
           f = File.join(Alfa::WebApplication.config[:document_root], s)
@@ -77,7 +77,7 @@ module TemplateInheritance
     def scripts
       @resourcer.scripts.uniq.map{|s|
         if (s[:src])
-          if s[:src].match(/^\/~assets\/(.*)/)
+          if s[:src].match(/\A\/~assets\/(.*)/)
             f = File.join(File.expand_path('../../../assets/', __FILE__), $1)
           else
             f = File.join(Alfa::WebApplication.config[:document_root], s[:src])
@@ -117,7 +117,14 @@ module TemplateInheritance
     end
 
     def a_post(text, url, attributes = {})
-      url_str = url.is_a?(Symbol) ? href(url.to_s) : url.to_s
+      if url.is_a?(Array)
+        args, params = ::Alfa::Support.args_kwargs(*url)
+        urlf = args.first
+      else
+        urlf = url
+        params = {}
+      end
+      url_str = urlf.is_a?(Symbol) ? href(urlf.to_s, params) : urlf.to_s
       attributes[:onclick] = "{var form=document.createElement(\"form\"); form.setAttribute(\"method\", \"post\"); form.setAttribute(\"action\", \"#{url_str}\"); document.body.appendChild(form); form.submit(); return false;}"
       a(text, url, attributes)
     end

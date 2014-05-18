@@ -4,7 +4,7 @@ Project::WebApplication.routes.draw do
   route '/:action', :controller => :default, :layout => :internal
   route '/:controller/:action', :layout => :internal
   route '/:controller/:action/:id', :layout => :internal
-  #route Regexp.new('^/(?<controller>[^/]+)/(?<action>[^/]+)/(?<id>\d+)/?$')
+  #route Regexp.new('\A/(?<controller>[^/]+)/(?<action>[^/]+)/(?<id>\d+)/?\z')
   #route '/**', :controller => :default, :action => :other
 
 

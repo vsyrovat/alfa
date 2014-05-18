@@ -1,3 +1,5 @@
+require 'bigdecimal'
+
 module Alfa
 
   # Thanks to John
@@ -164,5 +166,9 @@ class Float
 end
 
 class String
+  include Alfa::Hround
+end
+
+class BigDecimal
   include Alfa::Hround
 end

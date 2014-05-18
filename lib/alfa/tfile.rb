@@ -56,7 +56,7 @@ module Alfa
     end
 
     def extname= arg
-      arg = '.' + arg unless arg =~ /^\./
+      arg = '.' + arg unless arg =~ /\A\./
       self.basename= self.filename + arg
     end
 

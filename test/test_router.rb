@@ -34,11 +34,11 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal([false, {}], Alfa::Router.route_match?('/hello.html', '/~assets/js/jquery/jquery-latest.js'))
 
     # regexp rules, positive cases
-    rule = Regexp.new('^/(?<controller>[^/]+)/(?<action>[^/]+)?$')
+    rule = Regexp.new('\A/(?<controller>[^/]+)/(?<action>[^/]+)?\z')
     assert_equal([true, {controller: 'default', action: 'index'}], Alfa::Router.route_match?(rule, '/default/index'))
 
     # regexp rules, negative cases
-    rule = Regexp.new('^/(?<controller>[^/]+)/(?<action>[^/]+)?$')
+    rule = Regexp.new('\A/(?<controller>[^/]+)/(?<action>[^/]+)?\z')
     assert_equal([false, {}], Alfa::Router.route_match?(rule, '/'))
   end
 

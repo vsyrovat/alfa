@@ -85,7 +85,7 @@ module Alfa
             app_sym, c_sym, a_sym, l_sym = route_to_symbols(route, params)
             controller = self.invoke_controller(app_sym, c_sym, route)
             unless controller.class.instance_methods(false).include?(a_sym)
-              if route[:rule] =~ /^\/:(controller|action)\/?$/
+              if route[:rule] =~ /\A\/:(controller|action)\/?\z/
                 route, params = self.routes.find_route(Rack::Utils.unescape(env['PATH_INFO']), exclude: [route[:rule]])
                 app_sym, c_sym, a_sym, l_sym = route_to_symbols(route, params)
                 controller = self.invoke_controller(app_sym, c_sym, route)
