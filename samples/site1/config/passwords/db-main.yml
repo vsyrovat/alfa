@@ -1,0 +1,6 @@
+---
+dsn: "mysql2://root:@localhost/alfa_site1"
+host: "localhost"
+user: "root"
+password: ""
+dbname: "alfa_site1"

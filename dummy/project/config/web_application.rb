@@ -9,7 +9,7 @@ module Project
     config[:run_mode] = :development # :development or :production or :test
     config[:log][:file] = File.join(PROJECT_ROOT, 'log/web.log')
     config[:serve_static] = true
-    config[:session][:secret] = '#{SESSION_SECRET}'
+    config[:session][:secret] = YAML.load(File.open(File.expand_path('../passwords/secrets.yml', __FILE__))).symbolize_keys[:session_secret]
   end
 
   WebApplication.init!
