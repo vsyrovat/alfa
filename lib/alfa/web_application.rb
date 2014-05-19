@@ -134,7 +134,7 @@ module Alfa
           body = "You was redirected to #{e.url}"
         rescue Exception => e
           response_code = 500
-          body = "Error occured: #{e.message} at #{e.backtrace.first}<br>Full backtrace:<br>\n#{e.backtrace.join("<br>\n")}"
+          body = "Error occured: #{CGI.escape_html(e.message)} at #{e.backtrace.first}<br>Full backtrace:<br>\n#{e.backtrace.join("<br>\n")}"
           l.error "ERROR: #{e.message} at #{e.backtrace.first}"
         end
         if t_sym == :default
