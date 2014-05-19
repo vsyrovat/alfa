@@ -7,7 +7,7 @@ class NilKnown < SimpleDelegator
   alias :value :__getobj__
 
   def initialize(obj, k = nil)
-    raise ::ArgumentError, 'obj and k should not be nil simultaneously' if !obj.nil? && !k.nil?
+    raise ::ArgumentError, 'obj and k should not be not nil simultaneously' if !obj.nil? && !k.nil?
     super(obj)
     @known = obj ? obj : k
   end
@@ -152,6 +152,10 @@ class NilKnown < SimpleDelegator
 
   def mround(zeroes = false)
     self.nil? ? '' : @delegate_sd_obj.mround(zeroes)
+  end
+
+  def inspect
+    "#<NilKnown:#{'%x' % (__id__ << 1)},#{@delegate_sd_obj.inspect}, #{@known.inspect}>"
   end
 end
 
