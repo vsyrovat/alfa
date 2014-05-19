@@ -1,1 +1,1 @@
-ALFA_VERSION = '0.0.5.pre'
+ALFA_VERSION = '0.0.6.pre'
