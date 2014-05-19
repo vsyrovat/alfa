@@ -161,6 +161,14 @@ module TemplateInheritance
     def breadcrumb_match?(controller: nil, action: nil)
       @wrapper.breadcrumb_match?(controller: controller, action: action)
     end
+
+    def csrf_token_tag
+      "<input type='hidden' name='csrf_token' value='#{@wrapper.csrf_token}'/>"
+    end
+
+    def csrf_token
+      @wrapper.csrf_token
+    end
   end
 end
 # End of patch

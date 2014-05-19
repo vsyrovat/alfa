@@ -112,6 +112,17 @@ module Alfa
       (controller ? (@route[:options][:controller] ? @route[:options][:controller] == controller : @params[:controller] == controller) : true) &&
       (action ? (@route[:options][:action] ? @route[:options][:action] == action : @params[:action] == action) : true)
     end
+
+
+    def csrf_token
+      session[:csrf_token] ||= SecureRandom.base64(12)
+    end
+
+    def check_csrf_token
+      obtained_token = @request.post? ? @request.POST['csrf_token'] : @request.GET['csrf_token']
+      raise Alfa::Exceptions::Route403, 'CSRF token fail' unless obtained_token == csrf_token
+      true
+    end
   end
 
 
