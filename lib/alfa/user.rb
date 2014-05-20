@@ -1,5 +1,5 @@
-require 'digest/md5'
 require 'securerandom'
+require 'bcrypt'
 
 module Alfa
   class << self
@@ -84,11 +84,11 @@ module Alfa
   module UserModule
     def password=(p)
       self.salt = SecureRandom.hex(5)
-      self.passhash = Digest::MD5.hexdigest("#{self.salt}#{p}")
+      self.passhash = BCrypt::Password.create("#{self.salt}#{p}")
     end
 
     def password_valid?(p)
-      self.passhash == Digest::MD5.hexdigest("#{self.salt}#{p}")
+      BCrypt::Password.new(self.passhash) == "#{self.salt}#{p}"
     end
 
     def groups=(g)

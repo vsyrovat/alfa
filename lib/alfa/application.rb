@@ -2,6 +2,7 @@ require 'alfa/logger'
 require 'alfa/config'
 require 'alfa/exceptions'
 require 'alfa/user'
+require 'bcrypt'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -64,7 +65,7 @@ module Alfa
         unless User.first(:login=>login)
           @logger.portion do |l|
             salt = SecureRandom.hex(5)
-            passhash = Digest::MD5.hexdigest("#{salt}#{password}")
+            passhash = BCrypt::Password.create("#{salt}#{password}")
             User.create(:login=>login, :salt=>salt, :passhash=>passhash)
             l.info("created new user login=#{login}, password=***, salt=#{salt}, passhash=#{passhash}")
           end

@@ -53,7 +53,8 @@ module Alfa
     # Return current user
     def user
       @user ||= (
-        if @request.session[:user_id] && (u = ::User.first(id: @request.session[:user_id]))
+        u = ::User.first(id: @request.session[:user_id])
+        if @request.session[:user_id] && u && @request.session[:passhash] == u[:passhash]
           Alfa::User.new(u)
         else
           GuestUser
@@ -79,9 +80,10 @@ module Alfa
     def try_login(login, password)
       u = @application.config[:db][:main][:instance][:users].first(login: login)
       raise "No such login: #{login}" unless u
-      if u[:passhash] == Digest::MD5.hexdigest("#{u[:salt]}#{password}")
+      if BCrypt::Password.new(u[:passhash]) == "#{u[:salt]}#{password}"
         # success
         session[:user_id] = u[:id]
+        session[:passhash] = u[:passhash]
         return true
       else
         # fail

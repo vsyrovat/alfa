@@ -3,6 +3,13 @@ Legend:
 ! = important, . = minor
 
 
+=== HEAD
+
+s Require relogin on password change
+
+s Change password hashing algorithm from MD5 to BCrypt
+
+
 === 0.0.6.pre
 
 + CSRF protection methods (csrf_token, check_csrf_token)
