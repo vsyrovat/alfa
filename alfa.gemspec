@@ -1,5 +1,4 @@
 require './version'
-require 'bcrypt'
 
 Gem::Specification.new do |spec|
   spec.name        = 'alfa'
@@ -20,5 +19,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'rack-session-sequel', '~> 0.0', '>= 0.0.1'
   spec.add_runtime_dependency 'haml',   '4.0.5'
   spec.add_runtime_dependency 'template-inheritance', '0.3.1'
-  spec.add_runtime_dependency 'bcrypt', '~> 3.1', '>= 3.1.7'
+  spec.add_runtime_dependency 'scrypt', '~> 1.2', '>= 1.2.1'
 end

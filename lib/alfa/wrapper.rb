@@ -80,7 +80,7 @@ module Alfa
     def try_login(login, password)
       u = @application.config[:db][:main][:instance][:users].first(login: login)
       raise "No such login: #{login}" unless u
-      if BCrypt::Password.new(u[:passhash]) == "#{u[:salt]}#{password}"
+      if SCrypt::Password.new(u[:passhash]) == password
         # success
         session[:user_id] = u[:id]
         session[:passhash] = u[:passhash]

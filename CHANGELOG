@@ -3,11 +3,11 @@ Legend:
 ! = important, . = minor
 
 
-=== 0.0.7.pre
+=== 0.0.7.pre + 0.0.8.pre
 
 s Require relogin on password change
 
-s Change password hashing algorithm from MD5 to BCrypt
+s Change password hashing algorithm from MD5 to SCrypt
 
 
 === 0.0.6.pre

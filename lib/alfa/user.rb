@@ -1,5 +1,5 @@
 require 'securerandom'
-require 'bcrypt'
+require 'scrypt'
 
 module Alfa
   class << self
@@ -83,12 +83,11 @@ module Alfa
   #   end
   module UserModule
     def password=(p)
-      self.salt = SecureRandom.hex(5)
-      self.passhash = BCrypt::Password.create("#{self.salt}#{p}")
+      self.passhash = SCrypt::Password.create(p)
     end
 
     def password_valid?(p)
-      BCrypt::Password.new(self.passhash) == "#{self.salt}#{p}"
+      SCrypt::Password.new(self.passhash) == p
     end
 
     def groups=(g)

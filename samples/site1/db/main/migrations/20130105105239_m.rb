@@ -8,8 +8,7 @@ Sequel.migration do
     create_table :users do
       primary_key :id, :type=>:integer, :unsigned=>true
       column :login, String, null: false
-      column :salt, String, fixed: true, size: 10, null: false
-      column :passhash, String, fixed: true, size: 60, null: false
+      column :passhash, String, text: true, null: false
       index :login, :name=>:i_login, :unique=>true
     end
   end
