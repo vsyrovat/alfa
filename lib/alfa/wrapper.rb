@@ -53,8 +53,9 @@ module Alfa
     # Return current user
     def user
       @user ||= (
-        u = ::User.first(id: @request.session[:user_id])
-        if @request.session[:user_id] && u && @request.session[:passhash] == u[:passhash]
+        if @request.session[:user_id] &&
+           (u = ::User.first(id: @request.session[:user_id])) &&
+           @request.session[:passhash] == u[:passhash]
           Alfa::User.new(u)
         else
           GuestUser
