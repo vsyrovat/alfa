@@ -9,13 +9,25 @@ module Alfa
       yield(l)
     end
 
-    def info(*args)
+    def <<(*args)
     end
 
     def debug(*args)
     end
 
-    def <<(*args)
+    def info(*args)
+    end
+
+    def warn(*args)
+    end
+
+    def error(*args)
+    end
+
+    def fatal(*args)
+    end
+
+    def unknown(*args)
     end
   end
 
