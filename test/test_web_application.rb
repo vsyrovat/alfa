@@ -80,6 +80,7 @@ class TestAlfaWebApplication < Test::Unit::TestCase
       r2 = Alfa::WebApplication.call({'PATH_INFO'=>'/admin/test_08'}) do |controller2, template2|
         assert_not_equal(controller1.hash, controller2.hash)
         assert_not_equal(controller1.request.hash, controller2.request.hash)
+        assert_not_equal(controller1.response.hash, controller2.response.hash)
         assert_not_equal(controller1.session.hash, controller2.session.hash)
         assert_equal(:bar, controller1.session[:foo])
         assert_equal(:baz, controller2.session[:foo])
@@ -96,6 +97,7 @@ class TestAlfaWebApplication < Test::Unit::TestCase
         c2 = controller2
         assert_not_equal(controller1.hash, controller2.hash)
         assert_not_equal(controller1.request.hash, controller2.request.hash)
+        assert_not_equal(controller1.response.hash, controller2.response.hash)
         foo1 = controller1.session[:foo]
         foo2 = controller2.session[:foo]
       end
@@ -104,6 +106,18 @@ class TestAlfaWebApplication < Test::Unit::TestCase
     assert_equal(c1.hash.to_s, r1[2].join.strip)
     assert_equal(:far, foo1)
     assert_equal(:faz, foo2)
+
+    prepare_web_application
+    Alfa::WebApplication.call({'PATH_INFO'=>'/test_08'}) do |controller1, template1|
+      Alfa::WebApplication.call({'PATH_INFO'=>'/test_08a'}) do |controller2, template2|
+        assert_not_equal(controller1.hash, controller2.hash)
+        assert_not_equal(controller1.request.hash, controller2.request.hash)
+        assert_not_equal(controller1.response.hash, controller2.response.hash)
+        assert_not_equal(controller1.session.hash, controller2.session.hash)
+        assert_equal('value1', controller1.response.headers['Param'])
+        assert_equal('value2', controller2.response.headers['Param'])
+      end
+    end
   end
 
   # Test for serial routes such as /:action then /:controller or /:controller then /:action

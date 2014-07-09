@@ -8,6 +8,7 @@ require 'alfa/ruty'
 require 'alfa/snippeter'
 require 'alfa/wrapper'
 require 'alfa/resourcer'
+require 'alfa/http_response'
 require 'rack/utils'
 require 'rack/request'
 require 'rack/file_alfa'
@@ -49,14 +50,15 @@ module Alfa
     # main Rack routine
     def self.call(env, &block)
       start_time = Time.now
-      response_code = nil # required for store context inside @logger.portion
-      headers = {} # required for store context inside @logger.portion
+      response = Alfa::HttpResponse.new
+      # response.code = nil # required for store context inside @logger.portion
+      headers = response.headers # required for store context inside @logger.portion
       body = nil # required for store context inside @logger.portion
       @logger.portion(:sync=>true) do |l|
         @config[:db].each_value { |db| db[:instance].loggers = [l] }
         TemplateInheritance.logger = l
         @bputs = []
-        headers = {"Content-Type" => 'text/html; charset=utf-8'}
+        headers['Content-Type'] = 'text/html; charset=utf-8'
         t_sym = :default
         begin
           l.info "#{env['REQUEST_METHOD']} #{env['REQUEST_URI']} #{env['SERVER_PROTOCOL']} from #{env['REMOTE_ADDR']} at #{DateTime.now}"
@@ -64,7 +66,7 @@ module Alfa
           # l.info "  HTTP_ACCEPT: #{env['HTTP_ACCEPT']}"
           # l.info "  HTTP_ACCEPT_LANGUAGE: #{env['HTTP_ACCEPT_LANGUAGE']}"
           # l.info "  PATH_INFO: #{env['PATH_INFO']}"
-          response_code = 200
+          response.code = 200
           route, params = self.routes.find_route(Rack::Utils.unescape(env['PATH_INFO']))
           t_sym = route[:options].has_key?(:type) ? route[:options][:type] : :default
           if t_sym == :asset
@@ -99,41 +101,46 @@ module Alfa
             controller.app_sym = app_sym
             controller.c_sym = c_sym
             controller.params = params
+            controller.response = response
             data = controller.__send__(a_sym)
-            case controller.class.get_content_type(a_sym)
+            case response.type
               when :json
                 headers['Content-Type'] = 'application/json; charset=utf-8'
                 body = JSON.generate(data, quirks_mode: true)
-              else
+              when :html
                 data = controller._instance_variables_hash
                 resourcer = Alfa::Resourcer.new
                 wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym, resourcer: resourcer, params: params, route: route)
                 Ruty::Tags::RequireStyle.clean_cache # cleanup
                 Ruty::Tags::RequireScript.clean_cache # cleanup
                 content = self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data, &block)
-                if controller.class.get_render(a_sym) == :partial
+                if response.render == :partial
                   body = content
                 else
                   body = self.render_layout(app_sym.to_s, l_sym.to_s, controller, wrapper, data.merge({:@body => content}))
                 end
                 headers['Content-Type'] = 'text/html; charset=utf-8'
+              when :raw
+                body = data
+              else
+                raise "Unknown response.type: #{response.type}"
             end
           end
         rescue Alfa::Exceptions::Route404 => e
-          response_code = 404
+          response.code = 404
           body = "Url not found (#{e.message}) <br>urls map:<br>"
           body += self.routes.instance_variable_get(:@routes).inspect
           l.info "404: Url not found (#{e.message})"
         rescue Alfa::Exceptions::Route403 => e
-          response_code = 403
+          response.code = 403
           body = "Error 403: Forbidden (#{e.message})"
           l.info "403: Forbidden"
         rescue Exceptions::HttpRedirect => e
-          response_code = e.code
+          response.code = e.code
           headers['Location'] = e.url.to_s
           body = "You was redirected to #{e.url}"
         rescue Exception => e
-          response_code = 500
+          response.code = 500
           body = "Error occured: #{CGI.escape_html(e.message)} at #{e.backtrace.first}<br>Full backtrace:<br>\n#{e.backtrace.join("<br>\n")}"
           l.error "ERROR: #{e.message} at #{e.backtrace.first}"
         end
@@ -146,10 +153,10 @@ module Alfa
           #}.join('<br>')
           debug_info = "<hr>rack env: #{env.inspect}"
         end
-        l.info "RESPONSE: #{response_code} (#{sprintf('%.4f', Time.now - start_time)} sec)"
+        l.info "RESPONSE: #{response.code} (#{sprintf('%.4f', Time.now - start_time)} sec)"
         l << "\n"
       end
-      return [response_code, headers, [body, @bputs.join('<br>')]]
+      return [response.code, response.headers, [body, @bputs.join('<br>')]]
     end
 
 

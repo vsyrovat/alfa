@@ -26,10 +26,12 @@ class DefaultController < Alfa::Controller
     @path_info = @env['PATH_INFO']
     session[:foo] = :bar
     @link = href('test_08')
+    response.headers['Param'] = 'value1'
   end
 
   def test_08a
     @controller = self
     session[:foo] = :far
+    response.headers['Param'] = 'value2'
   end
 end
