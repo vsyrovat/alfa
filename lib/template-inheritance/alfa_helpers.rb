@@ -111,6 +111,10 @@ module TemplateInheritance
       end
       attributes.delete(:active_class)
       attributes[:href] = url
+      if attributes[:confirm]
+        attributes[:onclick] = "if (confirm(\"#{attributes[:confirm].gsub(/"/){'\"'}}\")) {#{attributes[:onclick] || 'return true;'}} else {return false;}"
+        attributes.delete(:confirm)
+      end
       capture_haml do
         haml_tag(:a, text, attributes)
       end
