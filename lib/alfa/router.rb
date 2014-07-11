@@ -199,7 +199,7 @@ module Alfa
                 if (r[:placeholders] - kwargs.keys).empty? &&
                     (kwargs.keys & r[:options].keys).all?{|key| kwargs[key] == r[:options][key]} &&
                     (kwargs.keys - [:app] - r[:placeholders] - r[:options].keys).empty?
-                  result = File.join(route[:context][:app][:path], r[:rule].strtr(kwargs.map{|key, value| [":#{key}", value.to_s]}))
+                  result = File.join(route[:context][:app][:path], r[:rule].strtr(kwargs.map{|key, value| [":#{key}", CGI.escape(value.to_s)]}))
                   result += "?#{::Rack::Utils.build_query(params)}" if params.any?
                   return result
                 end

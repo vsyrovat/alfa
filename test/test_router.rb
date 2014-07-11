@@ -229,7 +229,7 @@ class AlfaRouterTest < Test::Unit::TestCase
     assert_equal('/hello', Alfa::Router.href(:app=>:frontend, :controller=>:main, :action=>:hello))
     assert_equal('/hello', Alfa::Router.href(:app=>:frontend, :action=>:hello))
     assert_equal('/hello/babuin', Alfa::Router.href(:app=>:frontend, :controller=>:hello, :action=>:babuin))
-    assert_equal('/hello/babuin/11', Alfa::Router.href(:app=>:frontend, :controller=>:hello, :action=>:babuin, :id=>11))
+    assert_equal('/hello/run%26shine%2C+baby/11', Alfa::Router.href(:app=>:frontend, :controller=>:hello, :action=>:'run&shine, baby', :id=>11))
     assert_equal('/admin/', Alfa::Router.href(:app=>:backend, :controller=>:main, :action=>:index))
     assert_equal('/admin/', Alfa::Router.href(:app=>:backend))
     assert_equal('/admin/', Alfa::Router.href(:app=>:backend, :controller=>:main))
