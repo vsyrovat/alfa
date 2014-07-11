@@ -118,7 +118,7 @@ module Alfa
 
 
     def csrf_token
-      session[:csrf_token] ||= SecureRandom.base64(12)
+      session[:csrf_token] ||= SecureRandom.urlsafe_base64
     end
 
     def check_csrf_token

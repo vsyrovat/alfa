@@ -125,7 +125,7 @@ module TemplateInheritance
         params = {}
       end
       url_str = urlf.is_a?(Symbol) ? href(urlf.to_s, params) : urlf.to_s
-      attributes[:onclick] = "{var form=document.createElement(\"form\"); form.setAttribute(\"method\", \"post\"); form.setAttribute(\"action\", \"#{url_str}\"); document.body.appendChild(form); form.submit(); return false;}"
+      attributes[:onclick] = "{var form=document.createElement(\"form\"); form.setAttribute(\"method\", \"post\"); form.setAttribute(\"action\", \"#{url_str}\"); var t=document.createElement(\"input\"); form.appendChild(t); t.setAttribute(\"type\", \"hidden\"); t.setAttribute(\"name\", \"csrf_token\"); t.setAttribute(\"value\", \"#{csrf_token}\"); document.body.appendChild(form); form.submit(); return false;}"
       a(text, url, attributes)
     end
 
