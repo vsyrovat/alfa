@@ -64,6 +64,8 @@ class #{model_classname} < Sequel::Model(DB::#{db_classname}[:#{model_filename}s
   # many_to_many ...
   # one_through_one ...
   # Read more about association basics: http://sequel.jeremyevans.net/rdoc/files/doc/association_basics_rdoc.html
+
+  # Read more about model hooks: http://sequel.jeremyevans.net/rdoc/files/doc/model_hooks_rdoc.html
 end
 EOL
     filename = "#{model_filename}.rb"
