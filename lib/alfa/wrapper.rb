@@ -133,9 +133,9 @@ module Alfa
   class Wrapper
     include Alfa::WrapperMethods
 
-    attr_reader :application, :request, :app_sym, :c_sym, :resourcer, :params
+    attr_reader :application, :request, :config, :app_sym, :c_sym, :resourcer, :params
 
-    def initialize(application: nil, request: nil, app_sym: nil, c_sym: nil, resourcer: nil, params: nil, route: nil, caller: nil)
+    def initialize(application: nil, request: nil, config: nil, app_sym: nil, c_sym: nil, resourcer: nil, params: nil, route: nil, caller: nil)
       if caller
         @application = caller.application
         @request = caller.request
@@ -144,6 +144,7 @@ module Alfa
         @resourcer = caller.resourcer
         @params = caller.params
         @route = caller.route
+        @config = caller.config
       else
         @application = application
         @request = request
@@ -152,6 +153,7 @@ module Alfa
         @resourcer = resourcer
         @params = params
         @route = route
+        @config = config
       end
     end
   end

@@ -173,6 +173,10 @@ module TemplateInheritance
     def csrf_token
       @wrapper.csrf_token
     end
+
+    def config
+      @wrapper.config
+    end
   end
 end
 # End of patch

@@ -102,6 +102,7 @@ module Alfa
             controller.c_sym = c_sym
             controller.params = params
             controller.response = response
+            controller.config = config
             data = controller.__send__(a_sym)
             case response.type
               when :json
@@ -110,7 +111,7 @@ module Alfa
               when :html
                 data = controller._instance_variables_hash
                 resourcer = Alfa::Resourcer.new
-                wrapper = Alfa::Wrapper.new(application: self, request: request, app_sym: app_sym, c_sym: c_sym, resourcer: resourcer, params: params, route: route)
+                wrapper = Alfa::Wrapper.new(application: self, request: request, config: config, app_sym: app_sym, c_sym: c_sym, resourcer: resourcer, params: params, route: route)
                 Ruty::Tags::RequireStyle.clean_cache # cleanup
                 Ruty::Tags::RequireScript.clean_cache # cleanup
                 content = self.render_template(app_sym, c_sym, a_sym, controller, wrapper, data, &block)
