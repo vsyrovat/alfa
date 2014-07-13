@@ -3,7 +3,7 @@
 
 Sequel.migration do
   up do
-    # Put up migration code here
+    # Put forward migration code here
     # Use Sequel migration syntax (http://sequel.jeremyevans.net/rdoc/files/doc/schema_modification_rdoc.html) or native SQL (run "SQL command")
     alter_table :users do
       add_column :groups, 'text'
@@ -11,7 +11,7 @@ Sequel.migration do
   end
 
   down do
-    # Put down migration code here
+    # Put backward migration code here
     alter_table :users do
       drop_column :groups
     end

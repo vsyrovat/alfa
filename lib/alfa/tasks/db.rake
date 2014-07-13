@@ -74,12 +74,12 @@ namespace :db do
 
 Sequel.migration do
   up do
-    # Put up migration code here
+    # Put forward migration code here
     # Use Sequel migration syntax (http://sequel.jeremyevans.net/rdoc/files/doc/schema_modification_rdoc.html) or native SQL (run "SQL command")
   end
 
   down do
-    # Put down migration code here
+    # Put backward migration code here
   end
 end
 EOL
