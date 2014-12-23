@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rvm',    '~> 1.11'
 gem 'rake',   '~> 10.3', '>= 10.3.0'
-gem 'rack',   '~> 1.5', '>= 1.5.2'
+gem 'rack',   '~> 1.6.0', '>= 1.6.0'
 gem 'ruty',   '= 0.0.1'
 gem 'mysql2', '~> 0.3'
 gem 'sequel', '~> 4.9', '>= 4.9.0'
