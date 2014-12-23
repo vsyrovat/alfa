@@ -121,6 +121,8 @@ module Alfa
                   body = self.render_layout(app_sym.to_s, l_sym.to_s, controller, wrapper, data.merge({:@body => content}))
                 end
                 headers['Content-Type'] = 'text/html; charset=utf-8'
+              when :xml
+                headers['Content-Type'] = 'text/xml; charset=utf-8'
               when :raw
                 body = data
               else
