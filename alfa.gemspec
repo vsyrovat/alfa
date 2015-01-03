@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.executables << 'alfa'
   spec.add_runtime_dependency 'rvm',    '~> 1.11', '>= 1.11.3'
   spec.add_runtime_dependency 'rake',   '~> 10.3', '>= 10.3.1'
-  spec.add_runtime_dependency 'rack',   '~> 1.5', '>= 1.5.2'
+  spec.add_runtime_dependency 'rack',   '~> 1.6.0', '>= 1.6.0'
   spec.add_runtime_dependency 'ruty',   '0.0.1'
   spec.add_runtime_dependency 'mysql2', '~> 0.3', '>= 0.3.15'
   spec.add_runtime_dependency 'sequel', '~> 4.9', '>= 4.9.0'
