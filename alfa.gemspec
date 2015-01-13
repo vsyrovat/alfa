@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'mysql2', '~> 0.3', '>= 0.3.15'
   spec.add_runtime_dependency 'sequel', '~> 4.9', '>= 4.9.0'
   spec.add_runtime_dependency 'rack-session-sequel', '~> 0.0', '>= 0.0.1'
-  spec.add_runtime_dependency 'haml',   '4.0.5'
+  spec.add_runtime_dependency 'haml',   '4.0.6'
   spec.add_runtime_dependency 'template-inheritance', '0.3.1'
   spec.add_runtime_dependency 'scrypt', '~> 1.2', '>= 1.2.1'
 end
