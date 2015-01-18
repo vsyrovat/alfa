@@ -12,5 +12,6 @@ gem 'template-inheritance', '0.3.1'
 gem 'scrypt', '~> 1.2', '>= 1.2.1'
 
 group :test do
+  gem 'test-unit'
   gem 'sqlite3'
 end

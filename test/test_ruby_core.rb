@@ -20,13 +20,13 @@ EOL
     assert_equal(3, C.foo)
   end
 
-  # Test for Regression of Hash#reject in Ruby 2.1.1
+  # Test for Regression of Hash#reject in Ruby 2.1 and 2.2
   # https://www.ruby-lang.org/en/news/2014/03/10/regression-of-hash-reject-in-ruby-2-1-1/
-  # Should pass in Ruby 2.0.0 and 2.1.2+ (not in 2.1.1)
+  # Should pass in Ruby 2.1.1 and 2.2.0+ (not in 2.1.0, 2.1.2+)
   def test_02
     eval <<EOL
 class SubHash < Hash; end
 EOL
-    assert_equal(SubHash, SubHash.new.reject{}.class)
+    assert_equal(Hash, SubHash.new.reject{}.class)
   end
 end

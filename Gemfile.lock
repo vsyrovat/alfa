@@ -8,6 +8,7 @@ GEM
     haml (4.0.6)
       tilt
     mysql2 (0.3.17)
+    power_assert (0.2.2)
     rack (1.6.0)
     rack-session-sequel (0.0.1)
       rack
@@ -23,6 +24,8 @@ GEM
     template-inheritance (0.3.1)
       haml
       tilt
+    test-unit (3.0.9)
+      power_assert
     tilt (2.0.1)
 
 PLATFORMS
@@ -40,3 +43,4 @@ DEPENDENCIES
   sequel (= 4.12)
   sqlite3
   template-inheritance (= 0.3.1)
+  test-unit
