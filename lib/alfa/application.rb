@@ -62,12 +62,11 @@ module Alfa
 
     def self.try_register(login, password)
       @config[:db][:main][:instance].transaction do
-        unless User.first(:login=>login)
+        unless ::User.first(:login=>login)
           @logger.portion do |l|
-            salt = SecureRandom.hex(5)
             passhash = SCrypt::Password.create(password)
-            User.create(:login=>login, :passhash=>passhash)
-            l.info("created new user login=#{login}, password=***, salt=#{salt}, passhash=#{passhash}")
+            ::User.create(:login=>login, :passhash=>passhash)
+            l.info("created new user login=#{login}, passhash=#{passhash}")
           end
           return true, "Registration done"
         end
