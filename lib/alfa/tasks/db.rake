@@ -61,6 +61,17 @@ namespace :db do
     @db[:instance].drop_table(*@db[:instance].tables)
   end
 
+  namespace :drop do
+    task :all do
+      stack = ENV['db']
+      dbs.each do |name, db|
+        ENV['db'] = name.to_s
+        Rake::Task["db:drop"].invoke
+      end
+      ENV['db'] = stack
+    end
+  end
+
   desc "Create dumb migration for certain database and puts them into PROJECT_ROOT/db/%database%/migration"
   task :'new-migration' => [:require_db, :stdout_logger] do
     unless @db[:path]
