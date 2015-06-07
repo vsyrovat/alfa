@@ -80,7 +80,7 @@ module Alfa
 
     def try_login(login, password)
       u = @application.config[:db][:main][:instance][:users].first(login: login)
-      raise "No such login: #{login}" unless u
+      raise Alfa::Exceptions::Route403, 'Login failed' unless u
       if SCrypt::Password.new(u[:passhash]) == password
         # success
         session[:user_id] = u[:id]
@@ -89,7 +89,7 @@ module Alfa
       else
         # fail
         session[:user_id] = nil
-        raise 'login fail'
+        raise Alfa::Exceptions::Route403, 'Login failed' unless u
         return false
       end
     end
