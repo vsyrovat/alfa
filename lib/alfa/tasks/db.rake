@@ -43,9 +43,11 @@ namespace :db do
   # Auxiliary task
   # Set logger($stdout) for all databases
   task :stdout_logger do
-    @stdout_logger ||= Alfa::Logger.new($stdout)
-    dbs.each_value do |db|
-      db[:instance].loggers << @stdout_logger
+    unless ENV['log.stdout'] == 'false'
+      @stdout_logger ||= Alfa::Logger.new($stdout)
+      dbs.each_value do |db|
+        db[:instance].loggers << @stdout_logger
+      end
     end
   end
 
