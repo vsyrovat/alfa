@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'alfa/cli_application'
 require File.expand_path('../env', __FILE__)
 require File.expand_path('../db', __FILE__)
