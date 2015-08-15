@@ -64,7 +64,7 @@ module TemplateInheritance
       raise ArgumentError, 'src required' if src.nil?
       case src
         when :jquery, 'jquery'
-          @resourcer[:scripts] << {src: '/~assets/js/jquery/jquery-1.11.0.min.js', type: 'text/javascript'}
+          @resourcer[:scripts] << {src: '/~assets/js/jquery/jquery-1.11.3.min.js', type: 'text/javascript'}
         else
           @resourcer[:scripts] << {src: src, type: type}
       end
