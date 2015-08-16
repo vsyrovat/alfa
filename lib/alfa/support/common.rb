@@ -188,6 +188,14 @@ end
 
 class String
   include Alfa::HMround
+
+  def nl2br
+    self.gsub("\n\r",'<br>').gsub("\r", '').gsub("\n", '<br />')
+  end
+
+  def escape_html
+    ::CGI.escapeHTML(self)
+  end
 end
 
 class BigDecimal
