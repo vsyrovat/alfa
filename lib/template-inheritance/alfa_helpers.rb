@@ -65,6 +65,12 @@ module TemplateInheritance
       case src
         when :jquery, 'jquery'
           @resourcer[:scripts] << {src: '/~assets/js/jquery/jquery-1.11.3.min.js', type: 'text/javascript'}
+        when :datepick, 'datepick'
+          @resourcer[:styles] << '/~assets/js/jquery/plugins/datepick/jquery.datepick.css'
+          require_script :jquery
+          @resourcer[:scripts] << {src: '/~assets/js/jquery/migrate/jquery-migrate-1.2.1.js', type: 'text/javascript'}
+          @resourcer[:scripts] << {src: '/~assets/js/jquery/plugins/datepick/jquery.datepick.pack.js', type: 'text/javascript'}
+          @resourcer[:scripts] << {src: '/~assets/js/jquery/plugins/datepick/jquery.datepick-ru.js', type: 'text/javascript'}
         else
           @resourcer[:scripts] << {src: src, type: type}
       end
