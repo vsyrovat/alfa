@@ -85,10 +85,13 @@ module Alfa
         # success
         session[:user_id] = u[:id]
         session[:passhash] = u[:passhash]
+        csrf_token
         return true
       else
         # fail
         session[:user_id] = nil
+        session[:passhash] = nil
+        session[:csrf_token] = nil
         raise Alfa::Exceptions::Route403, 'Login failed' unless u
         return false
       end
